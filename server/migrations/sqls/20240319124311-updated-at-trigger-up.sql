@@ -10,24 +10,26 @@
 --              We can then call this function for every table as follows:
 --              `select trigger_updated_at('my_table_name')`
 --              after the `create table` statement.
-create or replace function set_updated_at()
-    returns trigger as
-$$
-begin
+CREATE OR REPLACE FUNCTION set_updated_at()
+    RETURNS TRIGGER
+    AS $$
+BEGIN
     NEW.updated_at = now();
-    return NEW;
-end;
-$$ language plpgsql;
-
-create or replace function trigger_updated_at(tablename regclass)
-    returns void as
+    RETURN NEW;
+END;
 $$
-begin
-    execute format('CREATE TRIGGER set_updated_at
+LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION trigger_updated_at(tablename regclass)
+    RETURNS void
+    AS $$
+BEGIN
+    EXECUTE format('CREATE TRIGGER set_updated_at
         BEFORE UPDATE
         ON %s
         FOR EACH ROW
         WHEN (OLD is distinct from NEW)
     EXECUTE FUNCTION set_updated_at();', tablename);
-end;
-$$ language plpgsql;
+END;
+$$
+LANGUAGE plpgsql;
