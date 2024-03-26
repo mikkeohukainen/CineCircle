@@ -7,6 +7,18 @@ const dbAuth = {
       [username, hashedPw],
     );
   },
+
+  getHashedPassword: async function (username) {
+    const result = await dbPool.query("SELECT password_hash FROM users WHERE username=$1", [
+      username,
+    ]);
+
+    if (result.rowCount > 0) {
+      return result.rows[0].password_hash;
+    } else {
+      return null;
+    }
+  },
 };
 
 module.exports = dbAuth;
