@@ -1,5 +1,7 @@
 const router = require("express").Router();
 const groups = require("../models/groups_model");
+const groupContents = require("../models/group_contents_model");
+const media = require("../models/media_model");
 
 router.get("/", async (req, res) => {
   try {
@@ -53,5 +55,51 @@ router.delete("/:groupId", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+router.post("/:groupId/media", async (req, res) => {
+    try {
+        const groupId = req.params.groupId;
+        console.log(groupId);
+        const { mediaId, addedBy } = req.body;
+        console.log(mediaId);
+      
+      const mediaExists = await media.getByTmdbId(mediaId);
+      if (!mediaExists) {
+        return res.status(404).json({ error: "Media not found" });
+      }
+      
+      const result = await groupContents.addGroupContent({
+        groupId,
+        mediaId,
+        addedBy
+      });
+      
+      res.status(201).json(result);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  router.get("/:groupId/media", async (req, res) => {
+    try {
+      const result = await groupContents.getGroupContents(req.params.groupId);
+      res.json(result);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
+  router.delete("/media/:groupContentId", async (req, res) => {
+    try {
+      const result = await groupContents.deleteGroupContent(req.params.groupContentId);
+      res.status(200).json(result);
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
+
 
 module.exports = router;
