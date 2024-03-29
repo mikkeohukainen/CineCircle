@@ -1,14 +1,16 @@
+import "@mantine/core/styles.css";
 import "./App.css";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import Home from "./pages/Home.jsx";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-]);
+import { Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage.jsx";
+import Layout from "./components/Layout/Layout.jsx";
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<HomePage />} />
+        <Route path="*" element={<div>Not Found</div>} />
+      </Route>
+    </Routes>
+  );
 }
