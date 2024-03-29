@@ -4,7 +4,7 @@ const groupContents = require("../models/group_contents_model");
 const media = require("../models/media_model");
 const groupMembers = require("../models/group_members_model");
 
-// Hae kaikki ryhmät tietoineen
+// Get all groups with their information
 router.get("/", async (req, res) => {
   try {
     const result = await groups.getAll();
@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Lisää ryhmä
+// Add a group
 router.post("/", async (req, res) => {
   try {
     const result = await groups.add(req.body);
@@ -26,7 +26,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Poista ryhmä. Poistaa ensin ryhmän jäsenet ja sisällön
+// Delete a group. First deletes the group members from the group_members table
+// and the group contents from the group_contents table.
 router.delete("/:groupId", async (req, res) => {
   const groupId = req.params.groupId;
   try {
@@ -44,10 +45,11 @@ router.delete("/:groupId", async (req, res) => {
   }
 });
 
-// Hae ryhmän kaikki media ja showtimet.
+// Get all media and showtimes for a group.
 router.get("/:groupId/contents", async (req, res) => {
+  const groupId = req.params.groupId;
   try {
-    const result = await groupContents.getGroupContents(req.params.groupId);
+    const result = await groupContents.getGroupContents(groupId);
     res.json(result);
   } catch (err) {
     console.log(err);
@@ -55,12 +57,11 @@ router.get("/:groupId/contents", async (req, res) => {
   }
 });
 
-// Lisää media tai showtime ryhmään. Joko mediaId tai showtimeId on pakollinen.
+// Add media or showtime to a group. Either mediaId or showtimeId is required.
 router.post("/:groupId/contents", async (req, res) => {
+  const groupId = req.params.groupId;
+  const { mediaId, showtimeId, addedBy } = req.body;
   try {
-    const groupId = req.params.groupId;
-    const { mediaId, showtimeId, addedBy } = req.body;
-
     if (!mediaId && !showtimeId) {
       return res.status(400).json({ error: "Either mediaId or showtimeId must be provided" });
     }
@@ -85,7 +86,6 @@ router.post("/:groupId/contents", async (req, res) => {
       showtimeId: showtimeId || null,
       addedBy,
     });
-
     res.status(201).json(result);
   } catch (err) {
     console.log(err);
@@ -93,10 +93,11 @@ router.post("/:groupId/contents", async (req, res) => {
   }
 });
 
-// Poista sisältöä content_id:n perusteella, toimii
+// Delete content by content_id
 router.delete("/contents/:contentId", async (req, res) => {
+  const contentId = req.params.contentId;
   try {
-    const result = await groupContents.deleteGroupContentById(req.params.contentId);
+    const result = await groupContents.deleteGroupContentById(contentId);
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
@@ -104,10 +105,11 @@ router.delete("/contents/:contentId", async (req, res) => {
   }
 });
 
-// Hae ryhmän jäsenet
+// Get group members
 router.get("/:groupId/members", async (req, res) => {
+  const groupId = req.params.groupId;
   try {
-    const result = await groupMembers.getAllByGroupId(req.params.groupId);
+    const result = await groupMembers.getAllByGroupId(groupId);
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
@@ -115,18 +117,16 @@ router.get("/:groupId/members", async (req, res) => {
   }
 });
 
-// Lisää jäsen ryhmään (liittymispyyntö, accepted=false ellei toisin määritetty)
+// Add a member to the group (join request, accepted=false unless specified otherwise)
 router.post("/:groupId/members", async (req, res) => {
+  const { userId, accepted } = req.body;
+  const groupId = req.params.groupId;
   try {
-    const { userId, accepted } = req.body;
-    const groupId = req.params.groupId;
-
     const result = await groupMembers.add({
       groupId,
       userId,
-      accepted, // Voi olla undefined, jolloin se asetetaan falseksi
+      accepted, // Can be undefined, in which case it is set to false
     });
-
     res.status(201).json(result);
   } catch (err) {
     console.log(err);
@@ -134,10 +134,11 @@ router.post("/:groupId/members", async (req, res) => {
   }
 });
 
-// Poista jäsen ryhmästä
+// Delete a member from group
 router.delete("/:groupId/members/:userId", async (req, res) => {
+  const { groupId, userId } = req.params;
   try {
-    const result = await groupMembers.deleteGroupMember(req.params.groupId, req.params.userId);
+    const result = await groupMembers.deleteGroupMember(groupId, userId);
     res.status(200).json(result);
   } catch (err) {
     console.log(err);
@@ -145,11 +146,11 @@ router.delete("/:groupId/members/:userId", async (req, res) => {
   }
 });
 
-// Hyväksy jäsen ryhmään
+// Accept a member into the group. Sets the accepted value to true.
 router.put("/:groupId/members", async (req, res) => {
+  const groupId = req.params.groupId;
+  const { userId } = req.body;
   try {
-    const groupId = req.params.groupId;
-    const { userId } = req.body;
     const result = await groupMembers.acceptGroupMember(groupId, userId);
     if (result.length === 0) {
       return res.status(404).json({ error: "Group member not found" });

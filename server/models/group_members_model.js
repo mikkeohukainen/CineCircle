@@ -8,10 +8,12 @@ const groupMembers = {
     );
     return result.rows;
   },
+
   getAllByGroupId: async (groupId) => {
     const result = await db.query("SELECT * FROM group_members WHERE group_id = $1", [groupId]);
     return result.rows;
   },
+
   deleteGroupMember: async (groupId, userId) => {
     const result = await db.query(
       "DELETE FROM group_members WHERE group_id = $1 AND user_id = $2 RETURNING *",
@@ -19,9 +21,11 @@ const groupMembers = {
     );
     return result.rows;
   },
+
   deleteAllGroupMembers: async (groupId) => {
     await db.query("DELETE FROM group_members WHERE group_id = $1", [groupId]);
   },
+
   acceptGroupMember: async (groupId, userId) => {
     const result = await db.query(
       "UPDATE group_members SET accepted = TRUE WHERE group_id = $1 AND user_id = $2 RETURNING *",
