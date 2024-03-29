@@ -3,6 +3,7 @@ const router = require("express").Router();
 const usersModel = require("../models/users_model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const userModel = require("../models/users_model");
 
 // ADD NEW USER
 router.post("/", async (req, res) => {
@@ -91,6 +92,41 @@ router.delete("/", async (req, res) => {
   } catch (err) {
     console.error(err.message);
     res.status(404).end();
+  }
+});
+
+// ADD FAVORITES
+router.post("/:username/favorites", async (req, res) => {
+  try {
+    await usersModel.addFavorites(req.body.username, req.body.mediaId);
+    res.status(200).end();
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).end();
+  }
+});
+
+// // GET FAVORITES
+router.get("/:username/favorites", async (req, res) => {
+  try {
+    const result = await userModel.getFavorites(req.params.username);
+    console.log(result[0]);
+    res.status(200).end();
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).end();
+  }
+});
+
+// // GET REVIEWS
+router.get("/:username/reviews", async (req, res) => {
+  try {
+    const result = await userModel.getReviews(req.params.username);
+    console.log(result);
+    res.status(200).end();
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).end();
   }
 });
 

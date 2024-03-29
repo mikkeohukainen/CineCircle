@@ -37,6 +37,38 @@ const userModel = {
       return null;
     }
   },
+
+  addFavorites: async function (username, mediaId) {
+    await dbPool.query(
+      "INSERT INTO favorites (user_id,media_id) VALUES ((SELECT user_id FROM users WHERE username=$1),$2)",
+      [username, mediaId],
+    );
+  },
+
+  getFavorites: async function (username) {
+    const result = await dbPool.query(
+      "SELECT ARRAY_AGG(DISTINCT media_id) AS media_ids FROM favorites WHERE user_id=(SELECT user_id FROM users WHERE username=$1)",
+      [username],
+    );
+
+    if (result.rowCount > 0) {
+      return result.rows;
+    } else {
+      return null;
+    }
+  },
+
+  getReviews: async function (username) {
+    const result = await dbPool.query(
+      "SELECT * FROM reviews WHERE user_id=(SELECT user_id FROM users WHERE username=$1)",
+      [username],
+    );
+    if (result.rowCount > 0) {
+      return result.rows;
+    } else {
+      return null;
+    }
+  },
 };
 
 module.exports = userModel;
