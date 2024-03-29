@@ -29,7 +29,7 @@ const groupContents = {
     }
   },
 
-  deleteGroupContent: async (contentId) => {
+  deleteGroupContentById: async (contentId) => {
     try {
       const result = await db.query(
         "DELETE FROM group_contents WHERE content_id = $1 RETURNING *",
@@ -40,6 +40,10 @@ const groupContents = {
       console.error(err);
       throw err;
     }
+  },
+
+  deleteAllGroupContent: async (groupId) => {
+    await db.query("DELETE FROM group_contents WHERE group_id = $1", [groupId]);
   },
 
   getShowtimeById: async (id) => {
