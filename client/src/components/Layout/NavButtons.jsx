@@ -9,7 +9,7 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 
-export default function NavButtons(props) {
+export default function NavButtons({ onClick, ...props }) {
   const { breakpoints } = useMantineTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(`(max-width: ${em(breakpoints.sm)})`);
@@ -19,19 +19,28 @@ export default function NavButtons(props) {
     <Parent {...props}>
       <UnstyledButton
         className={classes.navbutton}
-        onClick={() => navigate("/theaters")}
+        onClick={() => {
+          navigate("/theaters");
+          onClick();
+        }}
       >
         Theaters
       </UnstyledButton>
       <UnstyledButton
         className={classes.navbutton}
-        onClick={() => navigate("/groups")}
+        onClick={() => {
+          navigate("/groups");
+          onClick();
+        }}
       >
         Groups
       </UnstyledButton>
       <UnstyledButton
         className={classes.navbutton}
-        onClick={() => navigate("advanced-search")}
+        onClick={() => {
+          navigate("advanced-search");
+          onClick();
+        }}
       >
         Advanced Search
       </UnstyledButton>

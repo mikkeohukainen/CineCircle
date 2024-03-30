@@ -7,7 +7,8 @@ import NavButtons from "./NavButtons.jsx";
 
 export default function Layout() {
   const navigate = useNavigate();
-  const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
+  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
+    useDisclosure(false);
 
   return (
     <AppShell
@@ -44,13 +45,20 @@ export default function Layout() {
             <NavButtons ml="xl" gap={0} visibleFrom="sm" />
             <AuthButtonGroup visibleFrom="sm" />
           </Group>
+          x
         </Group>
       </AppShell.Header>
 
       <AppShell.Navbar p="sm">
-        <NavButtons />
+        <NavButtons onClick={closeDrawer} />
         <Divider my="sm" />
-        <AuthButtonGroup justify="center" grow pb="xl" px="md" />
+        <AuthButtonGroup
+          onClick={closeDrawer}
+          justify="center"
+          grow
+          pb="xl"
+          px="md"
+        />
       </AppShell.Navbar>
 
       <AppShell.Main>
