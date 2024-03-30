@@ -45,7 +45,6 @@ export default function Layout() {
             <NavButtons ml="xl" gap={0} visibleFrom="sm" />
             <AuthButtonGroup visibleFrom="sm" />
           </Group>
-          x
         </Group>
       </AppShell.Header>
 
