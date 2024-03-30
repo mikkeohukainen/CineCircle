@@ -1,68 +1,14 @@
 import classes from "./Layout.module.css";
-import {
-  AppShell,
-  Burger,
-  Group,
-  UnstyledButton,
-  Image,
-  Text,
-  Button,
-  rem,
-  em,
-  Divider,
-  Stack,
-  useMantineTheme,
-} from "@mantine/core";
-import { useDisclosure, useMediaQuery } from "@mantine/hooks";
+import { AppShell, Burger, Group, Image, Divider } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { Outlet, useNavigate } from "react-router-dom";
-
-function AuthButtonGroup(props) {
-  const navigate = useNavigate();
-
-  return (
-    <Group {...props}>
-      <Button variant="default" onClick={() => navigate("login")}>
-        Log in
-      </Button>
-      <Button onClick={() => navigate("/signup")}>Sign up</Button>
-    </Group>
-  );
-}
-
-function NavButtons(props) {
-  const { breakpoints } = useMantineTheme();
-  const navigate = useNavigate();
-  const isMobile = useMediaQuery(`(max-width: ${em(breakpoints.sm)})`);
-  const Parent = isMobile ? Stack : Group;
-
-  return (
-    <Parent {...props}>
-      <UnstyledButton
-        className={classes.navbutton}
-        onClick={() => navigate("/theaters")}
-      >
-        Theaters
-      </UnstyledButton>
-      <UnstyledButton
-        className={classes.navbutton}
-        onClick={() => navigate("/groups")}
-      >
-        Groups
-      </UnstyledButton>
-      <UnstyledButton
-        className={classes.navbutton}
-        onClick={() => navigate("advanced-search")}
-      >
-        Advanced Search
-      </UnstyledButton>
-    </Parent>
-  );
-}
+import AuthButtonGroup from "./AuthButtonGroup.jsx";
+import NavButtons from "./NavButtons.jsx";
 
 export default function Layout() {
   const navigate = useNavigate();
   const [drawerOpened, { toggle: toggleDrawer }] = useDisclosure(false);
-  console.log(classes);
+
   return (
     <AppShell
       header={{ height: { base: 60, md: 70, lg: 80 } }}
@@ -73,7 +19,7 @@ export default function Layout() {
       }}
       padding="md"
     >
-      <AppShell.Header>
+      <AppShell.Header className={classes.header}>
         <Group h="100%" px="md">
           <Burger
             opened={drawerOpened}

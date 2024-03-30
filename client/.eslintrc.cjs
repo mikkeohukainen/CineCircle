@@ -15,6 +15,7 @@ module.exports = {
   plugins: ["react-refresh"],
   rules: {
     "react/prop-types": "off",
+    "react/no-unescaped-entities": "off",
     "no-unused-vars": "off",
     "no-console": "off",
     "react/jsx-no-target-blank": "off",
