@@ -1,39 +1,27 @@
-import { Button, TextInput, PasswordInput, Text } from "@mantine/core";
+import { Button, TextInput, PasswordInput, Text, Anchor } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useForm } from "@mantine/form";
-import { Link } from "react-router-dom";
+import { useForm, isNotEmpty, hasLength, matchesField } from "@mantine/form";
+import { useNavigate } from "react-router-dom";
 
 export default function RegistrationForm() {
+  const navigate = useNavigate();
   const [showPassword, { toggle: toggleShowPassword }] = useDisclosure(false);
   const form = useForm({
+    validateInputOnChange: true,
     initialValues: {
       username: "",
       password: "",
       repeatPassword: "",
     },
-    validate: (values) => {
-      const [minPasswordLength, maxPasswordLength] = [8, 72];
-      const { username, password, repeatPassword } = values;
-      const errors = {};
-
-      if (!username || username.trim() === "") {
-        errors.username = "Username is required";
-      }
-
-      if (
-        !password ||
-        password.trim() === "" ||
-        password.length < minPasswordLength ||
-        password.length > maxPasswordLength
-      ) {
-        errors.password = `Password should be between ${minPasswordLength} and ${maxPasswordLength} characters`;
-      }
-
-      if (password !== repeatPassword) {
-        errors.repeatPassword = "Passwords do not match";
-      }
-
-      return errors;
+    validate: {
+      username: isNotEmpty("Username is required"),
+      password:
+        isNotEmpty("Password is required") &&
+        hasLength(
+          { min: 8, max: 72 },
+          "Password must be between 8 and 72 characters"
+        ),
+      repeatPassword: matchesField("password", "Passwords do not match"),
     },
   });
 
@@ -70,15 +58,9 @@ export default function RegistrationForm() {
       </Button>
       <Text mt="md" size="sm" align="center">
         Already have an account?{" "}
-        <Link
-          style={{
-            display: "inline-block",
-            fontSize: "inherit",
-          }}
-          to="/login"
-        >
+        <Anchor href="/login" onClick={() => navigate("/login")}>
           Log in
-        </Link>
+        </Anchor>
       </Text>
     </form>
   );

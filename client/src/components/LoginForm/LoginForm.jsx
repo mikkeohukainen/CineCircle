@@ -1,26 +1,18 @@
-import { Button, TextInput, PasswordInput, Text } from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { Link } from "react-router-dom";
+import { Button, TextInput, PasswordInput, Text, Anchor } from "@mantine/core";
+import { isNotEmpty, useForm } from "@mantine/form";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginForm() {
+  const navigate = useNavigate();
   const form = useForm({
+    validateInputOnChange: true,
     initialValues: {
       username: "",
       password: "",
     },
-    validate: (values) => {
-      const { username, password } = values;
-      const errors = {};
-
-      if (!username || username.trim() === "") {
-        errors.username = "Username is required";
-      }
-
-      if (!password || password.trim() === "") {
-        errors.password = "Password is required";
-      }
-
-      return errors;
+    validate: {
+      username: isNotEmpty("Username is required"),
+      password: isNotEmpty("Password is required"),
     },
   });
 
@@ -43,7 +35,10 @@ export default function LoginForm() {
         Log In
       </Button>
       <Text mt="md" align="center" size="sm">
-        Don't have an account? <Link to="/signup">Sign up</Link>
+        Don't have an account?{" "}
+        <Anchor href="/signup" onClick={() => navigate("/signup")}>
+          Sign up
+        </Anchor>
       </Text>
     </form>
   );
