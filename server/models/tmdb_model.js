@@ -5,6 +5,7 @@ const movieProvidersURL = 'https://api.themoviedb.org/3/watch/providers/movie?la
 const serieProvidersURL = 'https://api.themoviedb.org/3/watch/providers/tv?language=en-US&watch_region=FI'
 const popularMoviesURL = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1'
 const trendingMoviesURL = 'https://api.themoviedb.org/3/trending/movie/day?language=en-US&page=1&sort_by=popularity.desc'
+const trendingTVShowsURL = 'https://api.themoviedb.org/3/trending/tv/day?language=en-US&page=1&sort_by=popularity.desc'
 const searchMoviesURL = 'https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1&query='
 const searchMultiURL = 'https://api.themoviedb.org/3/search/multi?include_adult=false&language=en-US&page=1&sort_by=popularity.desc&query='
 const discoverMovieURL = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc'
@@ -56,6 +57,11 @@ const tmdb = {
         console.log('Trending movies fetched from:')
         console.log(trendingMoviesURL)
         return fetchData(trendingMoviesURL)
+    },
+    getTrendingTV: () => {
+        console.log('Trending movies fetched from:')
+        console.log(trendingTVShowsURL)
+        return fetchData(trendingTVShowsURL)
     },
     searchMovies: (title) => {
         const URL = searchMoviesURL + title
