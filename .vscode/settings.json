@@ -18,5 +18,12 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.formatOnSave": true,
-  "editor.insertSpaces": true
+  "editor.insertSpaces": true,
+  "cssVariables.lookupFiles": [
+    "**/*.css",
+    "**/*.scss",
+    "**/*.sass",
+    "**/*.less",
+    "./client/node_modules/@mantine/core/styles.css"
+  ]
 }
