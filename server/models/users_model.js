@@ -27,12 +27,13 @@ const userModel = {
   },
 
   getHashedPassword: async function (username) {
-    const result = await dbPool.query("SELECT password_hash FROM users WHERE username=$1", [
-      username,
-    ]);
+    const result = await dbPool.query(
+      "SELECT user_id, password_hash FROM users WHERE username=$1",
+      [username],
+    );
 
     if (result.rowCount > 0) {
-      return result.rows[0].password_hash;
+      return result.rows[0];
     } else {
       return null;
     }
@@ -47,7 +48,7 @@ const userModel = {
 
   getFavorites: async function (username) {
     const result = await dbPool.query(
-      "SELECT ARRAY_AGG(DISTINCT media_id) AS media_ids FROM favorites WHERE user_id=(SELECT user_id FROM users WHERE username=$1)",
+      "SELECT * FROM media JOIN favorites ON favorites.media_id=media.media_id WHERE user_id=(SELECT user_id FROM users WHERE username=$1);",
       [username],
     );
 
