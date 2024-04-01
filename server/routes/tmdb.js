@@ -126,4 +126,14 @@ router.get('/movie/details/:id', async (req, res) => {
     }
 })
 
+router.get('/movie/images/:id', async (req, res) => {
+    try {
+        const result = await tmdb.getMovieImages(req.params.id)
+        res.json(result)
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ error: err.message })
+    }
+})
+
 module.exports = router

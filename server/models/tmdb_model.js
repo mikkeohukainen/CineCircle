@@ -11,6 +11,8 @@ const searchMultiURL = 'https://api.themoviedb.org/3/search/multi?include_adult=
 const discoverMovieURL = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc'
 const searchPeopleURL = 'https://api.themoviedb.org/3/search/person?include_adult=false&language=en-US&page=1&query='
 const movieDetailsURL = 'https://api.themoviedb.org/3/movie/'
+const movieImagesURL = 'https://api.themoviedb.org/3/movie/'
+const TVImagesURL = ''
 
 const options = {
     method: 'GET',
@@ -90,6 +92,12 @@ const tmdb = {
     },
     getMovieDetails: (id) => {
         const URL = movieDetailsURL + id
+        return fetchData(URL)
+    },
+    getMovieImages: (id) => {
+        const URL = movieImagesURL + id + '/images?language=EN'
+        console.log('Images fetched from:')
+        console.log(URL)
         return fetchData(URL)
     }
 }
