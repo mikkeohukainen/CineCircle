@@ -117,7 +117,7 @@ router.post("/:username/favorites", async (req, res) => {
 router.get("/:username/favorites", async (req, res) => {
   try {
     const result = await userModel.getFavorites(req.params.username);
-    console.log(result);
+    // console.log(result);
     res.status(200).end();
   } catch (err) {
     console.error(err.message);
