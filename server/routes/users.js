@@ -29,7 +29,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// TODO: GET USER (atm returns only id, should return lots of stuff)
+// TODO: GET USER
 router.get("/:username", async (req, res) => {
   try {
     const result = await usersModel.getUser(req.params.username);
@@ -49,16 +49,23 @@ router.get("/:username", async (req, res) => {
 // LOGIN
 router.post("/session", async (req, res) => {
   try {
-    const dbHashedPassword = await usersModel.getHashedPassword(req.body.username);
+    // return is { user_id, password_hash }
+    const dbUserIdAndHashedPassword = await usersModel.getHashedPassword(req.body.username);
 
     // if not null
-    if (dbHashedPassword) {
-      const isAuthorized = await bcrypt.compare(req.body.password, dbHashedPassword);
+    if (dbUserIdAndHashedPassword) {
+      const isAuthorized = await bcrypt.compare(
+        req.body.password,
+        dbUserIdAndHashedPassword.password_hash,
+      );
 
       if (isAuthorized) {
         const token = jwt.sign({ username: req.body.username }, process.env.JWT_SUPERSECRETSIGNER);
-
-        res.status(200).json({ jwtToken: token });
+        res.status(200).json({
+          username: req.body.username,
+          userId: dbUserIdAndHashedPassword.user_id,
+          jwtToken: token,
+        });
       } else {
         res.status(401).end();
       }
@@ -110,7 +117,7 @@ router.post("/:username/favorites", async (req, res) => {
 router.get("/:username/favorites", async (req, res) => {
   try {
     const result = await userModel.getFavorites(req.params.username);
-    console.log(result[0]);
+    console.log(result);
     res.status(200).end();
   } catch (err) {
     console.error(err.message);
