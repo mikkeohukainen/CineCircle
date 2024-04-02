@@ -9,35 +9,22 @@ export default function NavButtons({ closeDrawer, ...props }) {
   const isMobile = useMediaQuery(`(max-width: ${em(breakpoints.sm)})`);
   const Parent = isMobile ? Stack : Group;
 
-  return (
-    <Parent {...props}>
-      <UnstyledButton
-        className={classes.navbutton}
-        onClick={() => {
-          navigate("/theaters");
-          if (isMobile) closeDrawer();
-        }}
-      >
-        Theaters
-      </UnstyledButton>
-      <UnstyledButton
-        className={classes.navbutton}
-        onClick={() => {
-          navigate("/groups");
-          if (isMobile) closeDrawer();
-        }}
-      >
-        Groups
-      </UnstyledButton>
-      <UnstyledButton
-        className={classes.navbutton}
-        onClick={() => {
-          navigate("advanced-search");
-          if (isMobile) closeDrawer();
-        }}
-      >
-        Advanced Search
-      </UnstyledButton>
-    </Parent>
-  );
+  const buttons = [
+    { label: "Theaters", onClick: () => navigate("/theaters") },
+    { label: "Groups", onClick: () => navigate("/groups") },
+    { label: "Advanced Search", onClick: () => navigate("/advanced-search") },
+  ].map(({ label, onClick }) => (
+    <UnstyledButton
+      key={label}
+      className={classes.navbutton}
+      onClick={() => {
+        onClick();
+        if (isMobile) closeDrawer();
+      }}
+    >
+      {label}
+    </UnstyledButton>
+  ));
+
+  return <Parent {...props}>{buttons}</Parent>;
 }
