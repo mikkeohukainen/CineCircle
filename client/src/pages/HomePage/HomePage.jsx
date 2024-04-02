@@ -34,7 +34,7 @@ export default function HomePage() {
     const data = await fetch("http://localhost:8000/search/trending/tv");
     const searchResults = await data.json();
     setTVShows(() => searchResults.results);
-    console.log("Trending movies fetched");
+    console.log("Trending TVshows fetched");
   };
 
   const handleSubmit = (e) => {
