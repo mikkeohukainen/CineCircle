@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Add a group
+// Add a group. Also adds the user who created the group as a accepted member of the group.
 router.post("/", async (req, res) => {
   try {
     const result = await groups.add(req.body);
