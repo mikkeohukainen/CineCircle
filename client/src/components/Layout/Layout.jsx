@@ -59,8 +59,12 @@ export default function Layout() {
 
       <AppShell.Navbar p="sm">
         <NavButtons closeDrawer={closeDrawer} />
-        <Divider my="sm" />
-        <AuthButtonGroup closeDrawer={closeDrawer} justify="center" grow pb="xl" px="md" />
+        {!isLoggedIn ? (
+          <>
+            <Divider my="sm" />
+            <AuthButtonGroup closeDrawer={closeDrawer} justify="center" grow pb="xl" px="md" />
+          </>
+        ) : null}
       </AppShell.Navbar>
 
       <AppShell.Main>
