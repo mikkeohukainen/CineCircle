@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { MovieCard } from "../../components/MovieCard";
 
 export default function UserFavorites() {
   // DEBUG hardcoding - DELETE
@@ -9,21 +10,33 @@ export default function UserFavorites() {
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrdWFua2thIiwiaWF0IjoxNzExOTc1OTcyfQ.f7136dHoqWU9YWelAkPNfWosqAj8dcILCcLZTSer-bA",
   };
 
-  try {
-    const query = fetch(
-      "http://localhost:8000/users/${userProfile.username}/favorites"
-    );
-    if (!query.ok) {
-      throw new Error("not ok");
-    }
-    const tmpjson = query.json();
-    console.log(tmpjson);
-  } catch (err) {
-    console.error(err);
-  }
+  const [favorites, setFavorites] = useState(null);
 
-  // TODO: fetch favorites
+  useEffect(() => {
+    const getFavorites = async () => {
+      try {
+        const query = await fetch(
+          `http://localhost:8000/users/${userProfile.username}/favorites`
+        );
+        const response = await query.json();
+        setFavorites(response);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    getFavorites();
+  }, []);
 
-  // TODO: display favorites
-  return <>{userProfile.username}</>;
+  return (
+    <>
+      <h1>{userProfile.username}</h1>
+      <p>Your favorites:</p>
+      {/* favorites is JSON array []
+      goes null after reload with F5 ??  wth is this error */}
+      {JSON.stringify(favorites[0], null, 2)}
+      {/* Does not go null after F5 */}
+      {/* {JSON.stringify(favorites)} */}
+      {/* TODO: moviecard here ? */}
+    </>
+  );
 }

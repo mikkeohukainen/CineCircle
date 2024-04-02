@@ -36,7 +36,7 @@ router.get("/:username", async (req, res) => {
     // if not null
     if (result) {
       console.log(result);
-      res.status(200).end();
+      res.status(200).json(result);
     } else {
       throw new Error("User does not exist!");
     }
@@ -118,19 +118,19 @@ router.get("/:username/favorites", async (req, res) => {
   try {
     const result = await userModel.getFavorites(req.params.username);
     // console.log(result);
-    res.status(200).end();
+    res.status(200).json(result);
   } catch (err) {
     console.error(err.message);
     res.status(500).end();
   }
 });
 
-// // GET REVIEWS
+// GET REVIEWS
 router.get("/:username/reviews", async (req, res) => {
   try {
     const result = await userModel.getReviews(req.params.username);
-    console.log(result);
-    res.status(200).end();
+    // console.log(result);
+    res.status(200).json(result);
   } catch (err) {
     console.error(err.message);
     res.status(500).end();
