@@ -1,0 +1,22 @@
+.menuItemIcon {
+  height: rem(20);
+  width: rem(20);
+}
+
+.menuButton {
+  display: block;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  border-radius: var(--mantine-radius-sm);
+
+  @mixin hover {
+    background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
+  }
+}
+
+.menuButtonIcon {
+  transition: transform 0.3s ease;
+}
+
+.menuButtonIcon.flipped {
+  transform: scaleY(-1);
+}

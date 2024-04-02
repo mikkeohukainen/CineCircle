@@ -1,7 +1,7 @@
 import classes from "./UserMenu.module.css";
-import { Menu, Group, Text, UnstyledButton, rem } from "@mantine/core";
+import { Menu, Group, Text, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconChevronDown } from "@tabler/icons-react";
+import { IconUser, IconSettings, IconLogout, IconCaretDownFilled } from "@tabler/icons-react";
 import useAuth from "../../hooks/useAuth";
 
 export default function UserMenu({ onLogout }) {
@@ -11,30 +11,36 @@ export default function UserMenu({ onLogout }) {
   return (
     <Group>
       <Menu
-        width={260}
+        width={220}
+        shadow="md"
         position="bottom-end"
-        transitionProps={{ transition: "pop-top-right" }}
-        onOpen={onOpen}
+        opened={opened}
         onClose={onClose}
+        onOpen={onOpen}
       >
         <Menu.Target>
-          <UnstyledButton
-            className={classes.user}
-            onClick={toggle}
-            style={{
-              ...(opened && { backgroundColor: "#fefefe" }),
-            }}
-          >
-            <Group gap={7}>
-              <Text fw={500} size="sm" lh={1} mr={3}>
-                {username}
-              </Text>
-              <IconChevronDown style={{ width: rem(12), height: rem(12) }} stroke={1.5} />
+          <UnstyledButton onClick={toggle} className={classes.menuButton}>
+            <Group>
+              <Text size="sm">{username}</Text>
+              <IconCaretDownFilled
+                className={`${classes.menuButtonIcon} ${opened ? classes.flipped : ""}`}
+                size={18}
+              />
             </Group>
           </UnstyledButton>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item onClick={onLogout}>Log Out</Menu.Item>
+          <Menu.Item leftSection={<IconUser className={classes.menuItemIcon} />}>Profile</Menu.Item>
+          <Menu.Item leftSection={<IconSettings className={classes.menuItemIcon} />}>
+            Settings
+          </Menu.Item>
+          <Menu.Divider />
+          <Menu.Item
+            leftSection={<IconLogout className={classes.menuItemIcon} />}
+            onClick={onLogout}
+          >
+            Log Out
+          </Menu.Item>
         </Menu.Dropdown>
       </Menu>
     </Group>
