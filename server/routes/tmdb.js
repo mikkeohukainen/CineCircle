@@ -48,9 +48,19 @@ router.get('/popular', async (req, res) => {
     }
 })
 
-router.get('/trending', async (req, res) => {
+router.get('/trending/movies', async (req, res) => {
     try {
         const result = await tmdb.getTrendingMovies()
+        res.json(result)
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ error: err.message })
+    }
+})
+
+router.get('/trending/tv', async (req, res) => {
+    try {
+        const result = await tmdb.getTrendingTV()
         res.json(result)
     } catch (err) {
         console.log(err)
