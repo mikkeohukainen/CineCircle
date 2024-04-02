@@ -17,7 +17,7 @@ export default function MovieCard({ movie }) {
     return (
         <div className={classes.cardContainer}>
             <Image 
-                src={movie.poster_path === null ? noimage : baseURL + movie.poster_path} 
+                src={movie.media_type === "person" || movie.poster_path === null ? noimage : baseURL + movie.poster_path} 
                 className={classes.image}
             />
             <button 
