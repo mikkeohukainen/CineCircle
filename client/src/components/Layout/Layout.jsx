@@ -30,7 +30,7 @@ export default function Layout() {
             <Group gap={0}>
               <Image
                 classNames={classes.logo}
-                src="/cinecircle.png"
+                src="/cinecircle-black.png"
                 style={{
                   width: 60,
                   height: 60,
