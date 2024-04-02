@@ -1,8 +1,11 @@
-import { Group, Button } from "@mantine/core";
+import { Group, Button, useMantineTheme, em } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 
-export default function AuthButtonGroup({ onClick, ...props }) {
+export default function AuthButtonGroup({ closeDrawer, ...props }) {
   const navigate = useNavigate();
+  const { breakpoints } = useMantineTheme();
+  const isMobile = useMediaQuery(`(max-width: ${em(breakpoints.sm)})`);
 
   return (
     <Group {...props}>
@@ -10,7 +13,7 @@ export default function AuthButtonGroup({ onClick, ...props }) {
         variant="default"
         onClick={() => {
           navigate("login");
-          onClick();
+          if (isMobile) closeDrawer();
         }}
       >
         Log In
@@ -18,7 +21,7 @@ export default function AuthButtonGroup({ onClick, ...props }) {
       <Button
         onClick={() => {
           navigate("/signup");
-          onClick();
+          if (isMobile) closeDrawer();
         }}
       >
         Sign Up
