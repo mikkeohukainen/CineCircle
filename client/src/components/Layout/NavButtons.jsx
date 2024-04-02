@@ -1,15 +1,9 @@
 import classes from "./Layout.module.css";
-import {
-  Group,
-  UnstyledButton,
-  em,
-  Stack,
-  useMantineTheme,
-} from "@mantine/core";
+import { Group, UnstyledButton, em, Stack, useMantineTheme } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 
-export default function NavButtons({ onClick, ...props }) {
+export default function NavButtons({ closeDrawer, ...props }) {
   const { breakpoints } = useMantineTheme();
   const navigate = useNavigate();
   const isMobile = useMediaQuery(`(max-width: ${em(breakpoints.sm)})`);
@@ -21,7 +15,7 @@ export default function NavButtons({ onClick, ...props }) {
         className={classes.navbutton}
         onClick={() => {
           navigate("/theaters");
-          onClick();
+          if (isMobile) closeDrawer();
         }}
       >
         Theaters
@@ -30,7 +24,7 @@ export default function NavButtons({ onClick, ...props }) {
         className={classes.navbutton}
         onClick={() => {
           navigate("/groups");
-          onClick();
+          if (isMobile) closeDrawer();
         }}
       >
         Groups
@@ -39,7 +33,7 @@ export default function NavButtons({ onClick, ...props }) {
         className={classes.navbutton}
         onClick={() => {
           navigate("advanced-search");
-          onClick();
+          if (isMobile) closeDrawer();
         }}
       >
         Advanced Search
