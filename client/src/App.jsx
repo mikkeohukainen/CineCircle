@@ -10,6 +10,7 @@ import { SearchPage } from "./pages/SearchPage";
 import AuthProvider from "./contexts/AuthContext.jsx";
 import { MediaDetailsPage } from "./pages/MediaDetailsPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { DeleteAccount } from "./components/UserDeleteAccount";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
           <Route path="search" element={<SearchPage />} />
           <Route path="details" element={<MediaDetailsPage />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="profile/delete" element={<DeleteAccount />} />
           <Route path="*" element={<div>Not Found</div>} />
         </Route>
       </Routes>

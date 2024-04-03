@@ -35,7 +35,7 @@ router.get("/:username", async (req, res) => {
     const result = await usersModel.getUser(req.params.username);
     // if not null
     if (result) {
-      console.log(result);
+      // console.log(result);
       res.status(200).json(result);
     } else {
       throw new Error("User does not exist!");
