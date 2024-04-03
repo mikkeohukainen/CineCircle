@@ -34,8 +34,9 @@ export default function MediaDetailsPage() {
   }, []);
 
   const getImages = async () => {
-    const URL = `http://localhost:8000/search/${mediaObj.media_type}/images/${mediaObj.id}`;
+    // const URL = `http://localhost:8000/search/${mediaObj.media_type}/images/${mediaObj.id}`;
     // const data = await fetch("http://localhost:8000/search/movie/images/" + mediaObj.id);
+    const URL = `http://localhost:8000/search/${mediaObj.title ? 'movie' : 'tv'}/images/${mediaObj.id}`;
     const data = await fetch(URL);
     const searchResults = await data.json();
     const limitedImages = searchResults.backdrops.slice(0, 20);
@@ -45,7 +46,7 @@ export default function MediaDetailsPage() {
 
   const getCredits = async () => {
     setIsLoading(true);
-    const URL = `http://localhost:8000/search/${mediaObj.media_type}/credits/${mediaObj.id}`;
+    const URL = `http://localhost:8000/search/${mediaObj.title ? 'movie' : 'tv'}/credits/${mediaObj.id}`;
     // const data = await fetch("http://localhost:8000/search/movie/images/" + mediaObj.id);
     const data = await fetch(URL);
     const searchResults = await data.json();
