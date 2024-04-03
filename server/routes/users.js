@@ -60,7 +60,9 @@ router.post("/session", async (req, res) => {
       );
 
       if (isAuthorized) {
-        const token = jwt.sign({ username: req.body.username }, process.env.JWT_SUPERSECRETSIGNER);
+        const token = jwt.sign({ username: req.body.username }, process.env.JWT_SUPERSECRETSIGNER, {
+          expiresIn: "1d",
+        });
         res.status(200).json({
           username: req.body.username,
           userId: dbUserIdAndHashedPassword.user_id,

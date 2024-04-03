@@ -2,7 +2,7 @@ import { Button, TextInput, PasswordInput, Text, Anchor } from "@mantine/core";
 import { isNotEmpty, useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 
-export default function LoginForm() {
+export default function LoginForm({ onSubmit }) {
   const navigate = useNavigate();
   const form = useForm({
     validateInputOnChange: true,
@@ -17,7 +17,7 @@ export default function LoginForm() {
   });
 
   return (
-    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+    <form onSubmit={form.onSubmit(onSubmit)}>
       <TextInput
         label="Username"
         placeholder="Your username"

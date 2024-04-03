@@ -5,11 +5,14 @@ const movieProvidersURL = 'https://api.themoviedb.org/3/watch/providers/movie?la
 const serieProvidersURL = 'https://api.themoviedb.org/3/watch/providers/tv?language=en-US&watch_region=FI'
 const popularMoviesURL = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1'
 const trendingMoviesURL = 'https://api.themoviedb.org/3/trending/movie/day?language=en-US&page=1&sort_by=popularity.desc'
+const trendingTVShowsURL = 'https://api.themoviedb.org/3/trending/tv/day?language=en-US&page=1&sort_by=popularity.desc'
 const searchMoviesURL = 'https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1&query='
 const searchMultiURL = 'https://api.themoviedb.org/3/search/multi?include_adult=false&language=en-US&page=1&sort_by=popularity.desc&query='
 const discoverMovieURL = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc'
 const searchPeopleURL = 'https://api.themoviedb.org/3/search/person?include_adult=false&language=en-US&page=1&query='
 const movieDetailsURL = 'https://api.themoviedb.org/3/movie/'
+const movieImagesURL = 'https://api.themoviedb.org/3/movie/'
+const TVDetailsURL = 'https://api.themoviedb.org/3/tv/'
 
 const options = {
     method: 'GET',
@@ -57,6 +60,11 @@ const tmdb = {
         console.log(trendingMoviesURL)
         return fetchData(trendingMoviesURL)
     },
+    getTrendingTV: () => {
+        console.log('Trending movies fetched from:')
+        console.log(trendingTVShowsURL)
+        return fetchData(trendingTVShowsURL)
+    },
     searchMovies: (title) => {
         const URL = searchMoviesURL + title
         console.log('Movies searched from:')
@@ -84,6 +92,30 @@ const tmdb = {
     },
     getMovieDetails: (id) => {
         const URL = movieDetailsURL + id
+        return fetchData(URL)
+    },
+    getMovieImages: (id) => {
+        const URL = movieImagesURL + id + '/images?language=EN%2Cnull'
+        console.log('Images fetched from:')
+        console.log(URL)
+        return fetchData(URL)
+    },
+    getMovieCredits: (id) => {
+        const URL = movieDetailsURL + id + '/credits?language=EN'
+        console.log('Credits fetched from:')
+        console.log(URL)
+        return fetchData(URL)
+    },
+    getTVCredits: (id) => {
+        const URL = TVDetailsURL + id + '/credits?language=EN'
+        console.log('Credits fetched from:')
+        console.log(URL)
+        return fetchData(URL)
+    },
+    getTVImages: (id) => {
+        const URL = TVDetailsURL + id + '/images?language=EN%2Cnull'
+        console.log('Images fetched from:')
+        console.log(URL)
         return fetchData(URL)
     }
 }

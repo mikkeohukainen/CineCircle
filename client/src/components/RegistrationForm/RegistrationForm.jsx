@@ -3,7 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useForm, isNotEmpty, hasLength, matchesField } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 
-export default function RegistrationForm() {
+export default function RegistrationForm({ onSubmit }) {
   const navigate = useNavigate();
   const [showPassword, { toggle: toggleShowPassword }] = useDisclosure(false);
   const form = useForm({
@@ -17,16 +17,13 @@ export default function RegistrationForm() {
       username: isNotEmpty("Username is required"),
       password:
         isNotEmpty("Password is required") &&
-        hasLength(
-          { min: 8, max: 72 },
-          "Password must be between 8 and 72 characters"
-        ),
+        hasLength({ min: 8, max: 72 }, "Password must be between 8 and 72 characters"),
       repeatPassword: matchesField("password", "Passwords do not match"),
     },
   });
 
   return (
-    <form onSubmit={form.onSubmit((values) => console.log(values))}>
+    <form onSubmit={form.onSubmit(onSubmit)}>
       <TextInput
         label="Username"
         placeholder="Your username"

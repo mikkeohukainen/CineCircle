@@ -4,11 +4,14 @@ import { useDisclosure } from "@mantine/hooks";
 import { Outlet, useNavigate } from "react-router-dom";
 import AuthButtonGroup from "./AuthButtonGroup.jsx";
 import NavButtons from "./NavButtons.jsx";
+import useAuth from "../../hooks/useAuth.js";
+import UserMenu from "../UserMenu/UserMenu.jsx";
+import { logout } from "../../data/auth.js";
 
 export default function Layout() {
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] =
-    useDisclosure(false);
+  const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
 
   return (
     <AppShell
@@ -22,17 +25,12 @@ export default function Layout() {
     >
       <AppShell.Header className={classes.header}>
         <Group h="100%" px="md">
-          <Burger
-            opened={drawerOpened}
-            onClick={toggleDrawer}
-            hiddenFrom="sm"
-            size="sm"
-          />
+          <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>
             <Group gap={0}>
               <Image
                 classNames={classes.logo}
-                src="/cinecircle.png"
+                src="/cinecircle-black.png"
                 style={{
                   width: 60,
                   height: 60,
@@ -43,21 +41,30 @@ export default function Layout() {
               />
             </Group>
             <NavButtons ml="xl" gap={0} visibleFrom="sm" />
-            <AuthButtonGroup visibleFrom="sm" />
+
+            {isLoggedIn ? (
+              <UserMenu
+                onLogout={() => {
+                  logout();
+                  setIsLoggedIn(false);
+                  navigate("/");
+                }}
+              />
+            ) : (
+              <AuthButtonGroup visibleFrom="sm" />
+            )}
           </Group>
         </Group>
       </AppShell.Header>
 
       <AppShell.Navbar p="sm">
-        <NavButtons onClick={closeDrawer} />
-        <Divider my="sm" />
-        <AuthButtonGroup
-          onClick={closeDrawer}
-          justify="center"
-          grow
-          pb="xl"
-          px="md"
-        />
+        <NavButtons closeDrawer={closeDrawer} />
+        {!isLoggedIn ? (
+          <>
+            <Divider my="sm" />
+            <AuthButtonGroup closeDrawer={closeDrawer} justify="center" grow pb="xl" px="md" />
+          </>
+        ) : null}
       </AppShell.Navbar>
 
       <AppShell.Main>
