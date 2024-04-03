@@ -15,9 +15,7 @@ export default function GroupsPage() {
   const getGroups = async () => {
     const response = await fetch("http://localhost:8000/groups");
     const groups = await response.json();
-    const sortedGroups = groups.sort((a, b) =>
-      a.group_name.localeCompare(b.group_name)
-    );
+    const sortedGroups = groups.sort((a, b) => a.group_name.localeCompare(b.group_name));
     setGroups(() => sortedGroups);
     console.log("Groups fetched");
     console.log(sortedGroups);
@@ -31,7 +29,7 @@ export default function GroupsPage() {
   const filteredGroups = groups.filter(
     (group) =>
       group.group_name.toLowerCase().includes(searchText.toLowerCase()) ||
-      group.description.toLowerCase().includes(searchText.toLowerCase())
+      group.description.toLowerCase().includes(searchText.toLowerCase()),
   );
   return (
     <Container size="xl" mt="lg" mb="xl">
@@ -45,19 +43,13 @@ export default function GroupsPage() {
               setSearchSubmitted(false);
             }}
           />
-          {searchSubmitted && searchText && (
-            <p>Search results for: "{searchText}"</p>
-          )}
+          {searchSubmitted && searchText && <p>Search results for: "{searchText}"</p>}
         </form>
       </Container>
-      <Grid mt="lg" justify="flex-start" align="stretch"gutter="lg">
+      <Grid mt="lg" justify="flex-start" align="stretch" gutter="lg">
         {filteredGroups.map((group) => (
           <Grid.Col span={6} key={group.group_id}>
-            <GroupInfoCard
-              name={group.group_name}
-              description={group.description}
-              memberCount={group.member_count}
-            />
+            <GroupInfoCard group={group} />
           </Grid.Col>
         ))}
       </Grid>
