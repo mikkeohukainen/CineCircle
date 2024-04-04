@@ -9,6 +9,8 @@ import { LoginPage } from "./pages/LoginPage";
 import { SearchPage } from "./pages/SearchPage";
 import AuthProvider from "./contexts/AuthContext.jsx";
 import { MediaDetailsPage } from "./pages/MediaDetailsPage";
+import { GroupsPage } from "./pages/GroupsPage";
+import { GroupDetailsPage } from "./pages/GroupDetailsPage";
 
 export default function App() {
   return (
@@ -20,6 +22,8 @@ export default function App() {
           <Route path="login" element={<LoginPage />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="details" element={<MediaDetailsPage />} />
+          <Route path="groups" element={<GroupsPage />} />
+          <Route path="group-details" element={<GroupDetailsPage />} />
           <Route path="*" element={<div>Not Found</div>} />
         </Route>
       </Routes>
