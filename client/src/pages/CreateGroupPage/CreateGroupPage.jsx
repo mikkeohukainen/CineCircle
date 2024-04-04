@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import CreateGroupForm from "./CreateGroupForm.jsx";
 import { GroupInfoCard } from "../../components/GroupInfoCard";
 import { Paper, Container, Button, Group } from "@mantine/core";
-import api from "../../data/api.js";
+import { api } from "../../data/api.js";
 import useAuth from "../../hooks/useAuth.js";
 import { useNavigate } from "react-router-dom";
 
