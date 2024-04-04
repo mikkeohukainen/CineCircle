@@ -48,8 +48,10 @@ const userModel = {
 
   getFavorites: async function (username) {
     const result = await dbPool.query(
-      //"SELECT * FROM media JOIN favorites ON favorites.media_id=media.media_id WHERE user_id=(SELECT user_id FROM users WHERE username=$1);",
-      "SELECT media.tmdb_id, media.poster_url as poster_path FROM media JOIN favorites ON favorites.media_id=media.media_id WHERE user_id=(SELECT user_id FROM users WHERE username=$1);",
+      // tällä pitäs se id+type palauttaa, ja tehä fetch tmdb:stä riippuen onko movie vai series
+      "SELECT * FROM media JOIN favorites ON favorites.media_id=media.media_id WHERE user_id=(SELECT user_id FROM users WHERE username=$1);",
+      // tällä toimii nyt debug
+      // "SELECT media.tmdb_id, media.poster_url as poster_path FROM media JOIN favorites ON favorites.media_id=media.media_id WHERE user_id=(SELECT user_id FROM users WHERE username=$1);",
       [username],
     );
 

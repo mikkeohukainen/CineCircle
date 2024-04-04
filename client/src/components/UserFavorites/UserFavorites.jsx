@@ -1,22 +1,18 @@
 import { useEffect, useState } from "react";
 import { MovieCard } from "../../components/MovieCard";
 import { Carousel } from "@mantine/carousel";
+import useAuth from "../../hooks/useAuth";
+import { Button } from "@mantine/core";
 
 export default function UserFavorites() {
-  // DEBUG hardcoding - DELETE
-  const userProfile = {
-    username: "akuankka",
-    userId: "75a7900f-f3cf-4c55-8958-d1a16bb92797",
-    jwtToken:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFrdWFua2thIiwiaWF0IjoxNzExOTc1OTcyfQ.f7136dHoqWU9YWelAkPNfWosqAj8dcILCcLZTSer-bA",
-  };
+  const { username } = useAuth();
 
   const [favorites, setFavorites] = useState(null);
 
   useEffect(() => {
     const getFavorites = async () => {
       try {
-        const query = await fetch(`http://localhost:8000/users/${userProfile.username}/favorites`);
+        const query = await fetch(`http://localhost:8000/users/${username}/favorites`);
         const response = await query.json();
         setFavorites(response);
       } catch (err) {
@@ -24,7 +20,7 @@ export default function UserFavorites() {
       }
     };
     getFavorites();
-  }, [userProfile.username]);
+  }, [username]);
 
   // If not null, map favorites
   const favoritesSlide = favorites

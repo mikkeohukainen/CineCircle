@@ -1,6 +1,7 @@
 import { Container, Space, Button } from "@mantine/core";
 import { UserFavorites } from "../../components/UserFavorites";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 function DeleteButton() {
   const navigate = useNavigate();
@@ -10,20 +11,22 @@ function DeleteButton() {
   };
 
   return (
-    <Button variant="filled" color="red" size="md" radius="md" onClick={handleClick}>
-      Delete user account
+    <Button variant="light" color="red" onClick={handleClick}>
+      I want to delete my account
     </Button>
   );
 }
 
 export default function ProfilePage() {
+  const { username } = useAuth();
+
   return (
     <Container>
-      <h1>TODO: fetch username</h1>
-      <Space h="xs" />
+      <h1>{username}</h1>
+      <h3>TODO: muotoilut puuttuu</h3>
+      <h3>TODO: fetch tmdb puuttuu</h3>
       <UserFavorites />
-      <Space h="xl" />
-      <h2>TODO: button, separate page to delete user account</h2>
+      <h3>TODO: group stuff here</h3>
       <DeleteButton />
     </Container>
   );

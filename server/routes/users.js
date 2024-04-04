@@ -87,7 +87,7 @@ router.delete("/", async (req, res) => {
     // if not null (same as login)
     if (dbHashedPassword) {
       // Compare hashed password to given password and confirm password
-      const isAuthorized = await bcrypt.compare(req.body.password, dbHashedPassword);
+      const isAuthorized = await bcrypt.compare(req.body.password, dbHashedPassword.password_hash);
       if (isAuthorized && req.body.password === req.body.confirmPw) {
         await usersModel.deleteUser(req.body.username);
         res.status(200).end();
