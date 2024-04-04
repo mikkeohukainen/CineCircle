@@ -1,19 +1,9 @@
 const router = require('express').Router()
 const tmdb = require('../models/tmdb_model')
 
-router.get('/genres/movie', async (req, res) => {
+router.get('/genres/:type', async (req, res) => {
     try {
-        const result = await tmdb.getMovieGenres()
-        res.json(result)
-    } catch (err) {
-        console.log(err)
-        res.status(500).send({ error: err.message })
-    }
-})
-
-router.get('/genres/series', async (req, res) => {
-    try {
-        const result = await tmdb.getTVGenres()
+        const result = await tmdb.getGenres(req.params.type)
         res.json(result)
     } catch (err) {
         console.log(err)
@@ -88,9 +78,9 @@ router.get('/multi/title/:title', async (req, res) => {
     }
 })
 
-router.get('/movie/filter', async (req, res) => {
+router.get('/multi/filter', async (req, res) => {
     try {
-        const result = await tmdb.discoverMovies(req.query)
+        const result = await tmdb.discoverMedia(req.query)
         res.json(result)
     } catch (err) {
         console.log(err)

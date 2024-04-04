@@ -1,5 +1,5 @@
 import { SearchBar } from "../../components/SearchBar";
-import { MovieCard } from "../../components/MovieCard";
+import { SearchResults } from "../../components/SearchResults";
 import { Container, useMantineTheme, Grid, Space, rem } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
@@ -49,16 +49,7 @@ export default function SearchPage() {
           />
         </form>
       </Container>
-      <Container size="lg">
-        <Space h="xl" />
-        <Grid mt="xl">
-          {movies.map((movie) => (
-            <Grid.Col span={{ base: 4, md: 4, lg: 3 }} key={movie.id}>
-              <MovieCard movie={movie} />
-            </Grid.Col>
-          ))}
-        </Grid>
-      </Container>
+        <SearchResults media={movies} />
     </Container>
   );
 }

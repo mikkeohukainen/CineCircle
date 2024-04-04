@@ -17,7 +17,7 @@ export default function ShowtimeCard({ showtime }) {
       const label = descriptor.Name.replace(/([A-Z])/g, " $1").trim();
       return (
         <Tooltip key={index} label={label} position="top">
-          <Image src={descriptor.ImageURL} alt={descriptor.Name} width={26} height={26} />
+          <Image src={descriptor.ImageURL} alt={label} width={26} height={26} />
         </Tooltip>
       );
     });
