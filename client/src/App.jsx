@@ -7,6 +7,7 @@ import { Layout } from "./components/Layout";
 import { RegisterPage } from "./pages/RegisterPage";
 import { LoginPage } from "./pages/LoginPage";
 import { SearchPage } from "./pages/SearchPage";
+import { AdvancedSearchPage } from "./pages/AdvancedSearchPage";
 import AuthProvider from "./contexts/AuthContext.jsx";
 import { MediaDetailsPage } from "./pages/MediaDetailsPage";
 import { GroupsPage } from "./pages/GroupsPage";
@@ -21,6 +22,7 @@ export default function App() {
           <Route path="signup" element={<RegisterPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route path="search" element={<SearchPage />} />
+          <Route path="advanced-search" element={<AdvancedSearchPage />} />
           <Route path="details" element={<MediaDetailsPage />} />
           <Route path="groups" element={<GroupsPage />} />
           <Route path="group-details" element={<GroupDetailsPage />} />
