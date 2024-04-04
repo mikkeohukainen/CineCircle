@@ -78,9 +78,9 @@ router.get('/multi/title/:title', async (req, res) => {
     }
 })
 
-router.get('/movie/filter', async (req, res) => {
+router.get('/multi/filter', async (req, res) => {
     try {
-        const result = await tmdb.discoverMovies(req.query)
+        const result = await tmdb.discoverMedia(req.query)
         res.json(result)
     } catch (err) {
         console.log(err)

@@ -15,7 +15,7 @@ import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 
 export default function AdvancedSearchPage() {
-  const [movies, setMovies] = useState([]);
+  const [media, setMedia] = useState([]);
   const [mediaType, setMediaType] = useState("movie");
   const [genres, setGenres] = useState([]);
   const [genreID, setGenreID] = useState();
@@ -51,18 +51,9 @@ export default function AdvancedSearchPage() {
     setActors(() => searchResults.filter((person) => person.name.includes(" ")));
   };
 
-  const searchMovies = async () => {
-    //   let URL = "http://localhost:8000/search/movie/filter?a=10"
-    //   URL += '&page=1'
-    //   if (genreID && genreID != 0) {URL += `&genre=${genreID}`}
-    //   if (providerID && providerID != 0) {URL += `&provider=${providerID}`}
-    //   if (actorID && actorID != 0) {URL += `&people=${actorID}`}
-    //   console.log(URL)
-    //   const data = await fetch(URL);
-    //   const searchResults = await data.json();
-    //   setMovies(() => searchResults.results);
-    const fetchMovies = async (page) => {
-      let URL = `http://localhost:8000/search/movie/filter?a=10&page=${page}`;
+  const searchMedia = async () => {
+    const fetchMedia = async (page) => {
+      let URL = `http://localhost:8000/search/multi/filter?a=10&page=${page}&type=${mediaType}`;
       if (genreID && genreID !== 0) URL += `&genre=${genreID}`;
       if (providerID && providerID !== 0) URL += `&provider=${providerID}`;
       if (actorID && actorID !== 0) URL += `&people=${actorID}`;
@@ -71,9 +62,15 @@ export default function AdvancedSearchPage() {
       const searchResults = await response.json();
       return searchResults.results;
     };
-    const firstPageResults = await fetchMovies(1);
-    const secondPageResults = await fetchMovies(2);
-    setMovies([...firstPageResults, ...secondPageResults]);
+    const firstPageResults = await fetchMedia(1);
+    const secondPageResults = await fetchMedia(2);
+
+    const firstPageMovieIds = new Set(firstPageResults.map((movie) => movie.id));
+    const filteredSecondsPage = secondPageResults.filter(
+      (movie) => !firstPageMovieIds.has(movie.id),
+    );
+
+    setMedia([...firstPageResults, ...filteredSecondsPage]);
   };
 
   const genreOptions = genres.map((genre) => ({
@@ -111,7 +108,7 @@ export default function AdvancedSearchPage() {
         <Group justify="start" mt="lg">
           <Select
             label="Genre"
-            placeholder="Any"
+            placeholder="All"
             data={genreOptions}
             onChange={(value) => setGenreID(Number(value))}
             searchable
@@ -122,7 +119,7 @@ export default function AdvancedSearchPage() {
           />
           <Select
             label="Streaming on"
-            placeholder="Any"
+            placeholder="All"
             data={providerOptions}
             onChange={(value) => setProviderID(Number(value))}
             searchable
@@ -131,21 +128,32 @@ export default function AdvancedSearchPage() {
             size="md"
             radius="md"
           />
-          <Select
-            label="Actor"
-            placeholder="Any"
-            data={actorOptions}
-            onChange={(value) => setActorID(Number(value))}
-            onSearchChange={searchActors}
-            searchable
-            clearable
-            checkIconPosition="right"
-            size="md"
-            radius="md"
-          />
+          {mediaType === "movie" ? (
+            <Select
+              label="Actor"
+              placeholder="All"
+              data={actorOptions}
+              onChange={(value) => setActorID(Number(value))}
+              onSearchChange={searchActors}
+              searchable
+              clearable
+              checkIconPosition="right"
+              size="md"
+              radius="md"
+            />
+          ) : (
+            <Select
+              label="Actor"
+              placeholder="Not available for TV"
+              disabled
+              checkIconPosition="right"
+              size="md"
+              radius="md"
+            />
+          )}
         </Group>
         <Button
-          onClick={searchMovies}
+          onClick={searchMedia}
           mt="lg"
           radius="md"
           rightSection={<IconArrowRight size={16} />}
@@ -156,9 +164,8 @@ export default function AdvancedSearchPage() {
       {/* {console.log("Genre id: " + genreID)}
       {console.log("Provider id: " + providerID)}
       {console.log("Actor id: " + actorID)} */}
-      {console.log(movies)}
-      {/* <SearchResults media={movies} /> */}
-      <SearchResults media={movies} />
+      {/* {console.log(movies)} */}
+      <SearchResults media={media} />
     </Container>
   );
 }

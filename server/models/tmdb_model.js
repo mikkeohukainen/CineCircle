@@ -75,11 +75,11 @@ const tmdb = {
         console.log(URL)
         return fetchData(URL)
     },
-    discoverMovies: (filters) => {
-        let URL = discoverMovieURL
+    discoverMedia: (filters) => {
+        let URL = `https://api.themoviedb.org/3/discover/${filters.type}?include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc`
         if (filters.page) {URL += `&page=${filters.page}`}
         if (filters.genre) {URL += `&with_genres=${filters.genre}`}
-        if (filters.provider) {URL += `&with_watch_providers=${filters.provider}`}
+        if (filters.provider) {URL += `&watch_region=FI&with_watch_providers=${filters.provider}`}
         if (filters.people) {URL += `&with_people=${filters.people}`}
         console.log(URL)
         return fetchData(URL)
