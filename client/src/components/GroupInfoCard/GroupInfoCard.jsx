@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Card, Title, Text, Badge, Button, Group } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 
-export default function GroupCard({ group }) {
+export default function GroupCard({ group, showJoinButton = true }) {
   const [groupObj, setGroupObj] = useState(group);
   const navigate = useNavigate();
 
@@ -25,9 +25,11 @@ export default function GroupCard({ group }) {
       <Text size="md" c="dimmed">
         {group.description}
       </Text>
-      <Button color="blue" mt="md" radius="md" size="xs">
-        Send Request
-      </Button>
+      {showJoinButton && (
+        <Button color="blue" mt="md" radius="md" size="xs">
+          Send Request
+        </Button>
+      )}
     </Card>
   );
 }
