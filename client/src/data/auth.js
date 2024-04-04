@@ -1,4 +1,4 @@
-import api from "./api";
+import { api } from "./api";
 
 export async function register(username, password, confirmPw) {
   return api.post("/users", {
