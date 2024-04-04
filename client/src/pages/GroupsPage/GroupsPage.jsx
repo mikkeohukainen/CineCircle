@@ -3,11 +3,13 @@ import { Container, Button, Grid, Group } from "@mantine/core";
 import { GroupInfoCard } from "../../components/GroupInfoCard";
 import { SearchBar } from "../../components/SearchBar";
 import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const { isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,6 +30,14 @@ export default function GroupsPage() {
     setSearchSubmitted(true);
   };
 
+  const createGroupButtonHandler = () => {
+    if (isLoggedIn) {
+      navigate("/create-group");
+    } else {
+      navigate("/login");
+    }
+  }
+
   const filteredGroups = groups.filter(
     (group) =>
       group.group_name.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -47,7 +57,7 @@ export default function GroupsPage() {
               }}
             />
           </form>
-          <Button onClick={() => navigate("/create-group")}>Create Group</Button>
+          <Button onClick={createGroupButtonHandler}>Create Group</Button>
         </Group>
       </Container>
       {searchSubmitted && searchText && <h3>Search results for: "{searchText}"</h3>}
