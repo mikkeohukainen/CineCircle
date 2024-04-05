@@ -3,8 +3,6 @@ services:
     build: .
     entrypoint: "/bin/sh docker-entrypoint.sh"
     env_file: .env
-    environment:
-      - NODE_ENV=production
     ports:
       - "8000:8000"
     restart: unless-stopped

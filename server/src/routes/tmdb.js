@@ -38,6 +38,16 @@ router.get('/popular', async (req, res) => {
     }
 })
 
+router.get('/toprated/:type', async (req, res) => {
+    try {
+        const result = await tmdb.getTopRated(req.params.type)
+        res.json(result)
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ error: err.message })
+    }
+})
+
 router.get('/trending/movies', async (req, res) => {
     try {
         const result = await tmdb.getTrendingMovies()
