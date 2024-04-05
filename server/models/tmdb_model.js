@@ -63,6 +63,12 @@ const tmdb = {
         console.log(trendingTVShowsURL)
         return fetchData(trendingTVShowsURL)
     },
+    getTopRated: (type) => {
+        const URL = `https://api.themoviedb.org/3/${type}/top_rated?language=en-US&page=1`
+        console.log('Trending movies fetched from:')
+        console.log(URL)
+        return fetchData(URL)
+    },
     searchMovies: (title) => {
         const URL = searchMoviesURL + title
         console.log('Movies searched from:')
