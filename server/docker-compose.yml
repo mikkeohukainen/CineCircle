@@ -1,0 +1,22 @@
+services:
+  app:
+    build: .
+    entrypoint: "/bin/sh docker-entrypoint.sh"
+    env_file: .env
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14.11
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - database-data:/var/lib/postgresql/data
+
+volumes:
+  database-data:
