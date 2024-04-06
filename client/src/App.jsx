@@ -12,6 +12,8 @@ import AuthProvider from "./contexts/AuthContext.jsx";
 import { MediaDetailsPage } from "./pages/MediaDetailsPage";
 import { GroupsPage } from "./pages/GroupsPage";
 import { GroupDetailsPage } from "./pages/GroupDetailsPage";
+import { ShowtimesPage } from "./pages/ShowtimesPage";
+import { CreateGroupPage } from "./pages/CreateGroupPage";
 
 export default function App() {
   return (
@@ -26,6 +28,8 @@ export default function App() {
           <Route path="details" element={<MediaDetailsPage />} />
           <Route path="groups" element={<GroupsPage />} />
           <Route path="group-details" element={<GroupDetailsPage />} />
+          <Route path="theaters" element={<ShowtimesPage />} />
+          <Route path="create-group" element={<CreateGroupPage />} />
           <Route path="*" element={<div>Not Found</div>} />
         </Route>
       </Routes>
