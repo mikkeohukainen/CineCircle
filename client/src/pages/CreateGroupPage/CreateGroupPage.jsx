@@ -10,6 +10,7 @@ export default function CreateGroupPage() {
   const [groupCreated, setGroupCreated] = useState(false);
   const [newGroupObject, setNewGroupObject] = useState(null);
   const { username, userId } = useAuth();
+  const membershipStatus = { isMember: true, isPending: false };
   const navigate = useNavigate();
 
   async function createGroup({ groupName, groupDescription }) {
@@ -42,7 +43,7 @@ export default function CreateGroupPage() {
       {groupCreated ? (
         <>
           <h2 style={{ textAlign: "center" }}>Group created!</h2>
-            <GroupInfoCard group={newGroupObject} showJoinButton={false} />
+            <GroupInfoCard group={newGroupObject} membershipStatus={membershipStatus} />
           <Group mt="xl" justify="space-evenly">
             <Button onClick={handleTitleClick}>Go to group's page</Button>
             <Button onClick={() => navigate("/groups")}>Browse all groups</Button>

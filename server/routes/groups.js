@@ -134,6 +134,18 @@ router.post("/:groupId/members", async (req, res) => {
   }
 });
 
+// Get all groups a user is a member of. Shows the group_id and accepted status.
+router.get("/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const result = await groupMembers.getGroupsByUserId(userId);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Delete a member from group
 router.delete("/:groupId/members/:userId", async (req, res) => {
   const { groupId, userId } = req.params;
