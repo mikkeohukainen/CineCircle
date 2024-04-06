@@ -3,17 +3,22 @@ import { Container, Button, Grid, Group } from "@mantine/core";
 import { GroupInfoCard } from "../../components/GroupInfoCard";
 import { SearchBar } from "../../components/SearchBar";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../data/api.js";
 import useAuth from "../../hooks/useAuth";
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState([]);
+  const [userGroups, setUserGroups] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchSubmitted, setSearchSubmitted] = useState(false);
-  const { isLoggedIn } = useAuth();
+  const { userId, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     getGroups();
+    if (isLoggedIn) {
+      getUsersGroups();
+    }
   }, []);
 
   const getGroups = async () => {
@@ -21,8 +26,32 @@ export default function GroupsPage() {
     const groups = await response.json();
     const sortedGroups = groups.sort((a, b) => a.group_name.localeCompare(b.group_name));
     setGroups(() => sortedGroups);
-    console.log("Groups fetched");
-    console.log(sortedGroups);
+  };
+
+  const getUsersGroups = async () => {
+    try {
+      const response = await api.get(`/groups/${userId}`);
+      setUserGroups(() => response.data);
+      console.log("Groups fetched", response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Tarkistaa käyttäjän jäsenyyden ja jäsenyyden tilan tietyssä ryhmässä.
+  const checkMembershipStatus = (groupId) => {
+    const membership = userGroups.find((group) => group.group_id === groupId);
+    if (membership) {
+      return {
+        isMember: true,
+        isPending: !membership.accepted,
+      };
+    } else {
+      return {
+        isMember: false,
+        isPending: false,
+      };
+    }
   };
 
   const handleSubmit = (e) => {
@@ -36,7 +65,7 @@ export default function GroupsPage() {
     } else {
       navigate("/login");
     }
-  }
+  };
 
   const filteredGroups = groups.filter(
     (group) =>
@@ -64,7 +93,9 @@ export default function GroupsPage() {
       <Grid mt="lg" justify="flex-start" align="stretch" gutter="lg">
         {filteredGroups.map((group) => (
           <Grid.Col span={6} key={group.group_id}>
-            <GroupInfoCard group={group} />
+            <GroupInfoCard group={group}
+            membershipStatus={checkMembershipStatus(group.group_id)}
+            />
           </Grid.Col>
         ))}
       </Grid>
