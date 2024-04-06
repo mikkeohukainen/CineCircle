@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { Container, Button, Grid, Group } from "@mantine/core";
+import { Container, Button, Grid, Group, Stack } from "@mantine/core";
 import { GroupInfoCard } from "../../components/GroupInfoCard";
 import { SearchBar } from "../../components/SearchBar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { api } from "../../data/api.js";
 import useAuth from "../../hooks/useAuth";
 
@@ -14,12 +14,12 @@ export default function GroupsPage() {
   const { userId, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
+
   useEffect(() => {
     getGroups();
-    if (isLoggedIn) {
-      getUsersGroups();
-    }
-  }, []);
+    getUsersGroups();
+  }, [isLoggedIn, userId]);
+
 
   const getGroups = async () => {
     const response = await fetch("http://localhost:8000/groups");
@@ -29,6 +29,7 @@ export default function GroupsPage() {
   };
 
   const getUsersGroups = async () => {
+    if (!isLoggedIn) return;
     try {
       const response = await api.get(`/groups/${userId}`);
       setUserGroups(() => response.data);
@@ -72,6 +73,7 @@ export default function GroupsPage() {
       group.group_name.toLowerCase().includes(searchText.toLowerCase()) ||
       group.description.toLowerCase().includes(searchText.toLowerCase()),
   );
+
   return (
     <Container size="xl" mt="lg" mb="xl">
       <Container size="sm" mt="lg" mb="xl">
@@ -90,15 +92,15 @@ export default function GroupsPage() {
         </Group>
       </Container>
       {searchSubmitted && searchText && <h3>Search results for: "{searchText}"</h3>}
-      <Grid mt="lg" justify="flex-start" align="stretch" gutter="lg">
+      <Container size="md" mt="lg">
+      <Stack spacing="lg" mt="lg">
         {filteredGroups.map((group) => (
-          <Grid.Col span={6} key={group.group_id}>
-            <GroupInfoCard group={group}
+            <GroupInfoCard group={group} key={group.group_id}
             membershipStatus={checkMembershipStatus(group.group_id)}
             />
-          </Grid.Col>
         ))}
-      </Grid>
+        </Stack>
+        </Container>
     </Container>
   );
 }
