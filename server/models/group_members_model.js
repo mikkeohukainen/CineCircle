@@ -14,6 +14,14 @@ const groupMembers = {
     return result.rows;
   },
 
+  getGroupsByUserId: async (userId) => {
+    const result = await db.query(
+      "SELECT group_id, accepted FROM group_members WHERE user_id = $1",
+      [userId],
+    );
+    return result.rows;
+  },
+
   deleteGroupMember: async (groupId, userId) => {
     const result = await db.query(
       "DELETE FROM group_members WHERE group_id = $1 AND user_id = $2 RETURNING *",

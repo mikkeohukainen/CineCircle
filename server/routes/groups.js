@@ -15,7 +15,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Add a group
+// Add a group. Also adds the user who created the group as a accepted member of the group.
 router.post("/", async (req, res) => {
   try {
     const result = await groups.add(req.body);
@@ -131,6 +131,18 @@ router.post("/:groupId/members", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.status(400).json({ error: "Bad request" });
+  }
+});
+
+// Get all groups a user is a member of. Shows the group_id and accepted status.
+router.get("/:userId", async (req, res) => {
+  const userId = req.params.userId;
+  try {
+    const result = await groupMembers.getGroupsByUserId(userId);
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 

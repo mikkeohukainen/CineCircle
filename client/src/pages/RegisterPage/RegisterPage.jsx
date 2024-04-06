@@ -8,7 +8,6 @@ export default function RegisterPage() {
   const navigate = useNavigate();
 
   async function handleRegister({ username, password, repeatPassword }) {
-    console.log(username, password, repeatPassword);
     try {
       await register(username, password, repeatPassword);
       navigate("/login", { replace: true });
