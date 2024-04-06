@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { Card, Title, Text, Badge, Button, Group } from "@mantine/core";
+import { Card, Title, Text, Badge, Container, Group } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
+import GroupCardActionButton from "./GroupCardActionButton.jsx";
 import useAuth from "../../hooks/useAuth";
 
-export default function GroupCard({ group, showJoinButton = true }) {
+export default function GroupCard({ group, membershipStatus }) {
   const [groupObj, setGroupObj] = useState(group);
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-
+  const { isMember, isPending } = membershipStatus;
 
   const handleTitleClick = () => {
     if (isLoggedIn) {
@@ -18,8 +19,8 @@ export default function GroupCard({ group, showJoinButton = true }) {
   };
 
   return (
-    <Card shadow="sm" padding="lg" radius="md" withBorder>
-      <Group justify="space-between" mt="xs" mb="xs">
+    <Card pl="xl" shadow="sm" padding="lg" radius="md" withBorder>
+      <Group justify="space-between" mb="xs">
         <Title order={1} onClick={handleTitleClick} style={{ cursor: "pointer" }}>
           {group.group_name}
         </Title>
@@ -31,11 +32,12 @@ export default function GroupCard({ group, showJoinButton = true }) {
       <Text size="md" c="dimmed">
         {group.description}
       </Text>
-      {showJoinButton && isLoggedIn && (
-        <Button color="blue" mt="md" radius="md" size="xs">
-          Send Request
-        </Button>
-      )}
+      <Container size="md" mt="md">
+        <GroupCardActionButton 
+          isMember={isMember}
+          isPending={isPending}
+        />
+      </Container>
     </Card>
   );
 }
