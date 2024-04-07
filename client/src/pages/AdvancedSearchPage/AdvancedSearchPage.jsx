@@ -25,11 +25,15 @@ export default function AdvancedSearchPage() {
   const [actorID, setActorID] = useState();
   const [directors, setDirectors] = useState([]);
   const [directorID, setDirectorID] = useState();
+  const [tvType, setTvType] = useState();
+  const [tvStatus, setTvStatus] = useState();
 
   // TODO:
   // Reset all fields and values on mediaType change -> form.reset()??
-  // Add more filters for TV shows and remove the ones that aren't applicable for TV
+  //
   // Refactor code and maybe move the 'search form' into a separate component
+  //
+  // Save search parameters to session storage
 
   useEffect(() => {
     getGenres();
@@ -55,7 +59,11 @@ export default function AdvancedSearchPage() {
     }
     const data = await fetch("http://localhost:8000/search/people/name/" + query);
     const searchResults = await data.json();
-    setActors(() => searchResults.filter((person) => person.name.includes(" ") && person.known_for_department === "Acting"));
+    setActors(() =>
+      searchResults.filter(
+        (person) => person.name.includes(" ") && person.known_for_department === "Acting",
+      ),
+    );
   };
 
   const searchDirectors = async (query) => {
@@ -67,16 +75,21 @@ export default function AdvancedSearchPage() {
     const searchResults = await data.json();
     setDirectors(() =>
       searchResults.filter(
-        (person) => person.name.includes(" ") && person.known_for_department === "Directing"));
+        (person) => person.name.includes(" ") && person.known_for_department === "Directing",
+      ),
+    );
   };
 
   const searchMedia = async () => {
+    console.log(tvType);
     const fetchMedia = async (page) => {
       let URL = `http://localhost:8000/search/multi/filter?a=10&page=${page}&type=${mediaType}`;
       if (genreID && genreID !== 0) URL += `&genre=${genreID}`;
       if (providerID && providerID !== 0) URL += `&provider=${providerID}`;
       if (actorID && actorID !== 0) URL += `&actor=${actorID}`;
       if (directorID && directorID !== 0) URL += `&director=${directorID}`;
+      if (tvType) URL += `&tvtype=${tvType}`;
+      if (tvStatus) URL += `&tvstatus=${tvStatus}`;
 
       const response = await fetch(URL);
       const searchResults = await response.json();
@@ -112,6 +125,25 @@ export default function AdvancedSearchPage() {
     value: person.id.toString(),
     label: person.name,
   }));
+
+  const tvTypeOptions = [
+    { value: "0", label: "Documentary" },
+    { value: "1", label: "News" },
+    { value: "2", label: "Miniseries" },
+    { value: "3", label: "Reality" },
+    { value: "4", label: "Scripted" },
+    { value: "5", label: "Talk Show" },
+    { value: "6", label: "Video" },
+  ];
+
+  const tvStatusOptions = [
+    { value: "0", label: "Returning" },
+    { value: "1", label: "Planned" },
+    { value: "2", label: "In Production" },
+    { value: "3", label: "Ended" },
+    { value: "4", label: "Cancelled" },
+    { value: "5", label: "Pilot" },
+  ];
 
   return (
     <Container size="xl" mt="lg">
@@ -168,9 +200,12 @@ export default function AdvancedSearchPage() {
             />
           ) : (
             <Select
-              label="Actor"
-              placeholder="Not available for TV"
-              disabled
+              label="Type"
+              placeholder="All"
+              data={tvTypeOptions}
+              onChange={(value) => setTvType(value)}
+              searchable
+              clearable
               checkIconPosition="right"
               size="md"
               radius="md"
@@ -191,9 +226,12 @@ export default function AdvancedSearchPage() {
             />
           ) : (
             <Select
-              label="Director"
-              placeholder="Not available for TV"
-              disabled
+              label="Status"
+              placeholder="All"
+              data={tvStatusOptions}
+              onChange={(value) => setTvStatus(value)}
+              searchable
+              clearable
               checkIconPosition="right"
               size="md"
               radius="md"

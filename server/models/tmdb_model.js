@@ -86,7 +86,8 @@ const tmdb = {
         if (filters.page) {URL += `&page=${filters.page}`}
         if (filters.genre) {URL += `&with_genres=${filters.genre}`}
         if (filters.provider) {URL += `&watch_region=FI&with_watch_providers=${filters.provider}`}
-        //if (filters.actor) {URL += `&with_people=${filters.actor}`}
+        if (filters.tvtype) {URL += `&with_type=${filters.tvtype}`}
+        if (filters.tvstatus) {URL += `&with_status=${filters.tvstatus}`}
 
         let peopleIds = []
         if (filters.actor) {
