@@ -4,8 +4,17 @@ import { Carousel } from "@mantine/carousel";
 import useAuth from "../../hooks/useAuth";
 import { Button } from "@mantine/core";
 
+// // Tämä vielä pitää kaivaa jostain muualta, nyt on kovakoodattuna
+const options = {
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    Authorization: import.meta.env.VITE_API_TOKEN,
+  },
+};
+
 export default function UserFavorites() {
-  const { username } = useAuth();
+  const { username, token } = useAuth();
 
   const [favorites, setFavorites] = useState(null);
 
@@ -14,7 +23,16 @@ export default function UserFavorites() {
       try {
         const query = await fetch(`http://localhost:8000/users/${username}/favorites`);
         const response = await query.json();
-        setFavorites(response);
+
+        const tmdbData = response.map((favorite) =>
+          fetch(`http://api.tmdb.org/3/movie/${favorite.tmdb_id}?language=en-US`, options),
+        );
+
+        const tmdbDataResponse = await Promise.all(tmdbData);
+        const movieData = await Promise.all(tmdbDataResponse.map((res) => res.json()));
+
+        setFavorites(movieData);
+        console.log(movieData);
       } catch (err) {
         console.error(err);
       }
@@ -25,7 +43,7 @@ export default function UserFavorites() {
   // If not null, map favorites
   const favoritesSlide = favorites
     ? favorites.map((entry) => (
-        <Carousel.Slide key={entry.tmdb_id}>
+        <Carousel.Slide key={entry.id}>
           <MovieCard movie={entry} />
         </Carousel.Slide>
       ))

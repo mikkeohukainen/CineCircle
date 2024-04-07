@@ -1,5 +1,6 @@
 import { Container, Space, Button } from "@mantine/core";
 import { UserFavorites } from "../../components/UserFavorites";
+import { UserGroups } from "../../components/UserGroups";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 
@@ -24,9 +25,8 @@ export default function ProfilePage() {
     <Container>
       <h1>{username}</h1>
       <h3>TODO: muotoilut puuttuu</h3>
-      <h3>TODO: fetch tmdb puuttuu</h3>
       <UserFavorites />
-      <h3>TODO: group stuff here</h3>
+      <UserGroups />
       <DeleteButton />
     </Container>
   );
