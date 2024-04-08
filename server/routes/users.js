@@ -35,8 +35,8 @@ router.get("/:username", async (req, res) => {
     const result = await usersModel.getUser(req.params.username);
     // if not null
     if (result) {
-      console.log(result);
-      res.status(200).end();
+      // console.log(result);
+      res.status(200).json(result);
     } else {
       throw new Error("User does not exist!");
     }
@@ -87,7 +87,7 @@ router.delete("/", async (req, res) => {
     // if not null (same as login)
     if (dbHashedPassword) {
       // Compare hashed password to given password and confirm password
-      const isAuthorized = await bcrypt.compare(req.body.password, dbHashedPassword);
+      const isAuthorized = await bcrypt.compare(req.body.password, dbHashedPassword.password_hash);
       if (isAuthorized && req.body.password === req.body.confirmPw) {
         await usersModel.deleteUser(req.body.username);
         res.status(200).end();
@@ -119,20 +119,20 @@ router.post("/:username/favorites", async (req, res) => {
 router.get("/:username/favorites", async (req, res) => {
   try {
     const result = await userModel.getFavorites(req.params.username);
-    console.log(result);
-    res.status(200).end();
+    // console.log(result);
+    res.status(200).json(result);
   } catch (err) {
     console.error(err.message);
     res.status(500).end();
   }
 });
 
-// // GET REVIEWS
+// GET REVIEWS
 router.get("/:username/reviews", async (req, res) => {
   try {
     const result = await userModel.getReviews(req.params.username);
-    console.log(result);
-    res.status(200).end();
+    // console.log(result);
+    res.status(200).json(result);
   } catch (err) {
     console.error(err.message);
     res.status(500).end();

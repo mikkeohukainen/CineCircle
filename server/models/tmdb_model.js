@@ -130,6 +130,10 @@ const tmdb = {
     const URL = movieDetailsURL + id;
     return fetchData(URL);
   },
+  getTVDetails: (id) => {
+    const URL = TVDetailsURL + id;
+    return fetchData(URL);
+  },
   getMovieImages: (id) => {
     const URL = movieImagesURL + id + "/images?language=EN%2Cnull";
     console.log("Images fetched from:");
