@@ -1,4 +1,4 @@
-const token = process.env.TOKEN;
+const token = process.env.TMDB_KEY;
 const genresURL = "https://api.themoviedb.org/3/genre/";
 const movieProvidersURL =
   "https://api.themoviedb.org/3/watch/providers/movie?language=en-US&watch_region=FI";
