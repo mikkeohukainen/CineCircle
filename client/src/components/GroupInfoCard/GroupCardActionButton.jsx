@@ -9,12 +9,11 @@ export default function GroupCardActionButton({ isMember, isPending, groupId, on
   const navigate = useNavigate();
 
 
-
   if (!isLoggedIn) {
     return (
       <Button color="blue" mt="md" radius="md" onClick={() => navigate("/login")}>
-        Log in to join groups
-      </Button>
+          Log in to join groups
+        </Button>
     );
   }
 
@@ -22,24 +21,24 @@ export default function GroupCardActionButton({ isMember, isPending, groupId, on
     return isPending ? (
       <div ref={ref}>
       {hovered ? (
-        <Button color="red" mt="lg" radius="md">
-          Cancel Request
-        </Button>
-      ) : (
-        <Badge size="xl" variant="light" color="gray" mt="lg">
-          Request sent
-        </Badge>
+          <Button color="red" mt="md" radius="md" onClick={() => onMembershipRequest(groupId, "cancel")}>
+            Cancel Request
+          </Button>
+        ) : (
+          <Badge size="xl" variant="light" color="gray" mt="lg">
+            Request sent
+                  </Badge>
       )}
-    </div>
+  </div>
     ) : (
       <Badge size="xl" variant="light" color="gray" mt="lg">
         You are a member
       </Badge>
-    );
-  }
+  );
+}
 
   return (
-    <Button color="blue" mt="lg" radius="md" onClick={() => onMembershipRequest(groupId)}>
+    <Button color="blue" mt="lg" radius="md" onClick={() => onMembershipRequest(groupId, "send")}>
       Send Request
     </Button>
   );
