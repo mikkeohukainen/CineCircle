@@ -2,11 +2,11 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 
-const users = require("./routes/users");
-const reviews = require("./routes/reviews");
-const favorites = require("./routes/favorites");
-const groups = require("./routes/groups");
-const search = require("./routes/tmdb");
+const users = require("../routes/users");
+const reviews = require("../routes/reviews");
+const favorites = require("../routes/favorites");
+const groups = require("../routes/groups");
+const search = require("../routes/tmdb");
 
 app.use(express.json());
 app.use(cors());

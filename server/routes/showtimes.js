@@ -1,5 +1,5 @@
 const express = require("express");
-const showtimes = require("../../models/showtimes_model");
+const showtimes = require("../models/showtimes_model");
 
 const router = express.Router();
 
