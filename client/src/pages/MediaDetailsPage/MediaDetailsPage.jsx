@@ -9,14 +9,17 @@ import {
   Group,
   Title,
   useMantineTheme,
+  ActionIcon
 } from "@mantine/core";
+import { IconArrowLeft } from '@tabler/icons-react';
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CastCarousel from "./CastCarousel.jsx";
 
 export default function MediaDetailsPage() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mediaObj, setMediaObj] = useState(location.state.obj);
   const [images, setImages] = useState([]);
   const [credits, setCredits] = useState([]);
@@ -74,6 +77,9 @@ export default function MediaDetailsPage() {
 
   return (
     <Container size="lg" mt="lg">
+      <ActionIcon variant="outline" onClick={() => navigate(-1)}>
+        <IconArrowLeft></IconArrowLeft>
+      </ActionIcon>
       <Card shadow="lg" padding="lg" radius="md" withBorder>
         <Card.Section>
           <Carousel

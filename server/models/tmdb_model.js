@@ -3,8 +3,8 @@ const genresURL ='https://api.themoviedb.org/3/genre/'
 const movieProvidersURL = 'https://api.themoviedb.org/3/watch/providers/movie?language=en-US&watch_region=FI'
 const serieProvidersURL = 'https://api.themoviedb.org/3/watch/providers/tv?language=en-US&watch_region=FI'
 const popularMoviesURL = 'https://api.themoviedb.org/3/movie/popular?language=en-US&page=1'
-const trendingMoviesURL = 'https://api.themoviedb.org/3/trending/movie/day?language=en-US&page=1&sort_by=popularity.desc'
-const trendingTVShowsURL = 'https://api.themoviedb.org/3/trending/tv/day?language=en-US&page=1&sort_by=popularity.desc'
+const trendingMoviesURL = 'https://api.themoviedb.org/3/trending/movie/week?language=en-US&page=1&sort_by=popularity.desc'
+const trendingTVShowsURL = 'https://api.themoviedb.org/3/trending/tv/week?language=en-US&page=1&sort_by=popularity.desc'
 const searchMoviesURL = 'https://api.themoviedb.org/3/search/movie?include_adult=false&language=en-US&page=1&query='
 const searchMultiURL = 'https://api.themoviedb.org/3/search/multi?include_adult=false&language=en-US&page=1&sort_by=popularity.desc&query='
 const discoverMovieURL = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc'
@@ -86,7 +86,20 @@ const tmdb = {
         if (filters.page) {URL += `&page=${filters.page}`}
         if (filters.genre) {URL += `&with_genres=${filters.genre}`}
         if (filters.provider) {URL += `&watch_region=FI&with_watch_providers=${filters.provider}`}
-        if (filters.people) {URL += `&with_people=${filters.people}`}
+        if (filters.tvtype) {URL += `&with_type=${filters.tvtype}`}
+        if (filters.tvstatus) {URL += `&with_status=${filters.tvstatus}`}
+
+        let peopleIds = []
+        if (filters.actor) {
+            peopleIds.push(filters.actor);
+        }
+        if (filters.director) {
+            peopleIds.push(filters.director);
+        }
+        if (peopleIds.length > 0) {
+            URL += `&with_people=${peopleIds.join(',')}`;
+        }
+
         console.log(URL)
         return fetchData(URL)
     },
@@ -97,6 +110,10 @@ const tmdb = {
     },
     getMovieDetails: (id) => {
         const URL = movieDetailsURL + id
+        return fetchData(URL)
+    },
+    getTVDetails: (id) => {
+        const URL = TVDetailsURL + id
         return fetchData(URL)
     },
     getMovieImages: (id) => {

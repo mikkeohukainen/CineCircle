@@ -106,7 +106,8 @@ router.get('/people/name/:name', async (req, res) => {
                 name: person.name,
                 original_name: person.original_name,
                 id: person.id,
-                path: person.profile_path
+                path: person.profile_path,
+                known_for_department: person.known_for_department
             }
         })
         res.json(filteredResult)
@@ -119,6 +120,16 @@ router.get('/people/name/:name', async (req, res) => {
 router.get('/movie/details/:id', async (req, res) => {
     try {
         const result = await tmdb.getMovieDetails(req.params.id)
+        res.json(result)
+    } catch (err) {
+        console.log(err)
+        res.status(500).send({ error: err.message })
+    }
+})
+
+router.get('/tv/details/:id', async (req, res) => {
+    try {
+        const result = await tmdb.getTVDetails(req.params.id)
         res.json(result)
     } catch (err) {
         console.log(err)
