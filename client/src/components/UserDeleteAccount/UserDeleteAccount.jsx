@@ -1,9 +1,13 @@
 import { Container, TextInput, Button, Box, Space, Checkbox } from "@mantine/core";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "@mantine/form";
+import { useState } from "react";
+import { logout } from "../../data/auth";
 
 export default function DeleteAccount() {
   const { username } = useAuth();
+
+  const [notification, setNotification] = useState(false);
 
   const form = useForm({
     initialValues: { username: "", password: "", confirmPw: "", boxChecked: false },
@@ -37,6 +41,7 @@ export default function DeleteAccount() {
         console.log("You can only delete your own account");
       }
     } else {
+      setNotification(true);
       console.log("box not checked");
     }
   };

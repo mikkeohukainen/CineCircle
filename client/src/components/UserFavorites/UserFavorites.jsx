@@ -14,7 +14,7 @@ const options = {
 };
 
 export default function UserFavorites() {
-  const { username, token } = useAuth();
+  const { username } = useAuth();
 
   const [favorites, setFavorites] = useState(null);
 
@@ -24,9 +24,13 @@ export default function UserFavorites() {
         const query = await fetch(`http://localhost:8000/users/${username}/favorites`);
         const response = await query.json();
 
-        const tmdbData = response.map((favorite) =>
-          fetch(`http://api.tmdb.org/3/movie/${favorite.tmdb_id}?language=en-US`, options),
-        );
+        const tmdbData = response.map((favorite) => {
+          if (favorite.type === "movie") {
+            return fetch(`http://api.tmdb.org/3/movie/${favorite.tmdb_id}?language=en-US`, options);
+          } else if (favorite.type === "series") {
+            return fetch(`http://api.tmdb.org/3/tv/${favorite.tmdb_id}?language=en-US`, options);
+          }
+        });
 
         const tmdbDataResponse = await Promise.all(tmdbData);
         const movieData = await Promise.all(tmdbDataResponse.map((res) => res.json()));
