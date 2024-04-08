@@ -4,7 +4,7 @@ services:
     entrypoint: "/bin/sh docker-entrypoint.sh"
     env_file: .env
     ports:
-      - "8000:8000"
+      - ${SERVER_PORT}:${SERVER_PORT}
     restart: unless-stopped
     depends_on:
       - database
