@@ -1,4 +1,4 @@
-const token = process.env.token;
+const token = process.env.TOKEN;
 const genresURL = "https://api.themoviedb.org/3/genre/";
 const movieProvidersURL =
   "https://api.themoviedb.org/3/watch/providers/movie?language=en-US&watch_region=FI";
