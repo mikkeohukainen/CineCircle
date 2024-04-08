@@ -10,6 +10,7 @@ export default function NavButtons({ closeDrawer, ...props }) {
   const Parent = isMobile ? Stack : Group;
 
   const buttons = [
+    { label: "Home", onClick: () => navigate("/") },
     { label: "Theaters", onClick: () => navigate("/theaters") },
     { label: "Groups", onClick: () => navigate("/groups") },
     { label: "Advanced Search", onClick: () => navigate("/advanced-search") },

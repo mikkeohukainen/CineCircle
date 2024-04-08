@@ -106,7 +106,8 @@ router.get('/people/name/:name', async (req, res) => {
                 name: person.name,
                 original_name: person.original_name,
                 id: person.id,
-                path: person.profile_path
+                path: person.profile_path,
+                known_for_department: person.known_for_department
             }
         })
         res.json(filteredResult)
