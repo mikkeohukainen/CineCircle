@@ -1,11 +1,14 @@
-import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Badge, Button } from '@mantine/core'
+import { useHover } from '@mantine/hooks';
 import useAuth from '../../hooks/useAuth'
 
-export default function GroupCardActionButton({ isMember, isPending }) {
+export default function GroupCardActionButton({ isMember, isPending, groupId, onMembershipRequest }) {
   const { isLoggedIn } = useAuth();
+  const { hovered, ref } = useHover();
   const navigate = useNavigate();
+
+
 
   if (!isLoggedIn) {
     return (
@@ -17,9 +20,17 @@ export default function GroupCardActionButton({ isMember, isPending }) {
 
   if (isMember) {
     return isPending ? (
-      <Badge size="xl" variant="light" color="gray" mt="lg">
-        Request sent
-      </Badge>
+      <div ref={ref}>
+      {hovered ? (
+        <Button color="red" mt="lg" radius="md">
+          Cancel Request
+        </Button>
+      ) : (
+        <Badge size="xl" variant="light" color="gray" mt="lg">
+          Request sent
+        </Badge>
+      )}
+    </div>
     ) : (
       <Badge size="xl" variant="light" color="gray" mt="lg">
         You are a member
@@ -28,7 +39,7 @@ export default function GroupCardActionButton({ isMember, isPending }) {
   }
 
   return (
-    <Button color="blue" mt="lg" radius="md">
+    <Button color="blue" mt="lg" radius="md" onClick={() => onMembershipRequest(groupId)}>
       Send Request
     </Button>
   );

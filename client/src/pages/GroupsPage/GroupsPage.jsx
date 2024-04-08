@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { Container, Button, Grid, Group, Stack } from "@mantine/core";
+import { Container, Button, Group, Stack } from "@mantine/core";
 import { GroupInfoCard } from "../../components/GroupInfoCard";
 import { SearchBar } from "../../components/SearchBar";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { api } from "../../data/api.js";
 import useAuth from "../../hooks/useAuth";
+import { sendRequest } from "../../data/groups";
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState([]);
@@ -55,6 +56,17 @@ export default function GroupsPage() {
     }
   };
 
+  const handleMemberShipRequest = async (groupId) => {
+    try {
+      await sendRequest(groupId, userId);
+      await getUsersGroups();
+      console.log("Request sent to group: ", groupId);
+    }
+    catch (error) {
+      console.error(error);
+    }
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setSearchSubmitted(true);
@@ -97,6 +109,8 @@ export default function GroupsPage() {
         {filteredGroups.map((group) => (
             <GroupInfoCard group={group} key={group.group_id}
             membershipStatus={checkMembershipStatus(group.group_id)}
+            onMembershipRequest={handleMemberShipRequest}
+            
             />
         ))}
         </Stack>
