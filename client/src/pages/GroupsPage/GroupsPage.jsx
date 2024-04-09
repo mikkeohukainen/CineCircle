@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
-import { Container, Button, Grid, Group, Stack } from "@mantine/core";
+import { Container, Button, Group, Stack } from "@mantine/core";
 import { GroupInfoCard } from "../../components/GroupInfoCard";
 import { SearchBar } from "../../components/SearchBar";
-import { useNavigate, useLocation } from "react-router-dom";
-import { api } from "../../data/api.js";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { sendRequest, cancelRequest, getAllGroups, getGroupsByUserId } from "../../data/groups";
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState([]);
   const [userGroups, setUserGroups] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
   const { userId, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
@@ -18,22 +19,25 @@ export default function GroupsPage() {
   useEffect(() => {
     getGroups();
     getUsersGroups();
-  }, [isLoggedIn, userId]);
-
+  }, [updateTrigger, isLoggedIn, userId]);
 
   const getGroups = async () => {
-    const response = await fetch("http://localhost:8000/groups");
-    const groups = await response.json();
-    const sortedGroups = groups.sort((a, b) => a.group_name.localeCompare(b.group_name));
-    setGroups(() => sortedGroups);
+    try {
+      const groups = await getAllGroups();
+      const sortedGroups = groups.sort((a, b) => a.group_name.localeCompare(b.group_name));
+      setGroups(sortedGroups);
+      console.log("All groups fetched, found", groups.length, "groups.");
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   const getUsersGroups = async () => {
     if (!isLoggedIn) return;
     try {
-      const response = await api.get(`/groups/${userId}`);
-      setUserGroups(() => response.data);
-      console.log("Groups fetched", response.data);
+      const usersGroups = await getGroupsByUserId(userId);
+      setUserGroups(usersGroups);
+      console.log("Users groups fetched. Found", usersGroups.length, "groups.");
     } catch (error) {
       console.log(error);
     }
@@ -52,6 +56,21 @@ export default function GroupsPage() {
         isMember: false,
         isPending: false,
       };
+    }
+  };
+
+  const handleMembershipRequest = async (groupId, action) => {
+    try {
+      if (action === "send") {
+        await sendRequest(groupId, userId);
+        console.log("Request sent to group: ", groupId);
+      } else if (action === "cancel") {
+        await cancelRequest(groupId, userId);
+        console.log("Request cancelled for group: ", groupId);
+      }
+      setUpdateTrigger(prev => prev + 1);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -93,14 +112,18 @@ export default function GroupsPage() {
       </Container>
       {searchSubmitted && searchText && <h3>Search results for: "{searchText}"</h3>}
       <Container size="md" mt="lg">
-      <Stack spacing="lg" mt="lg">
-        {filteredGroups.map((group) => (
-            <GroupInfoCard group={group} key={group.group_id}
-            membershipStatus={checkMembershipStatus(group.group_id)}
-            />
-        ))}
+        <Stack spacing="lg" mt="lg">
+          {filteredGroups.map((group) => (
+              <GroupInfoCard
+                group={group}
+                key={`${group.group_id}-${checkMembershipStatus(group.group_id).isPending}`}
+                membershipStatus={checkMembershipStatus(group.group_id)}
+                onMembershipRequest={handleMembershipRequest}
+              />
+          ))}
         </Stack>
-        </Container>
+      </Container>
     </Container>
   );
 }
+
