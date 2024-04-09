@@ -60,9 +60,15 @@ export default function MediaDetailsPage() {
 
   const checkFavorites = () => {
     if (isLoggedIn && favorites) {
+      console.log("Checking favorites.")
+      console.log(favorites)
       const idFound = favorites.some((favorite) => favorite.tmdb_id === mediaObj.id);
       if (idFound) {
+        console.log("Movie ID found in favorites.")
         setInFavorites(true);
+      } else {
+        console.log("Movie ID NOT found in favorites.")
+        setInFavorites(false);
       }
     }
   };
