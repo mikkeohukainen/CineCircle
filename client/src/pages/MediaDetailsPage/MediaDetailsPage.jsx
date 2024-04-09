@@ -61,7 +61,6 @@ export default function MediaDetailsPage() {
   const checkFavorites = () => {
     if (isLoggedIn && favorites) {
       const idFound = favorites.some((favorite) => favorite.tmdb_id === mediaObj.id);
-      console.log(idFound);
       if (idFound) {
         setInFavorites(true);
       }
@@ -160,9 +159,6 @@ export default function MediaDetailsPage() {
         <Title ta="center" c="blue" mt="md" order={2}>
           Cast
         </Title>
-
-        {console.log("Favorites")}
-        {console.log(favorites)}
 
         {!isLoading && credits.cast && <CastCarousel creditsArray={credits} />}
 
