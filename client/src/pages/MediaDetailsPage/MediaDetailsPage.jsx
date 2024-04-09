@@ -19,7 +19,7 @@ import CastCarousel from "./CastCarousel.jsx";
 import useAuth from "../../hooks/useAuth";
 
 export default function MediaDetailsPage() {
-  const { userId, isLoggedIn } = useAuth();
+  const { username, userId, isLoggedIn } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mediaObj, setMediaObj] = useState(location.state.obj);

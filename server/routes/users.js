@@ -4,6 +4,7 @@ const usersModel = require("../models/users_model");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/users_model");
+const mediaModel = require("../models/media_model");
 
 // ADD NEW USER
 router.post("/", async (req, res) => {
@@ -107,7 +108,20 @@ router.delete("/", async (req, res) => {
 // ADD FAVORITES
 router.post("/:username/favorites", async (req, res) => {
   try {
-    await usersModel.addFavorites(req.body.username, req.body.mediaId);
+    const result = await mediaModel.getByTmdbId(req.body.tmdbId);
+    if (!result) {
+      const mediaObject = {
+        title: req.body.title,
+        type: req.body.type,
+        description: req.body.description,
+        tmdbId: req.body.tmdbId,
+        posterUrl: req.body.posterUrl,
+      };
+      await mediaModel.add(mediaObject);
+    }
+    
+    await usersModel.addFavorites(req.body.username, req.body.tmdbId);
+
     res.status(200).end();
   } catch (err) {
     console.error(err.message);
