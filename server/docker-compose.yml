@@ -1,0 +1,57 @@
+services:
+  app:
+    build: .
+    entrypoint: "/bin/sh docker-entrypoint.sh"
+    env_file: .env
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    restart: unless-stopped
+    depends_on:
+      - database
+
+  database:
+    image: postgres:14.11
+    ports:
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - database-data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    ports:
+      - "5050:80"
+    restart: unless-stopped
+    depends_on:
+      - database
+    configs:
+      - source: pgpass
+        target: /pgadmin4/.pgpass
+      - source: serversjson
+        target: /pgadmin4/servers.json
+
+configs:
+  pgpass:
+    content: database:${POSTGRES_PORT}:*:${POSTGRES_USER}:${POSTGRES_PASSWORD}
+
+  serversjson:
+    content: |
+      {"Servers": {"1": {
+        "Group": "Servers",
+        "Name": "CineCircle",
+        "Host": "database",
+        "Port": ${POSTGRES_PORT},
+        "MaintenanceDB": "postgres",
+        "Username": "${POSTGRES_USER}",
+        "PassFile": "/pgadmin4/.pgpass",
+        "SSLMode": "prefer"
+      }}}
+
+volumes:
+  database-data:
