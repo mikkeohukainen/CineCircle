@@ -11,6 +11,7 @@ export default function GroupsPage() {
   const [userGroups, setUserGroups] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const [updateTrigger, setUpdateTrigger] = useState(0);
   const { userId, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
@@ -18,7 +19,7 @@ export default function GroupsPage() {
   useEffect(() => {
     getGroups();
     getUsersGroups();
-  }, [isLoggedIn, userId]);
+  }, [updateTrigger, isLoggedIn, userId]);
 
   const getGroups = async () => {
     try {
@@ -67,7 +68,7 @@ export default function GroupsPage() {
         await cancelRequest(groupId, userId);
         console.log("Request cancelled for group: ", groupId);
       }
-      await getUsersGroups();
+      setUpdateTrigger(prev => prev + 1);
     } catch (error) {
       console.error(error);
     }
@@ -112,19 +113,17 @@ export default function GroupsPage() {
       {searchSubmitted && searchText && <h3>Search results for: "{searchText}"</h3>}
       <Container size="md" mt="lg">
         <Stack spacing="lg" mt="lg">
-          {filteredGroups.map((group) => {
-            const membershipStatus = checkMembershipStatus(group.group_id);
-            return (
+          {filteredGroups.map((group) => (
               <GroupInfoCard
                 group={group}
-                key={`${group.group_id}-${membershipStatus.isMember}-${membershipStatus.isPending}`}
-                membershipStatus={membershipStatus}
+                key={`${group.group_id}-${checkMembershipStatus(group.group_id).isPending}`}
+                membershipStatus={checkMembershipStatus(group.group_id)}
                 onMembershipRequest={handleMembershipRequest}
               />
-            );
-          })}
+          ))}
         </Stack>
       </Container>
     </Container>
   );
 }
+
