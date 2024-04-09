@@ -24,7 +24,7 @@ export default function MemberList({ groupMembers, isOwner, ownerId, handleAccep
           <Title order={4}>Pending requests:</Title>
           <Stack spacing="xs" mt="lg">
             {pendingMembers.map((member) => (
-              <Group key={member.userId}>
+              <Group key={member.user_id}>
                 <Text>{member.username}</Text>
                 <Button onClick={() => handleAcceptAndReject(member.user_id, "accept")}>
                   Accept
