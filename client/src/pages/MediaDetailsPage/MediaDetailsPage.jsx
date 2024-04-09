@@ -9,17 +9,20 @@ import {
   Group,
   Title,
   useMantineTheme,
-  ActionIcon
+  ActionIcon,
 } from "@mantine/core";
-import { IconArrowLeft } from '@tabler/icons-react';
+import { IconArrowLeft } from "@tabler/icons-react";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import CastCarousel from "./CastCarousel.jsx";
 import useAuth from "../../hooks/useAuth";
+import useFav from "../../hooks/useFav";
+import { getFavorites, addFavorite } from "../../data/favorites";
 
 export default function MediaDetailsPage() {
   const { username, userId, isLoggedIn } = useAuth();
+  const { favorites, setFavorites } = useFav();
   const location = useLocation();
   const navigate = useNavigate();
   const [mediaObj, setMediaObj] = useState(location.state.obj);
@@ -29,16 +32,27 @@ export default function MediaDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    let isMounted = true;
-    if (isMounted) {
-      getImages();
-      getCredits();
-      getGenres();
-    }
-    return () => {
-      isMounted = false;
-    };
+    getImages();
+    getCredits();
+    getGenres();
+    fetchFavorites();
   }, []);
+
+  const fetchFavorites = async () => {
+    if (isLoggedIn && username) {
+      console.log("Trying to fetch favorites.");
+      try {
+        const results = await getFavorites(username);
+        const searchResults = results.data;
+        console.log("Results data:");
+        console.log(searchResults);
+        setFavorites(searchResults)
+        
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
 
   const getImages = async () => {
     const URL = `http://localhost:8000/search/${mediaObj.title ? "movie" : "tv"}/images/${mediaObj.id}`;
@@ -115,10 +129,17 @@ export default function MediaDetailsPage() {
         <Title ta="center" c="blue" mt="md" order={2}>
           Cast
         </Title>
-        
+
+        {console.log("Favorites")}
+        {console.log(favorites)}
+
         {!isLoading && credits.cast && <CastCarousel creditsArray={credits} />}
 
-        {isLoggedIn && <Button color="blue" mt="md" radius="md" fullWidth>Add to favorites</Button>}
+        {isLoggedIn && (
+          <Button color="blue" mt="md" radius="md" fullWidth >
+            Add to favorites
+          </Button>
+        )}
 
         {/* <Button color="blue" mt="md" radius="md" fullWidth>
           Add to favorites
