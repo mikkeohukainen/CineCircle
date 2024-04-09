@@ -107,9 +107,13 @@ router.delete("/", async (req, res) => {
 
 // ADD FAVORITES
 router.post("/:username/favorites", async (req, res) => {
+  //console.log(req.body)
   try {
     const result = await mediaModel.getByTmdbId(req.body.tmdbId);
-    if (!result) {
+    const rows = result.rowCount;
+    //console.log("From users.js By TMDBid result:")
+    //console.log(rows)
+    if (rows === 0) {
       const mediaObject = {
         title: req.body.title,
         type: req.body.type,

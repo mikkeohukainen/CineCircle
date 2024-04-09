@@ -23,13 +23,16 @@ import { getFavorites, addFavorite } from "../../data/favorites";
 export default function MediaDetailsPage() {
   const { username, userId, isLoggedIn } = useAuth();
   const { favorites, setFavorites } = useFav();
+
   const location = useLocation();
   const navigate = useNavigate();
+
   const [mediaObj, setMediaObj] = useState(location.state.obj);
   const [images, setImages] = useState([]);
   const [credits, setCredits] = useState([]);
   const [genres, setGenres] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [inFavorites, setInFavorites] = useState(false);
 
   useEffect(() => {
     getImages();
@@ -38,20 +41,48 @@ export default function MediaDetailsPage() {
     fetchFavorites();
   }, []);
 
+  useEffect(() => {
+    checkFavorites();
+  }, [favorites]);
+
   const fetchFavorites = async () => {
     if (isLoggedIn && username) {
       console.log("Trying to fetch favorites.");
       try {
         const results = await getFavorites(username);
         const searchResults = results.data;
-        console.log("Results data:");
-        console.log(searchResults);
-        setFavorites(searchResults)
-        
+        setFavorites(searchResults);
       } catch (error) {
         console.error(error);
       }
     }
+  };
+
+  const checkFavorites = () => {
+    if (isLoggedIn && favorites) {
+      const idFound = favorites.some((favorite) => favorite.tmdb_id === mediaObj.id);
+      console.log(idFound);
+      if (idFound) {
+        setInFavorites(true);
+      }
+    }
+  };
+
+  const addToFavorites = async () => {
+    const type = mediaObj.title ? "movie" : "series";
+    try {
+      await addFavorite(
+        username,
+        mediaObj.title || mediaObj.name,
+        type,
+        mediaObj.overview,
+        mediaObj.id,
+        mediaObj.poster_path,
+      );
+    } catch (error) {
+      console.error(error);
+    }
+    fetchFavorites();
   };
 
   const getImages = async () => {
@@ -135,10 +166,26 @@ export default function MediaDetailsPage() {
 
         {!isLoading && credits.cast && <CastCarousel creditsArray={credits} />}
 
-        {isLoggedIn && (
-          <Button color="blue" mt="md" radius="md" fullWidth >
+        {isLoggedIn && !inFavorites && (
+          <Button color="blue" mt="md" radius="md" fullWidth onClick={addToFavorites}>
             Add to favorites
           </Button>
+        )}
+
+        {isLoggedIn && inFavorites && (
+          <Container>
+            <Badge variant="outline" color="blue" size="xl" radius="md" mt="md">
+              Already in your favorites list
+            </Badge>
+          </Container>
+        )}
+
+        {!isLoggedIn && (
+          <Container>
+            <Badge variant="outline" color="blue" size="xl" radius="md" mt="md">
+              Log in to add to favorites
+            </Badge>
+          </Container>
         )}
 
         {/* <Button color="blue" mt="md" radius="md" fullWidth>
