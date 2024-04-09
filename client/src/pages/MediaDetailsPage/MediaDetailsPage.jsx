@@ -9,34 +9,86 @@ import {
   Group,
   Title,
   useMantineTheme,
-  ActionIcon
+  ActionIcon,
 } from "@mantine/core";
-import { IconArrowLeft } from '@tabler/icons-react';
+import { IconArrowLeft } from "@tabler/icons-react";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import CastCarousel from "./CastCarousel.jsx";
+import useAuth from "../../hooks/useAuth";
+import useFav from "../../hooks/useFav";
+import { getFavorites, addFavorite } from "../../data/favorites";
 
 export default function MediaDetailsPage() {
+  const { username, userId, isLoggedIn } = useAuth();
+  const { favorites, setFavorites } = useFav();
+
   const location = useLocation();
   const navigate = useNavigate();
+
   const [mediaObj, setMediaObj] = useState(location.state.obj);
   const [images, setImages] = useState([]);
   const [credits, setCredits] = useState([]);
   const [genres, setGenres] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [inFavorites, setInFavorites] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
-    if (isMounted) {
-      getImages();
-      getCredits();
-      getGenres();
-    }
-    return () => {
-      isMounted = false;
-    };
+    getImages();
+    getCredits();
+    getGenres();
+    fetchFavorites();
   }, []);
+
+  useEffect(() => {
+    checkFavorites();
+  }, [favorites]);
+
+  const fetchFavorites = async () => {
+    if (isLoggedIn && username) {
+      console.log("Trying to fetch favorites.");
+      try {
+        const results = await getFavorites(username);
+        const searchResults = results.data;
+        setFavorites(searchResults);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
+  const checkFavorites = () => {
+    if (isLoggedIn && favorites) {
+      console.log("Checking favorites.")
+      console.log(favorites)
+      const idFound = favorites.some((favorite) => favorite.tmdb_id === mediaObj.id);
+      if (idFound) {
+        console.log("Movie ID found in favorites.")
+        setInFavorites(true);
+      } else {
+        console.log("Movie ID NOT found in favorites.")
+        setInFavorites(false);
+      }
+    }
+  };
+
+  const addToFavorites = async () => {
+    const type = mediaObj.title ? "movie" : "series";
+    try {
+      await addFavorite(
+        username,
+        mediaObj.title || mediaObj.name,
+        type,
+        mediaObj.overview,
+        mediaObj.id,
+        mediaObj.poster_path,
+      );
+    } catch (error) {
+      console.error(error);
+    }
+    fetchFavorites();
+  };
 
   const getImages = async () => {
     const URL = `http://localhost:8000/search/${mediaObj.title ? "movie" : "tv"}/images/${mediaObj.id}`;
@@ -113,12 +165,34 @@ export default function MediaDetailsPage() {
         <Title ta="center" c="blue" mt="md" order={2}>
           Cast
         </Title>
-        
+
         {!isLoading && credits.cast && <CastCarousel creditsArray={credits} />}
 
-        <Button color="blue" mt="md" radius="md" fullWidth>
+        {isLoggedIn && !inFavorites && (
+          <Button color="blue" mt="md" radius="md" fullWidth onClick={addToFavorites}>
+            Add to favorites
+          </Button>
+        )}
+
+        {isLoggedIn && inFavorites && (
+          <Container>
+            <Badge variant="outline" color="blue" size="xl" radius="md" mt="md">
+              Already in your favorites list
+            </Badge>
+          </Container>
+        )}
+
+        {!isLoggedIn && (
+          <Container>
+            <Badge variant="outline" color="blue" size="xl" radius="md" mt="md">
+              Log in to add to favorites
+            </Badge>
+          </Container>
+        )}
+
+        {/* <Button color="blue" mt="md" radius="md" fullWidth>
           Add to favorites
-        </Button>
+        </Button> */}
       </Card>
     </Container>
   );

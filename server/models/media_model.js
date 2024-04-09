@@ -2,9 +2,9 @@ const db = require("../database/db_connection");
 
 const media = {
   add: async (media) => {
-    db.query(
-      "INSERT INTO media (title, type, description, tmdb_id, poster_url, released) VALUES ($1, $2, $3, $4, $5, $6)",
-      [media.title, media.type, media.description, media.tmdbId, media.posterUrl, media.released],
+    await db.query(
+      "INSERT INTO media (title, type, description, tmdb_id, poster_url) VALUES ($1, $2, $3, $4, $5)",
+      [media.title, media.type, media.description, media.tmdbId, media.posterUrl],
     );
   },
   getById: async (id) => {
