@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { acceptRequest, getGroupMembers, deleteGroupMember } from "../../data/groups";
 import MemberList from "./GroupMembers.jsx";
 import useAuth from "../../hooks/useAuth";
+import useUserInfo from "../../hooks/useUserInfo.js";
 
 export default function GroupDetailsPage() {
   const location = useLocation();
@@ -14,6 +15,7 @@ export default function GroupDetailsPage() {
   const acceptedMembers = groupMembers.filter((member) => member.accepted);
   const isOwner = groupDetails.owner_id === userId;
   const groupId = groupDetails.group_id;
+  const { userGroups } = useUserInfo();
 
   useEffect(() => {
     getMembers();
@@ -49,6 +51,7 @@ export default function GroupDetailsPage() {
         <h1>Group Details Page</h1>
         <Button onClick={() => console.log(groupDetails)}>Console.log group details</Button>
         <Button onClick={() => console.log(groupMembers)}>Console.log group members</Button>
+        <Button onClick={() => console.log(userGroups)}>Console.log users groups</Button>
       </Group>
       <Space h="xl" />
 

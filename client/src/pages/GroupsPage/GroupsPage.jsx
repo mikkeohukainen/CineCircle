@@ -4,17 +4,17 @@ import { GroupInfoCard } from "../../components/GroupInfoCard";
 import { SearchBar } from "../../components/SearchBar";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import useUserInfo from "../../hooks/useUserInfo";
 import { sendRequest, cancelRequest, getAllGroups, getGroupsByUserId } from "../../data/groups";
 
 export default function GroupsPage() {
   const [groups, setGroups] = useState([]);
-  const [userGroups, setUserGroups] = useState([]);
+  const { userGroupIds, setUserGroupIds } = useUserInfo();
   const [searchText, setSearchText] = useState("");
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [updateTrigger, setUpdateTrigger] = useState(0);
   const { userId, isLoggedIn } = useAuth();
   const navigate = useNavigate();
-
 
   useEffect(() => {
     getGroups();
@@ -28,7 +28,7 @@ export default function GroupsPage() {
       setGroups(sortedGroups);
       console.log("All groups fetched, found", groups.length, "groups.");
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
@@ -36,7 +36,7 @@ export default function GroupsPage() {
     if (!isLoggedIn) return;
     try {
       const usersGroups = await getGroupsByUserId(userId);
-      setUserGroups(usersGroups);
+      setUserGroupIds(usersGroups);
       console.log("Users groups fetched. Found", usersGroups.length, "groups.");
     } catch (error) {
       console.log(error);
@@ -45,7 +45,7 @@ export default function GroupsPage() {
 
   // Tarkistaa käyttäjän jäsenyyden ja jäsenyyden tilan tietyssä ryhmässä.
   const checkMembershipStatus = (groupId) => {
-    const membership = userGroups.find((group) => group.group_id === groupId);
+    const membership = userGroupIds.find((group) => group.group_id === groupId);
     if (membership) {
       return {
         isMember: true,
@@ -68,7 +68,7 @@ export default function GroupsPage() {
         await cancelRequest(groupId, userId);
         console.log("Request cancelled for group: ", groupId);
       }
-      setUpdateTrigger(prev => prev + 1);
+      setUpdateTrigger((prev) => prev + 1);
     } catch (error) {
       console.error(error);
     }
@@ -114,16 +114,15 @@ export default function GroupsPage() {
       <Container size="md" mt="lg">
         <Stack spacing="lg" mt="lg">
           {filteredGroups.map((group) => (
-              <GroupInfoCard
-                group={group}
-                key={`${group.group_id}-${checkMembershipStatus(group.group_id).isPending}`}
-                membershipStatus={checkMembershipStatus(group.group_id)}
-                onMembershipRequest={handleMembershipRequest}
-              />
+            <GroupInfoCard
+              group={group}
+              key={`${group.group_id}-${checkMembershipStatus(group.group_id).isPending}`}
+              membershipStatus={checkMembershipStatus(group.group_id)}
+              onMembershipRequest={handleMembershipRequest}
+            />
           ))}
         </Stack>
       </Container>
     </Container>
   );
 }
-
