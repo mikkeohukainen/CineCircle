@@ -17,12 +17,12 @@ import { useMediaQuery } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import CastCarousel from "./CastCarousel.jsx";
 import useAuth from "../../hooks/useAuth";
-import useFav from "../../hooks/useFav";
+import useUserInfo from "../../hooks/useUserInfo.js";
 import { getFavorites, addFavorite } from "../../data/favorites";
 
 export default function MediaDetailsPage() {
   const { username, userId, isLoggedIn } = useAuth();
-  const { favorites, setFavorites } = useFav();
+  const { favorites, setFavorites } = useUserInfo();
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -60,14 +60,14 @@ export default function MediaDetailsPage() {
 
   const checkFavorites = () => {
     if (isLoggedIn && favorites) {
-      console.log("Checking favorites.")
-      console.log(favorites)
+      console.log("Checking favorites.");
+      console.log(favorites);
       const idFound = favorites.some((favorite) => favorite.tmdb_id === mediaObj.id);
       if (idFound) {
-        console.log("Movie ID found in favorites.")
+        console.log("Movie ID found in favorites.");
         setInFavorites(true);
       } else {
-        console.log("Movie ID NOT found in favorites.")
+        console.log("Movie ID NOT found in favorites.");
         setInFavorites(false);
       }
     }

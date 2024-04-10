@@ -9,7 +9,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { SearchPage } from "./pages/SearchPage";
 import { AdvancedSearchPage } from "./pages/AdvancedSearchPage";
 import AuthProvider from "./contexts/AuthContext.jsx";
-import FavProvider from "./contexts/FavContext.jsx";
+import UserInfoProvider from "./contexts/UserInfoContext.jsx";
 import { MediaDetailsPage } from "./pages/MediaDetailsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { DeleteAccount } from "./components/UserDeleteAccount";
@@ -21,7 +21,7 @@ import { CreateGroupPage } from "./pages/CreateGroupPage";
 export default function App() {
   return (
     <AuthProvider>
-      <FavProvider>
+      <UserInfoProvider>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<HomePage />} />
@@ -39,7 +39,7 @@ export default function App() {
             <Route path="*" element={<div>Not Found</div>} />
           </Route>
         </Routes>
-      </FavProvider>
+      </UserInfoProvider>
     </AuthProvider>
   );
 }
