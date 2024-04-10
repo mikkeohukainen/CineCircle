@@ -6,8 +6,8 @@ import useAuth from "../../hooks/useAuth";
 
 export default function GroupCard({
   group,
-  membershipStatus,
-  onMembershipRequest,
+  membershipStatus = { isMember: true, isPending: false },
+  onMembershipRequest = () => {},
   showActionButton = true, // Liittymisnappi/jäsenyyden status näytetään oletuksena, mutta voidaan piilottaa
 }) {
   const [groupObj, setGroupObj] = useState(group);
@@ -37,7 +37,7 @@ export default function GroupCard({
       <Text size="md" c="dimmed">
         {group.description}
       </Text>
-      {showActionButton && (
+      {showActionButton && membershipStatus && onMembershipRequest && (
         <Container size="md" mt="md">
           <GroupCardActionButton
             isMember={isMember}
