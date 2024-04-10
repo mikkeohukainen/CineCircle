@@ -3,11 +3,12 @@ import useAuth from "../../hooks/useAuth";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
 import { logout } from "../../data/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function DeleteAccount() {
-  const { username } = useAuth();
-
+  const { username, setIsLoggedIn } = useAuth();
   const [notification, setNotification] = useState(false);
+  const navigate = useNavigate();
 
   const form = useForm({
     initialValues: { username: "", password: "", confirmPw: "", boxChecked: false },
@@ -31,11 +32,12 @@ export default function DeleteAccount() {
         if (!response.ok) {
           console.error("Failed to delete account");
         } else {
-          // TODO: LOGOUT here
+          logout();
+          setIsLoggedIn(false);
+          navigate("/");
+          console.log("Account deleted");
 
           // TODO: DELETE all data
-
-          console.log("Account deleted");
         }
       } else {
         console.log("You can only delete your own account");
@@ -44,6 +46,7 @@ export default function DeleteAccount() {
       setNotification(true);
       console.log("box not checked");
     }
+    form.reset();
   };
 
   return (
@@ -76,7 +79,6 @@ export default function DeleteAccount() {
         <Button type="submit" variant="filled" color="red" size="md" radius="md">
           DELETE USER ACCOUNT
         </Button>
-        <h3>TODO: logout puuttuu napin painalluksen jälkeen</h3>
       </form>
     </Container>
   );
