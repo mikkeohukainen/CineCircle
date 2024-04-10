@@ -1,4 +1,4 @@
-import { Container, TextInput, Button, Box, Space, Checkbox } from "@mantine/core";
+import { Container, TextInput, Button, Box, Space, Checkbox, Stack } from "@mantine/core";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
@@ -52,34 +52,36 @@ export default function DeleteAccount() {
   return (
     <Container>
       <h1>{username}</h1>
-      <h3>TODO: muotoilut puuttuu tästäkin</h3>
-      <form onSubmit={form.onSubmit(handleSubmit)}>
-        <TextInput
-          label="Username"
-          placeholder="Enter your username"
-          {...form.getInputProps("username")}
-        />
-        <TextInput
-          label="Password"
-          placeholder="Enter your password"
-          {...form.getInputProps("password")}
-          type="password"
-        />
-        <TextInput
-          label="Confirm password"
-          placeholder="Enter your password"
-          {...form.getInputProps("confirmPw")}
-          type="password"
-        />
-        <Checkbox
-          mt="md"
-          label="Yes, I understand this deletion can not be undone."
-          {...form.getInputProps("boxChecked", { type: "checkbox" })}
-        />
-        <Button type="submit" variant="filled" color="red" size="md" radius="md">
-          DELETE USER ACCOUNT
-        </Button>
-      </form>
+      <Container size="xs">
+        <form onSubmit={form.onSubmit(handleSubmit)}>
+          <TextInput
+            label="Username"
+            placeholder="Enter your username"
+            {...form.getInputProps("username")}
+          />
+          <TextInput
+            label="Password"
+            placeholder="Enter your password"
+            {...form.getInputProps("password")}
+            type="password"
+          />
+          <TextInput
+            label="Confirm password"
+            placeholder="Confirm your password"
+            {...form.getInputProps("confirmPw")}
+            type="password"
+          />
+          <Checkbox
+            mt="md"
+            label="Yes, I understand this deletion can not be undone."
+            {...form.getInputProps("boxChecked", { type: "checkbox" })}
+          />
+          <Space h="md" />
+          <Button type="submit" variant="filled" color="red" size="md" radius="md">
+            DELETE USER ACCOUNT
+          </Button>
+        </form>
+      </Container>
     </Container>
   );
 }
