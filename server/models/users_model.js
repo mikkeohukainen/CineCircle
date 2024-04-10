@@ -1,4 +1,4 @@
-const dbPool = require("../database/db_connection");
+const { dbPool } = require("../database/db_connection");
 
 const userModel = {
   addNewUser: async function (username, hashedPw) {
@@ -15,11 +15,7 @@ const userModel = {
       [username],
     );
 
-    if (result.rowCount > 0) {
-      return result.rows;
-    } else {
-      return null;
-    }
+    return result.rowCount > 0 ? result.rows[0] : null;
   },
 
   deleteUser: async function (username) {
@@ -32,11 +28,7 @@ const userModel = {
       [username],
     );
 
-    if (result.rowCount > 0) {
-      return result.rows[0];
-    } else {
-      return null;
-    }
+    return result.rowCount > 0 ? result.rows[0] : null;
   },
 
   addFavorites: async function (username, mediaId) {
@@ -55,11 +47,7 @@ const userModel = {
       [username],
     );
 
-    if (result.rowCount > 0) {
-      return result.rows;
-    } else {
-      return null;
-    }
+    return result.rowCount > 0 ? result.rows : null;
   },
 
   getReviews: async function (username) {
@@ -67,11 +55,7 @@ const userModel = {
       "SELECT * FROM reviews WHERE user_id=(SELECT user_id FROM users WHERE username=$1)",
       [username],
     );
-    if (result.rowCount > 0) {
-      return result.rows;
-    } else {
-      return null;
-    }
+    return result.rowCount > 0 ? result.rows : null;
   },
 };
 
