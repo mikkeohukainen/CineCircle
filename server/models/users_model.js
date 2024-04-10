@@ -31,10 +31,10 @@ const userModel = {
     return result.rowCount > 0 ? result.rows[0] : null;
   },
 
-  addFavorites: async function (username, mediaId) {
+  addFavorites: async function (username, tmdbId) {
     await dbPool.query(
-      "INSERT INTO favorites (user_id,media_id) VALUES ((SELECT user_id FROM users WHERE username=$1),$2)",
-      [username, mediaId],
+      "INSERT INTO favorites (user_id,media_id) VALUES ((SELECT user_id FROM users WHERE username=$1),(SELECT media_id FROM media WHERE tmdb_id=$2))",
+      [username, tmdbId],
     );
   },
 

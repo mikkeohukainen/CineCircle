@@ -4,7 +4,12 @@ import { useNavigate } from "react-router-dom";
 import GroupCardActionButton from "./GroupCardActionButton.jsx";
 import useAuth from "../../hooks/useAuth";
 
-export default function GroupCard({ group, membershipStatus }) {
+export default function GroupCard({
+  group,
+  membershipStatus = { isMember: true, isPending: false },
+  onMembershipRequest = () => {},
+  showActionButton = true, // Liittymisnappi/jäsenyyden status näytetään oletuksena, mutta voidaan piilottaa
+}) {
   const [groupObj, setGroupObj] = useState(group);
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
@@ -32,12 +37,16 @@ export default function GroupCard({ group, membershipStatus }) {
       <Text size="md" c="dimmed">
         {group.description}
       </Text>
-      <Container size="md" mt="md">
-        <GroupCardActionButton 
-          isMember={isMember}
-          isPending={isPending}
-        />
-      </Container>
+      {showActionButton && membershipStatus && onMembershipRequest && (
+        <Container size="md" mt="md">
+          <GroupCardActionButton
+            isMember={isMember}
+            isPending={isPending}
+            groupId={group.group_id}
+            onMembershipRequest={onMembershipRequest}
+          />
+        </Container>
+      )}
     </Card>
   );
 }

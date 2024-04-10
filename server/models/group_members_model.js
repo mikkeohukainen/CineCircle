@@ -10,7 +10,17 @@ const groupMembers = {
   },
 
   getAllByGroupId: async (groupId) => {
-    const result = await db.query("SELECT * FROM group_members WHERE group_id = $1", [groupId]);
+    const result = await db.query(`
+    SELECT 
+      gm.*, 
+      u.username
+    FROM 
+      group_members AS gm
+    JOIN 
+      users AS u ON gm.user_id = u.user_id
+    WHERE 
+      gm.group_id = $1
+  `, [groupId]);
     return result.rows;
   },
 
