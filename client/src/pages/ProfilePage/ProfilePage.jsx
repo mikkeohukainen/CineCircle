@@ -1,4 +1,4 @@
-import { Container, Space, Button } from "@mantine/core";
+import { Container, Space, Button, Stack } from "@mantine/core";
 import { UserFavorites } from "../../components/UserFavorites";
 import { UserGroups } from "../../components/UserGroups";
 import { useNavigate } from "react-router-dom";
@@ -24,9 +24,11 @@ export default function ProfilePage() {
   return (
     <Container>
       <h1>{username}</h1>
-      <h3>TODO: muotoilut puuttuu</h3>
-      <UserFavorites />
-      <UserGroups />
+      <Stack>
+        <UserFavorites />
+        <UserGroups />
+        <Space h="xl" />
+      </Stack>
       <DeleteButton />
     </Container>
   );

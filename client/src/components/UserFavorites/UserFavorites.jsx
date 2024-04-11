@@ -30,7 +30,7 @@ export default function UserFavorites() {
       const movieData = await Promise.all(tmdbDataResponse.map((res) => res.json()));
 
       setFavorites(movieData);
-      console.log(movieData);
+      // console.log(movieData);
     } catch (err) {
       console.error(err);
     }
