@@ -24,15 +24,6 @@ const createDatabase = async () => {
   }
 };
 
-const dropDatabase = async () => {
-  try {
-    await dropdb(config, config.database);
-    console.log(`Database ${config.database} dropped`);
-  } catch (error) {
-    // ignore
-  }
-};
-
 const dbPool = new Pool({
   ...config,
 });
@@ -60,4 +51,4 @@ const emptyDatabase = async () => {
   `);
 };
 
-module.exports = { dbPool, createDatabase, dropDatabase, emptyDatabase };
+module.exports = { dbPool, createDatabase, emptyDatabase };

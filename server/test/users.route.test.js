@@ -1,6 +1,5 @@
 require("dotenv").config();
 process.env.NODE_ENV = "test";
-
 const chai = require("chai");
 const chaiHttp = require("chai-http");
 const server = require("../src/server");
@@ -17,13 +16,8 @@ const expect = chai.expect;
 
 describe("Users", function () {
   before("set up database", async function () {
-    await db.dropDatabase();
     await db.createDatabase();
     await dbmigrate.up();
-  });
-
-  after("destroy database", async function () {
-    await db.dropDatabase();
   });
 
   afterEach("empty database tables", async function () {
