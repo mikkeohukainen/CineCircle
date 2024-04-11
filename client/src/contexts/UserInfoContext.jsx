@@ -1,6 +1,7 @@
 import { createContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { getAllGroups, getGroupsByUserId } from "../data/groups";
+import { getFavorites } from "../data/favorites";
 
 export const UserInfoContext = createContext({});
 
@@ -8,11 +9,12 @@ export default function UserInfoProvider({ children }) {
   const [favorites, setFavorites] = useState([]);
   const [userGroups, setUserGroups] = useState([]);
   const [userGroupIds, setUserGroupIds] = useState([]);
-  const { userId, isLoggedIn } = useAuth();
+  const { username, userId, isLoggedIn } = useAuth();
 
   useEffect(() => {
     if (!isLoggedIn) return;
     getUsersGroups();
+    fetchFavorites();
   }, [isLoggedIn, userId]);
 
   useEffect(() => {
@@ -48,9 +50,22 @@ export default function UserInfoProvider({ children }) {
     }
   };
 
+  const fetchFavorites = async () => {
+    if (isLoggedIn && username) {
+      console.log("Trying to fetch favorites.");
+      try {
+        const results = await getFavorites(username);
+        const searchResults = results.data;
+        setFavorites(searchResults);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+
   return (
     <UserInfoContext.Provider
-      value={{ favorites, setFavorites, userGroups, setUserGroups, userGroupIds, setUserGroupIds}}
+      value={{ favorites, setFavorites, userGroups, setUserGroups, userGroupIds, setUserGroupIds }}
     >
       {children}
     </UserInfoContext.Provider>
