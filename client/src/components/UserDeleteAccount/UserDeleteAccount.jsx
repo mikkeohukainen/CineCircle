@@ -34,7 +34,7 @@ export default function DeleteAccount() {
 
         if (!response.ok) {
           customNotification("Error", "Password does not match confirmation password", "red");
-          console.error("Failed to delete account");
+          // console.error("Failed to delete account");
         } else {
           //
           // TODO: DELETE all data from all tables
@@ -44,17 +44,17 @@ export default function DeleteAccount() {
           logout();
           setIsLoggedIn(false);
           navigate("/");
-          console.log("Account deleted");
+          // console.log("Account deleted");
         }
       } else {
         customNotification("Error", "Username does not match login", "red");
-        console.log("You can only delete your own account");
+        // console.log("You can only delete your own account");
       }
     } else {
       // customNotification("Error", "Please mark the checkbox to confirm deletion", "red");
       altNotification("Error", "Please mark the checkbox to confirm deletion", "red");
 
-      console.log("box not checked");
+      // console.log("box not checked");
     }
     form.reset();
   };
