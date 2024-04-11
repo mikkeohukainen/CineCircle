@@ -6,40 +6,49 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/users_model");
 const mediaModel = require("../models/media_model");
 
-// ADD NEW USER
 router.post("/", async (req, res) => {
   try {
-    const hashPw = await bcrypt.hash(req.body.password, 10);
+    const { username, password, confirmPw } = req.body;
 
-    // Confirm password before creating user
-    if (req.body.password === req.body.confirmPw) {
-      try {
-        // If username exists, throw an error
-        await usersModel.addNewUser(req.body.username, hashPw);
-        res.status(200).end();
-      } catch (err) {
-        console.error(err.message);
-        return res.status(500).end();
+    if (!username || !password || !confirmPw) {
+      return res.status(400).json({ message: "Missing fields" });
+    }
+
+    // 8 is recommended by OWASP, 72 is the max bcrypt can handle
+    // https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
+    if (typeof password !== "string" || password.length < 8 || password.length > 72) {
+      return res.status(400).json({ message: "Password must be between 8 and 72 characters" });
+    }
+
+    if (password !== confirmPw) {
+      return res.status(400).json({ message: "Confirmation password does not match" });
+    }
+
+    const hashPw = await bcrypt.hash(password, 10);
+
+    try {
+      await usersModel.addNewUser(username, hashPw);
+      res.status(201).end();
+    } catch (err) {
+      if (err.message.includes("duplicate")) {
+        return res.status(409).json({ message: "Username already exists" });
       }
-    } else {
-      throw new Error("Confirmation password does not match!");
+      return res.status(500).end();
     }
   } catch (err) {
-    // console.error(err.message);
+    console.error(err.message);
     res.status(500).end();
   }
 });
 
-// TODO: GET USER
 router.get("/:username", async (req, res) => {
   try {
-    const result = await usersModel.getUser(req.params.username);
-    // if not null
-    if (result) {
-      // console.log(result);
-      res.status(200).json(result);
+    const { username } = req.params;
+    const user = await usersModel.getUser(username);
+    if (user) {
+      res.status(200).json(user);
     } else {
-      throw new Error("User does not exist!");
+      res.status(404).end();
     }
   } catch (err) {
     console.error(err.message);
@@ -47,65 +56,75 @@ router.get("/:username", async (req, res) => {
   }
 });
 
-// LOGIN
 router.post("/session", async (req, res) => {
   try {
-    // return is { user_id, password_hash }
-    const dbUserIdAndHashedPassword = await usersModel.getHashedPassword(req.body.username);
-
-    // if not null
-    if (dbUserIdAndHashedPassword) {
-      const isAuthorized = await bcrypt.compare(
-        req.body.password,
-        dbUserIdAndHashedPassword.password_hash,
-      );
-
-      if (isAuthorized) {
-        const token = jwt.sign({ username: req.body.username }, process.env.JWT_SUPERSECRETSIGNER, {
-          expiresIn: "1d",
-        });
-        res.status(200).json({
-          username: req.body.username,
-          userId: dbUserIdAndHashedPassword.user_id,
-          jwtToken: token,
-        });
-      } else {
-        res.status(401).end();
-      }
-    } else {
-      throw new Error("User not found!");
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ message: "Missing fields" });
     }
+
+    const row = await usersModel.getHashedPassword(username);
+    if (!row) {
+      return res.status(401).json({ message: "Incorrect username or password" });
+    }
+
+    const isAuthorized = await bcrypt.compare(password, row.password_hash);
+    if (!isAuthorized) {
+      return res.status(401).json({ message: "Incorrect username or password" });
+    }
+
+    const token = jwt.sign({ username }, process.env.JWT_SUPERSECRETSIGNER, {
+      expiresIn: "1d",
+    });
+
+    res.status(200).json({
+      username,
+      userId: row.user_id,
+      jwtToken: token,
+    });
   } catch (err) {
-    return res.status(404).end();
+    console.log(err.message);
+    return res.status(500).end();
   }
 });
 
-// DELETE USER
 router.delete("/", async (req, res) => {
   try {
-    const dbHashedPassword = await usersModel.getHashedPassword(req.body.username);
-
-    // if not null (same as login)
-    if (dbHashedPassword) {
-      // Compare hashed password to given password and confirm password
-      const isAuthorized = await bcrypt.compare(req.body.password, dbHashedPassword.password_hash);
-      if (isAuthorized && req.body.password === req.body.confirmPw) {
-        await usersModel.deleteUser(req.body.username);
-        res.status(200).end();
-      } else {
-        console.log("Incorrect password!");
-        return res.status(401).end();
-      }
-    } else {
-      throw new Error("User not found!");
+    if (!req.headers.authorization) {
+      return res.status(401).json({ message: "Authorization header required" });
     }
+
+    const { password } = req.body;
+    if (!password) {
+      return res.status(400).json({ message: "Missing password" });
+    }
+
+    const token = req.headers.authorization.split(" ")[1];
+
+    const decoded = jwt.verify(token, process.env.JWT_SUPERSECRETSIGNER);
+    if (!decoded) {
+      return res.status(401).json({ message: "Invalid token" });
+    }
+
+    const { username } = decoded;
+
+    const row = await usersModel.getHashedPassword(username);
+    if (!row) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    const isAuthorized = await bcrypt.compare(password, row.password_hash);
+    if (!isAuthorized) {
+      return res.status(401).json({ message: "Incorrect password" });
+    }
+
+    await usersModel.deleteUser(username);
+    res.status(200).end();
   } catch (err) {
-    console.error(err.message);
-    res.status(404).end();
+    res.status(401).json({ message: "Invalid token" });
   }
 });
 
-// ADD FAVORITES
 router.post("/:username/favorites", async (req, res) => {
   //console.log(req.body)
   try {
@@ -123,7 +142,7 @@ router.post("/:username/favorites", async (req, res) => {
       };
       await mediaModel.add(mediaObject);
     }
-    
+
     await usersModel.addFavorites(req.body.username, req.body.tmdbId);
 
     res.status(200).end();
@@ -133,11 +152,10 @@ router.post("/:username/favorites", async (req, res) => {
   }
 });
 
-// // GET FAVORITES
 router.get("/:username/favorites", async (req, res) => {
   try {
-    const result = await userModel.getFavorites(req.params.username);
-    // console.log(result);
+    const { username } = req.params;
+    const result = await userModel.getFavorites(username);
     res.status(200).json(result);
   } catch (err) {
     console.error(err.message);
@@ -145,11 +163,10 @@ router.get("/:username/favorites", async (req, res) => {
   }
 });
 
-// GET REVIEWS
 router.get("/:username/reviews", async (req, res) => {
   try {
-    const result = await userModel.getReviews(req.params.username);
-    // console.log(result);
+    const { username } = req.params;
+    const result = await userModel.getReviews(username);
     res.status(200).json(result);
   } catch (err) {
     console.error(err.message);
