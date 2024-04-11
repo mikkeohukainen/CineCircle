@@ -6,15 +6,18 @@ const groupContents = {
     return result.rows;
   },
 
-  addGroupContent: async (groupContent) => {
+  addMediaToGroup: async (groupContent) => {
     const result = await db.query(
-      "INSERT INTO group_contents (group_id, media_id, showtime_id, added_by) VALUES ($1, $2, $3, $4) RETURNING *",
-      [
-        groupContent.groupId,
-        groupContent.mediaId || null,
-        groupContent.showtimeId || null,
-        groupContent.addedBy,
-      ],
+      "INSERT INTO group_contents (group_id, media_id, added_by) VALUES ($1, (SELECT media_id FROM media WHERE tmdb_id=$2), $3) RETURNING *",
+      [groupContent.groupId, groupContent.tmdbId, groupContent.addedBy],
+    );
+    return result.rows;
+  },
+
+  addShowtimeToGroup: async (groupContent) => {
+    const result = await db.query(
+      "INSERT INTO group_contents (group_id, showtime_id, added_by) VALUES ($1, (SELECT showtime_id FROM showtimes WHERE theater=$2 AND showtime=$3), $4) RETURNING *",
+      [groupContent.groupId, groupContent.theater, groupContent.showtime, groupContent.addedBy],
     );
     return result.rows;
   },
