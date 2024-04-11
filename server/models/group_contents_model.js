@@ -1,8 +1,15 @@
 const db = require("../database/db_connection");
 
 const groupContents = {
+  
   getGroupContents: async (groupId) => {
-    const result = await db.query("SELECT * FROM group_contents WHERE group_id = $1", [groupId]);
+    const result = await db.query(
+      `SELECT group_contents.*, users.username 
+      FROM group_contents
+      INNER JOIN users ON group_contents.added_by = users.user_id
+      WHERE group_contents.group_id = $1`,
+      [groupId],
+    );
     return result.rows;
   },
 
@@ -31,10 +38,6 @@ const groupContents = {
 
   deleteAllGroupContent: async (groupId) => {
     await db.query("DELETE FROM group_contents WHERE group_id = $1", [groupId]);
-  },
-
-  getShowtimeById: async (id) => {
-    return db.query("SELECT * FROM showtimes WHERE showtime_id = $1", [id]);
   },
 };
 

@@ -1,9 +1,23 @@
-import { Card, Image, Text, Group, Stack, Divider, Anchor, Tooltip } from "@mantine/core";
+import { Card, Image, Text, Group, Stack, Divider, Anchor, Tooltip, Button } from "@mantine/core";
 import dayjs from "dayjs";
+import { addShowtimeToGroup, getGroupContents } from "../../data/groupContent";
+import useAuth from "../../hooks/useAuth";
+import useUserInfo from "../../hooks/useUserInfo";
 
 export default function ShowtimeCard({ showtime }) {
   const showStartTime = dayjs(showtime.dttmShowStart).format("HH.mm");
   const showEndTime = dayjs(showtime.dttmShowEnd).format("HH.mm");
+  const { userGroups } = useUserInfo();
+  const { userId } = useAuth();
+
+  // async function handleAddShowtime() {
+  //   const groupId = 3; // TODO: Replace with actual group ID
+  //   try {
+  //     await addShowtimeToGroup(groupId, showtime.TheatreAndAuditorium, showtime.dttmShowStart, userId);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
 
   function makeContentDescriptorImages() {
     const contentDescriptors = showtime.ContentDescriptors.ContentDescriptor;
