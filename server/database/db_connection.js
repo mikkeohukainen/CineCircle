@@ -36,6 +36,13 @@ dbPool.connect((err) => {
   }
 });
 
+const databaseExists = async () => {
+  const { rows } = await dbPool.query(
+    `SELECT 1 FROM pg_database WHERE datname = '${config.database}'`,
+  );
+  return rows.length > 0;
+};
+
 const emptyDatabase = async () => {
   await dbPool.query(`
   DO
@@ -51,4 +58,4 @@ const emptyDatabase = async () => {
   `);
 };
 
-module.exports = { dbPool, createDatabase, emptyDatabase };
+module.exports = { dbPool, databaseExists, createDatabase, emptyDatabase };

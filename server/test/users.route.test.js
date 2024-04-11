@@ -16,8 +16,12 @@ const expect = chai.expect;
 
 describe("Users", function () {
   before("set up database", async function () {
-    await db.createDatabase();
-    await dbmigrate.up();
+    if (await db.databaseExists()) {
+      await db.emptyDatabase();
+    } else {
+      await db.createDatabase();
+      await dbmigrate.up();
+    }
   });
 
   afterEach("empty database tables", async function () {
