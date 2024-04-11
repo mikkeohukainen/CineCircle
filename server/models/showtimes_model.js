@@ -1,21 +1,25 @@
-const db = require("../database/db_connection");
+const { dbPool } = require("../database/db_connection");
 
 const showtimes = {
   add: async (showtime) => {
-    await db.query("INSERT INTO showtimes (media_id, theater, showtime) VALUES ($1, $2, $3)", [
-      showtime.mediaId,
+    await dbPool.query("INSERT INTO showtimes (theater, showtime) VALUES ($1, $2)", [
       showtime.theater,
       showtime.showtime,
     ]);
   },
   getAll: async () => {
-    return db.query("SELECT * FROM showtimes");
+    return dbPool.query("SELECT * FROM showtimes");
   },
-  getByMediaId: async (mediaId) => {
-    return db.query("SELECT * FROM showtimes WHERE media_id = $1", [mediaId]);
+
+  getByTheaterAndTimestap: async (theater, showtime) => {
+    return dbPool.query("SELECT * FROM showtimes WHERE theater = $1 AND showtime = $2", [
+      theater,
+      showtime,
+    ]);
   },
+
   delete: async (id) => {
-    return db.query("DELETE FROM showtimes WHERE id = $1", [id]);
+    return dbPool.query("DELETE FROM showtimes WHERE id = $1", [id]);
   },
 };
 
