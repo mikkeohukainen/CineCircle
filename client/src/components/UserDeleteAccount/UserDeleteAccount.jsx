@@ -4,15 +4,18 @@ import { useForm } from "@mantine/form";
 import { useState } from "react";
 import { logout } from "../../data/auth";
 import { useNavigate } from "react-router-dom";
+import { basicNotification, alterNotification } from "../Notifications";
 
 export default function DeleteAccount() {
   const { username, setIsLoggedIn } = useAuth();
-  const [notification, setNotification] = useState(false);
   const navigate = useNavigate();
 
   const form = useForm({
     initialValues: { username: "", password: "", confirmPw: "", boxChecked: false },
   });
+
+  const customNotification = basicNotification();
+  const altNotification = alterNotification();
 
   const handleSubmit = async (values) => {
     if (values.boxChecked === true) {
@@ -30,20 +33,27 @@ export default function DeleteAccount() {
         });
 
         if (!response.ok) {
+          customNotification("Error", "Password does not match confirmation password", "red");
           console.error("Failed to delete account");
         } else {
+          //
+          // TODO: DELETE all data from all tables
+          //
+          customNotification("Ok", "Account permanently deleted", "green");
+          customNotification("Ok", "Logged out", "green");
           logout();
           setIsLoggedIn(false);
           navigate("/");
           console.log("Account deleted");
-
-          // TODO: DELETE all data
         }
       } else {
+        customNotification("Error", "Username does not match login", "red");
         console.log("You can only delete your own account");
       }
     } else {
-      setNotification(true);
+      // customNotification("Error", "Please mark the checkbox to confirm deletion", "red");
+      altNotification("Error", "Please mark the checkbox to confirm deletion", "red");
+
       console.log("box not checked");
     }
     form.reset();
