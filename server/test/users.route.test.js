@@ -46,7 +46,7 @@ describe("Users", function () {
 
       // Attempt to create user with same username
       const res = await chai.request(server).post("/users").send(user);
-
+      expect(res).to.be.json;
       expect(res).to.have.status(409);
       expect(res.body.message).to.equal("Username already exists");
     });
@@ -57,12 +57,14 @@ describe("Users", function () {
         password: "password",
         confirmPw: "password123",
       });
+      expect(res).to.be.json;
       expect(res).to.have.status(400);
       expect(res.body.message).to.equal("Confirmation password does not match");
     });
 
     it("should reject if fields not provided", async function () {
       const res = await chai.request(server).post("/users").send({});
+      expect(res).to.be.json;
       expect(res).to.have.status(400);
       expect(res.body.message).to.equal("Missing fields");
     });
@@ -73,6 +75,7 @@ describe("Users", function () {
         password: "pass",
         confirmPw: "pass",
       });
+      expect(res).to.be.json;
       expect(res).to.have.status(400);
       expect(res.body.message).to.equal("Password must be between 8 and 72 characters");
     });
@@ -86,6 +89,7 @@ describe("Users", function () {
           password: "password".repeat(10),
           confirmPw: "password".repeat(10),
         });
+      expect(res).to.be.json;
       expect(res).to.have.status(400);
       expect(res.body.message).to.equal("Password must be between 8 and 72 characters");
     });
@@ -106,6 +110,7 @@ describe("Users", function () {
         password: "test1234",
       });
 
+      expect(loginRes).to.be.json;
       expect(loginRes).to.have.status(200);
       expect(loginRes.body.username).to.equal("test");
       expect(loginRes.body.userId).to.be.a("string");
@@ -118,6 +123,7 @@ describe("Users", function () {
         password: "password",
       });
 
+      expect(res).to.be.json;
       expect(res).to.have.status(401);
       expect(res.body.message).to.equal("Incorrect username or password");
     });
@@ -142,6 +148,7 @@ describe("Users", function () {
 
     it("should reject if fields not provided", async function () {
       const res = await chai.request(server).post("/users/session").send({});
+      expect(res).to.be.json;
       expect(res).to.have.status(400);
       expect(res.body.message).to.equal("Missing fields");
     });
@@ -158,6 +165,7 @@ describe("Users", function () {
 
       // Get user
       const res = await chai.request(server).get("/users/test123");
+      expect(res).to.be.json;
       expect(res).to.have.status(200);
       expect(res.body).to.have.property("username");
       expect(res.body).to.have.property("user_id");
@@ -201,6 +209,7 @@ describe("Users", function () {
 
     it("should reject if no authorization header is provided", async function () {
       const res = await chai.request(server).delete("/users");
+      expect(res).to.be.json;
       expect(res).to.have.status(401);
       expect(res.body.message).to.equal("Authorization header required");
     });
@@ -221,6 +230,8 @@ describe("Users", function () {
           password: "password",
         })
         .set("Authorization", "Bearer invalidtoken");
+
+      expect(res).to.be.json;
       expect(res).to.have.status(401);
       expect(res.body.message).to.equal("Invalid token");
     });
@@ -248,6 +259,7 @@ describe("Users", function () {
           password: "wrongpassword",
         });
 
+      expect(deleteRes).to.be.json;
       expect(deleteRes).to.have.status(401);
       expect(deleteRes.body.message).to.equal("Incorrect password");
     });
@@ -272,6 +284,7 @@ describe("Users", function () {
         .delete("/users")
         .set("Authorization", `Bearer ${loginRes.body.jwtToken}`);
 
+      expect(deleteRes).to.be.json;
       expect(deleteRes).to.have.status(400);
       expect(deleteRes.body.message).to.equal("Missing password");
     });
