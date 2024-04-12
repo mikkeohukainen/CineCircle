@@ -1,12 +1,12 @@
 const { dbPool } = require("../database/db_connection");
 
 const groupContents = {
-  
   getGroupContents: async (groupId) => {
     const result = await dbPool.query(
-      `SELECT group_contents.*, users.username 
+      `SELECT group_contents.*, users.username, showtimes.event_id
       FROM group_contents
       INNER JOIN users ON group_contents.added_by = users.user_id
+      INNER JOIN showtimes ON showtimes.showtime_id = group_contents.showtime_id
       WHERE group_contents.group_id = $1`,
       [groupId],
     );
