@@ -1,12 +1,4 @@
-import {
-  Button,
-  Container,
-  Group,
-  Space,
-  Text,
-  Title,
-  Badge,
-} from "@mantine/core";
+import { Button, Container, Group, Space, Text, Title, Badge } from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
@@ -37,32 +29,15 @@ export default function GroupDetailsPage() {
 
   const getMembers = async () => {
     try {
-      const members = await getGroupMembers(groupDetails.group_id);
+      const members = await getGroupMembers(groupId);
       setGroupMembers(members);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const handleAcceptAndReject = async (userId, action) => {
-    try {
-      if (action === "accept") {
-        await acceptRequest(groupId, userId);
-        console.log("Request accepted");
-      } else if (action === "reject") {
-        await deleteGroupMember(groupId, userId);
-        console.log("Request rejected");
-      }
-      getMembers();
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const deleteGroup = async (groupId) => {
-    if (!isOwner) {
-      return;
-    }
+  const handleDeleteGroup = async () => {
+    if (!isOwner) return;
     try {
       await deleteGroupById(groupId);
       console.log("Group ", groupDetails.group_name, " deleted");
@@ -71,10 +46,38 @@ export default function GroupDetailsPage() {
     }
   };
 
+  async function handleMemberAction(userId, action) {
+    if (!isOwner) return;
+
+    const actionMap = {
+      accept: async () => {
+        await acceptRequest(groupId, userId);
+        console.log("Request accepted");
+      },
+      reject: async () => {
+        await deleteGroupMember(groupId, userId);
+        console.log("Request rejected");
+      },
+      removeUser: async () => {
+        await deleteGroupMember(groupId, userId);
+        console.log("User removed from group");
+      },
+    };
+
+    try {
+      await actionMap[action]();
+      getMembers();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <Container size="md" mb="xl" p="xl">
       <Group justify="flex-end" mb="xl">
-        {isOwner && <DeleteGroupModal deleteGroup={deleteGroup} groupDetails={groupDetails} />}
+        {isOwner && (
+          <DeleteGroupModal handleDeleteGroup={handleDeleteGroup} groupDetails={groupDetails} />
+        )}
       </Group>
       <Group justify="space-between">
         <Title order={1}>{groupDetails.group_name}</Title>
@@ -104,11 +107,11 @@ export default function GroupDetailsPage() {
         <MemberList
           groupMembers={groupMembers}
           isOwner={isOwner}
-          handleAcceptAndReject={handleAcceptAndReject}
+          handleMemberAction={handleMemberAction}
           ownerId={groupDetails.owner_id}
         />
       </Container>
-      
+
       <Text ta="center">TEST BUTTONS:</Text>
       <Group justify="space-around">
         <Button onClick={() => console.log(groupDetails)}>Console.log group details</Button>

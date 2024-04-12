@@ -1,8 +1,11 @@
 import { Stack, Button, Group, Text, Title, Paper, Container, Divider, Center, Space } from "@mantine/core";
+import RemoveUserModal from "./RemoveUserModal.jsx";
 
-export default function MemberList({ groupMembers, isOwner, ownerId, handleAcceptAndReject }) {
+export default function MemberList({ groupMembers, isOwner, ownerId, handleMemberAction }) {
   const pendingMembers = groupMembers.filter((member) => !member.accepted);
-  const acceptedMembers = groupMembers.filter((member) => member.accepted);
+  const acceptedMembers = groupMembers
+    .filter((member) => member.accepted)
+    .sort((a, b) => (b.user_id === ownerId) ? 1 : -1); // järjestää listan niin että omistaja on aina listan ensimmäisenä
 
   return (
     <Container size="sm">
@@ -15,9 +18,16 @@ export default function MemberList({ groupMembers, isOwner, ownerId, handleAccep
             <div key={member.user_id}>
               <Divider my="sm" variant="dashed" />
               <Group justify="space-between">
-                <Text>{member.username}</Text>
-                {isOwner && member.user_id !== ownerId && <Button>Remove user</Button>}
-                {member.user_id === ownerId && <Text>Group Owner</Text>}
+              <Text>{member.username}</Text>
+                {member.user_id === ownerId ? (
+                  <Text>Group Owner</Text>
+                ) : (
+                  isOwner && <RemoveUserModal
+                    handleMemberAction={handleMemberAction}
+                    user_id={member.user_id}
+                    username={member.username}
+                  />
+                )}
               </Group>
             </div>
           ))}
@@ -36,12 +46,12 @@ export default function MemberList({ groupMembers, isOwner, ownerId, handleAccep
                 <Group justify="space-between">
                   <Text>{member.username}</Text>
                   <Group>
-                    <Button onClick={() => handleAcceptAndReject(member.user_id, "accept")}>
+                    <Button onClick={() => handleMemberAction(member.user_id, "accept")}>
                       Accept
                     </Button>
                     <Button
                       color="red"
-                      onClick={() => handleAcceptAndReject(member.user_id, "reject")}
+                      onClick={() => handleMemberAction(member.user_id, "reject")}
                     >
                       Decline
                     </Button>

@@ -3,13 +3,13 @@ import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function DeleteGroupModal({ deleteGroup, groupDetails }) {
+export default function DeleteGroupModal({ handleDeleteGroup, groupDetails }) {
   const [opened, { open, close }] = useDisclosure(false);
   const [deleted, setDeleted] = useState(false);
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    await deleteGroup(groupDetails.group_id);
+    await handleDeleteGroup();
     console.log(`Group ${groupDetails.group_name} deleted`);
     setDeleted(true);
   };
