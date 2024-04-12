@@ -158,6 +158,12 @@ const tmdb = {
     console.log(URL);
     return fetchData(URL);
   },
+  getRecommendations: (mediaType, id) => {
+    const URL = `https://api.themoviedb.org/3/${mediaType}/${id}/recommendations`
+    console.log("Fetching recommendations from:");
+    console.log(URL);
+    return fetchData(URL);
+  }
 };
 
 module.exports = tmdb;
