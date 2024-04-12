@@ -1,8 +1,22 @@
-import { Button, Container, Group, Space, Text, Title, Paper, Divider } from "@mantine/core";
+import {
+  Button,
+  Container,
+  Group,
+  Space,
+  Text,
+  Title,
+  Badge,
+} from "@mantine/core";
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { acceptRequest, getGroupMembers, deleteGroupMember } from "../../data/groups";
+import {
+  acceptRequest,
+  getGroupMembers,
+  deleteGroupMember,
+  deleteGroupById,
+} from "../../data/groups";
 import MemberList from "./GroupMembers.jsx";
+import DeleteGroupModal from "./DeleteGroupModal.jsx";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo.js";
 
@@ -45,23 +59,34 @@ export default function GroupDetailsPage() {
     }
   };
 
+  const deleteGroup = async (groupId) => {
+    if (!isOwner) {
+      return;
+    }
+    try {
+      await deleteGroupById(groupId);
+      console.log("Group ", groupDetails.group_name, " deleted");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container size="md" mb="xl" p="xl">
-      <Group justify="space-between">
-        <h1>Group Details Page</h1>
-        <Button onClick={() => console.log(groupDetails)}>Console.log group details</Button>
-        <Button onClick={() => console.log(groupMembers)}>Console.log group members</Button>
-        <Button onClick={() => console.log(userGroups)}>Console.log users groups</Button>
+      <Group justify="flex-end" mb="xl">
+        {isOwner && <DeleteGroupModal deleteGroup={deleteGroup} groupDetails={groupDetails} />}
       </Group>
-      <Space h="xl" />
+      <Group justify="space-between">
+        <Title order={1}>{groupDetails.group_name}</Title>
+        <Badge size="lg" variant="light" color="gray">
+          MEMBERS: {acceptedMembers.length}
+        </Badge>
+      </Group>
+      <Space h="xs" />
+
+      <Text size="xl">{groupDetails.description}</Text>
 
       <Container size="md" mb="xl">
-        <Paper withBorder shadow="md" p="xs" radius="xs" mt="xl">
-          <Title order={3}>Group Name: {groupDetails.group_name}</Title>
-          <Text>Group description: {groupDetails.description}</Text>
-          <Text>Owner: {groupDetails.owner_username}</Text>
-          <Text>Members: {acceptedMembers.length}</Text>
-        </Paper>
         <Space h="xl" />
 
         <Container size="md" mb="xl">
@@ -69,11 +94,13 @@ export default function GroupDetailsPage() {
             GROUP CONTENT HERE
           </Title>
         </Container>
+
         <Container size="md" mb="xl">
           <Title ta="center" order={3}>
             GROUP SHOWTIMES HERE
           </Title>
         </Container>
+
         <MemberList
           groupMembers={groupMembers}
           isOwner={isOwner}
@@ -81,6 +108,13 @@ export default function GroupDetailsPage() {
           ownerId={groupDetails.owner_id}
         />
       </Container>
+      
+      <Text ta="center">TEST BUTTONS:</Text>
+      <Group justify="space-around">
+        <Button onClick={() => console.log(groupDetails)}>Console.log group details</Button>
+        <Button onClick={() => console.log(groupMembers)}>Console.log group members</Button>
+        <Button onClick={() => console.log(userGroups)}>Console.log users groups</Button>
+      </Group>
     </Container>
   );
 }
