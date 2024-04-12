@@ -2,9 +2,10 @@ const { dbPool } = require("../database/db_connection");
 
 const showtimes = {
   add: async (showtime) => {
-    await dbPool.query("INSERT INTO showtimes (theater, showtime) VALUES ($1, $2)", [
+    await dbPool.query("INSERT INTO showtimes (theater, showtime, event_id) VALUES ($1, $2, $3)", [
       showtime.theater,
       showtime.showtime,
+      showtime.EventID,
     ]);
   },
   getAll: async () => {
