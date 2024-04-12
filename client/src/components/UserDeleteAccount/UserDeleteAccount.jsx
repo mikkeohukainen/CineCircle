@@ -22,6 +22,7 @@ export default function DeleteAccount() {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           password: values.password,
@@ -52,7 +53,11 @@ export default function DeleteAccount() {
   return (
     <Container>
       <h1>{username}</h1>
+
       <Container size="xs">
+        By deleting your account you will lose all of your data permanently. This action can not be
+        undone.
+        <Space h="md" />
         <form onSubmit={form.onSubmit(handleSubmit)}>
           <TextInput
             label="Password"
@@ -62,7 +67,7 @@ export default function DeleteAccount() {
           />
           <Checkbox
             mt="md"
-            label="Yes, I understand this deletion can not be undone."
+            label="Yes, I understand the consequences and want to delete my account"
             {...form.getInputProps("boxChecked", { type: "checkbox" })}
           />
           <Space h="md" />
