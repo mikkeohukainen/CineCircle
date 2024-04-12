@@ -21,7 +21,6 @@ export default function Layout() {
         breakpoint: "sm",
         collapsed: { mobile: !drawerOpened, desktop: true },
       }}
-      padding="md"
     >
       <AppShell.Header className={classes.header}>
         <Group h="100%" px="md">
