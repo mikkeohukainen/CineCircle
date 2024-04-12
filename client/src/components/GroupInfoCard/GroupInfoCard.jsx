@@ -12,8 +12,10 @@ export default function GroupCard({
 }) {
   const [groupObj, setGroupObj] = useState(group);
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, userId } = useAuth();
   const { isMember, isPending } = membershipStatus;
+  const isOwner = group.owner_id === userId;
+
 
   const handleTitleClick = () => {
     if (isLoggedIn) {
@@ -40,6 +42,7 @@ export default function GroupCard({
       {showActionButton && membershipStatus && onMembershipRequest && (
         <Container size="md" mt="md">
           <GroupCardActionButton
+            isOwner={isOwner}
             isMember={isMember}
             isPending={isPending}
             groupId={group.group_id}
