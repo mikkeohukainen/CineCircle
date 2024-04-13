@@ -61,9 +61,9 @@ export default function Recommendations() {
     let sliceIndex = 5;
 
     if (numFavorites > 6) {
-      sliceIndex = 2;
+      sliceIndex = 3;
     } else if (numFavorites <= 6) {
-      sliceIndex = Math.ceil(10 / numFavorites);
+      sliceIndex = Math.ceil(15 / numFavorites);
     }
 
     return data.results.slice(0, sliceIndex);
