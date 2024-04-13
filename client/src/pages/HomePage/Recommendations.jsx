@@ -35,11 +35,14 @@ export default function Recommendations() {
   }, [favMovies, favTv]);
 
   const filterFavorites = () => {
-    if (!isLoggedIn || !favorites) return;
-
+    console.log(favorites);
+    if (!isLoggedIn || !favorites) {
+      setFavMovies([]);
+      setFavTv([]);
+      return;
+    }
     const onlyMovies = favorites.filter((favorite) => favorite.type === "movie");
     setFavMovies(onlyMovies);
-
     const onlyTvShows = favorites.filter((favorite) => favorite.type === "series");
     setFavTv(onlyTvShows);
   };
@@ -48,8 +51,6 @@ export default function Recommendations() {
     if (!isLoggedIn || !favorites || !favorites.length || !mediaObject) return [];
 
     const type = mediaObject.type === "movie" ? "movie" : "tv";
-
-    console.log("Fetching recommendations for:", mediaObject);
 
     const response = await fetch(
       `http://localhost:8000/search/recommendations?type=${type}&id=${mediaObject.tmdb_id}`,
@@ -71,6 +72,8 @@ export default function Recommendations() {
   const getAllRecommendations = async () => {
     if (!isLoggedIn || !favorites || !favorites.length) {
       setIsLoading(false);
+      setRecomMovies([]);
+      setRecomTvShows([]);
       return;
     }
     setIsLoading(true);
@@ -104,7 +107,6 @@ export default function Recommendations() {
         uniqueItems.push(item);
       }
     });
-
     return uniqueItems;
   };
 
@@ -139,17 +141,6 @@ export default function Recommendations() {
           transitionDuration={300}
         />
       </Group>
-      {console.log("Fav movies:")}
-      {console.log(favMovies)}
-
-      {console.log("Recommended movies:")}
-      {console.log(recomMovies)}
-
-      {console.log("Fav tv:")}
-      {console.log(favTv)}
-
-      {console.log("Recommended tv:")}
-      {console.log(recomTvShows)}
 
       {isLoading && (
         <Group justify="center">
@@ -157,7 +148,9 @@ export default function Recommendations() {
         </Group>
       )}
 
-      {!isLoading && (
+      {!favorites && <Title order={3}>Add favorites to see recommendations</Title>}
+
+      {!isLoading && favorites && (
         <Carousel
           slideSize={{ base: "33.333%", sm: "20%" }}
           slideGap={{ base: "md", sm: "xl" }}
