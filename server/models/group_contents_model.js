@@ -13,6 +13,18 @@ const groupContents = {
     return result.rows;
   },
 
+  getGroupMedia: async (groupId) => {
+    const result = await dbPool.query(
+      `SELECT group_contents.*, media.*
+      FROM media
+      JOIN group_contents ON media.media_id = group_contents.media_id
+      WHERE group_contents.group_id = $1 AND group_contents.media_id IS NOT NULL;
+      `,
+      [groupId],
+    );
+    return result.rows;
+  },
+
   addMediaToGroup: async (groupContent) => {
     const result = await dbPool.query(
       "INSERT INTO group_contents (group_id, media_id, added_by) VALUES ($1, (SELECT media_id FROM media WHERE tmdb_id=$2), $3) RETURNING *",
