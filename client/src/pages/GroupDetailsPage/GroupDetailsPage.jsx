@@ -9,6 +9,7 @@ import {
 } from "../../data/groups";
 import MemberList from "./GroupMembers.jsx";
 import DeleteGroupModal from "./DeleteGroupModal.jsx";
+import LeaveGroupModal from "./LeaveGroupModal.jsx";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo.js";
 
@@ -17,7 +18,7 @@ export default function GroupDetailsPage() {
   const groupDetails = location.state?.groupDetails;
   const [groupMembers, setGroupMembers] = useState([]);
   const [groupContent, setGroupContent] = useState([]);
-  const { userId } = useAuth();
+  const { userId, username } = useAuth();
   const acceptedMembers = groupMembers.filter((member) => member.accepted);
   const isOwner = groupDetails.owner_id === userId;
   const groupId = groupDetails.group_id;
@@ -47,8 +48,6 @@ export default function GroupDetailsPage() {
   };
 
   async function handleMemberAction(userId, action) {
-    if (!isOwner) return;
-
     const actionMap = {
       accept: async () => {
         await acceptRequest(groupId, userId);
@@ -63,7 +62,6 @@ export default function GroupDetailsPage() {
         console.log("User removed from group");
       },
     };
-
     try {
       await actionMap[action]();
       getMembers();
@@ -75,8 +73,10 @@ export default function GroupDetailsPage() {
   return (
     <Container size="md" mb="xl" p="xl">
       <Group justify="flex-end" mb="xl">
-        {isOwner && (
+        {isOwner ? (
           <DeleteGroupModal handleDeleteGroup={handleDeleteGroup} groupDetails={groupDetails} />
+        ) : (
+            <LeaveGroupModal handleMemberAction={handleMemberAction} username={username} user_id={userId} groupDetails={groupDetails} />
         )}
       </Group>
       <Group justify="space-between">
