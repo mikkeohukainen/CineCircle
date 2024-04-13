@@ -34,6 +34,8 @@ export default function Recommendations() {
   }, [favMovies, favTv]);
 
   const filterFavorites = () => {
+    if (!isLoggedIn || !favorites) return;
+
     const onlyMovies = favorites.filter((favorite) => favorite.type === "movie");
     setFavMovies(onlyMovies);
 
@@ -42,7 +44,7 @@ export default function Recommendations() {
   };
 
   const getRecommendations = async (mediaObject) => {
-    if (!isLoggedIn || !favorites.length || !mediaObject) return [];
+    if (!isLoggedIn || !favorites || !favorites.length || !mediaObject) return [];
 
     const type = mediaObject.type === "movie" ? "movie" : "tv";
 
@@ -53,27 +55,20 @@ export default function Recommendations() {
     );
     const data = await response.json();
 
-    if (type === "movie") {
-      if (favMovies.length > 6) {
-        return data.results.slice(0, 2);
-      } else if (favMovies.length < 7) {
-        const sliceIndex = Math.ceil(10 / favMovies.length)
-        return data.results.slice(0, sliceIndex);
-      }
+    const numFavorites = type === "movie" ? favMovies.length : favTv.length;
+    let sliceIndex = 5;
+
+    if (numFavorites > 6) {
+      sliceIndex = 2;
+    } else if (numFavorites <= 6) {
+      sliceIndex = Math.ceil(10 / numFavorites);
     }
-    if (type === "tv") {
-      if (favTv.length > 6) {
-        return data.results.slice(0, 2);
-      } else if (favTv.length < 7) {
-        const sliceIndex = Math.ceil(10 / favTv.length)
-        return data.results.slice(0, sliceIndex);
-      }
-    }
-    return data.results.slice(0, 5);
+
+    return data.results.slice(0, sliceIndex);
   };
 
   const getAllRecommendations = async () => {
-    if (!isLoggedIn || !favorites.length) return;
+    if (!isLoggedIn || !favorites || !favorites.length) return;
 
     const moviePromises = favMovies.map((movie) => getRecommendations(movie));
     const tvPromises = favTv.map((tv) => getRecommendations(tv));
@@ -84,8 +79,8 @@ export default function Recommendations() {
     const uniqueMovies = deduplicate(moviesResults.flat());
     const uniqueTvShows = deduplicate(tvResults.flat());
 
-    setRecomMovies(uniqueMovies);
-    setRecomTvShows(uniqueTvShows);
+    setRecomMovies(uniqueMovies.reverse());
+    setRecomTvShows(uniqueTvShows.reverse());
   };
 
   const deduplicate = (items) => {
