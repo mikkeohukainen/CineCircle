@@ -7,6 +7,7 @@ import {
   rem,
   SegmentedControl,
   Group,
+  Loader,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { Carousel } from "@mantine/carousel";
@@ -20,7 +21,7 @@ export default function Recommendations() {
 
   const [favMovies, setFavMovies] = useState([]);
   const [favTv, setFavTv] = useState([]);
-
+  const [isLoading, setIsLoading] = useState(false);
   const [recomMovies, setRecomMovies] = useState([]);
   const [recomTvShows, setRecomTvShows] = useState([]);
   const [mediaType, setMediaType] = useState("movie");
@@ -68,27 +69,37 @@ export default function Recommendations() {
   };
 
   const getAllRecommendations = async () => {
-    if (!isLoggedIn || !favorites || !favorites.length) return;
-
+    if (!isLoggedIn || !favorites || !favorites.length) {
+      setIsLoading(false);
+      return;
+    }
+    setIsLoading(true);
     const moviePromises = favMovies.map((movie) => getRecommendations(movie));
     const tvPromises = favTv.map((tv) => getRecommendations(tv));
 
-    const moviesResults = await Promise.all(moviePromises);
-    const tvResults = await Promise.all(tvPromises);
+    try {
+      const moviesResults = await Promise.all(moviePromises);
+      const tvResults = await Promise.all(tvPromises);
 
-    const uniqueMovies = deduplicate(moviesResults.flat());
-    const uniqueTvShows = deduplicate(tvResults.flat());
+      const uniqueMovies = deduplicateAndFilter(moviesResults.flat(), favMovies);
+      const uniqueTvShows = deduplicateAndFilter(tvResults.flat(), favTv);
 
-    setRecomMovies(uniqueMovies.reverse());
-    setRecomTvShows(uniqueTvShows.reverse());
+      setRecomMovies(uniqueMovies.reverse());
+      setRecomTvShows(uniqueTvShows.reverse());
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const deduplicate = (items) => {
+  const deduplicateAndFilter = (items, favorites) => {
+    const favoriteIds = new Set(favorites.map((fav) => fav.tmdb_id));
     const uniqueIds = new Set();
     const uniqueItems = [];
 
     items.forEach((item) => {
-      if (!uniqueIds.has(item.id)) {
+      if (!uniqueIds.has(item.id) && !favoriteIds.has(item.id)) {
         uniqueIds.add(item.id);
         uniqueItems.push(item);
       }
@@ -140,15 +151,23 @@ export default function Recommendations() {
       {console.log("Recommended tv:")}
       {console.log(recomTvShows)}
 
-      <Carousel
-        slideSize={{ base: "33.333%", sm: "20%" }}
-        slideGap={{ base: "md", sm: "xl" }}
-        align="start"
-        slidesToScroll={mobile ? 3 : 5}
-        controlSize={30}
-      >
-        {mediaType === "movie" ? recomMovieSlides : recomTvSlides}
-      </Carousel>
+      {isLoading && (
+        <Group justify="center">
+          <Loader></Loader>
+        </Group>
+      )}
+
+      {!isLoading && (
+        <Carousel
+          slideSize={{ base: "33.333%", sm: "20%" }}
+          slideGap={{ base: "md", sm: "xl" }}
+          align="start"
+          slidesToScroll={mobile ? 3 : 5}
+          controlSize={30}
+        >
+          {mediaType === "movie" ? recomMovieSlides : recomTvSlides}
+        </Carousel>
+      )}
       <Space h="xl" />
     </>
   );
