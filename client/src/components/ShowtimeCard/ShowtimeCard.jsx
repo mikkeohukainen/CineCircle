@@ -1,18 +1,19 @@
 import { Card, Image, Text, Group, Stack, Divider, Anchor, Tooltip } from "@mantine/core";
 import dayjs from "dayjs";
+import { useMemo } from "react";
 
 export default function ShowtimeCard({ showtime }) {
   const showStartTime = dayjs(showtime.dttmShowStart).format("HH.mm");
   const showEndTime = dayjs(showtime.dttmShowEnd).format("HH.mm");
 
-  function makeContentDescriptorImages() {
-    const contentDescriptors = showtime.ContentDescriptors.ContentDescriptor;
+  const contentDescriptors = useMemo(() => {
+    const descriptors = showtime.ContentDescriptors.ContentDescriptor;
 
-    if (!Array.isArray(contentDescriptors)) {
+    if (!Array.isArray(descriptors)) {
       return null;
     }
 
-    return contentDescriptors.map((descriptor, index) => {
+    return descriptors.map((descriptor, index) => {
       // Insert a space before capital letters, e.g. "ViolenceAndGore" -> "Violence And Gore"
       const label = descriptor.Name.replace(/([A-Z])/g, " $1").trim();
       return (
@@ -21,7 +22,7 @@ export default function ShowtimeCard({ showtime }) {
         </Tooltip>
       );
     });
-  }
+  }, [showtime]);
 
   return (
     <Card>
@@ -42,7 +43,7 @@ export default function ShowtimeCard({ showtime }) {
           </Text>
           <Group pt="sm">
             <Image src={showtime.RatingImageUrl} alt={showtime.Rating} width={26} height={26} />
-            {makeContentDescriptorImages()}
+            {contentDescriptors}
           </Group>
         </Stack>
       </Group>
