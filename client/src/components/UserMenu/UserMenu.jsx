@@ -3,10 +3,12 @@ import { Menu, Group, Text, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconUser, IconSettings, IconLogout, IconCaretDownFilled } from "@tabler/icons-react";
 import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function UserMenu({ onLogout }) {
+  const navigate = useNavigate();
   const { username } = useAuth();
-  const [opened, { toggle, onOpen, onClose }] = useDisclosure(false);
+  const [opened, { toggle, onOpen, onClose, close }] = useDisclosure(false);
 
   return (
     <Group>
@@ -30,7 +32,15 @@ export default function UserMenu({ onLogout }) {
           </UnstyledButton>
         </Menu.Target>
         <Menu.Dropdown>
-          <Menu.Item leftSection={<IconUser className={classes.menuItemIcon} />}>Profile</Menu.Item>
+          <Menu.Item
+            onClick={() => {
+              close();
+              navigate("/profile");
+            }}
+            leftSection={<IconUser className={classes.menuItemIcon} />}
+          >
+            Profile
+          </Menu.Item>
           <Menu.Item leftSection={<IconSettings className={classes.menuItemIcon} />}>
             Settings
           </Menu.Item>
