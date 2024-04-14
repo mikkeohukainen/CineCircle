@@ -1,7 +1,8 @@
 import { api } from "./api";
 
 export async function getFavorites(username) {
-  return api.get(`/users/${username}/favorites`);
+  const response = await api.get(`/users/${username}/favorites`);
+  return response.data;
 }
 
 export async function addFavorite(username, title, type, description, tmdbId, posterUrl) {
@@ -11,6 +12,12 @@ export async function addFavorite(username, title, type, description, tmdbId, po
     type,
     description,
     tmdbId,
-    posterUrl
+    posterUrl,
+  });
+}
+
+export async function removeFavorite(username, tmdbId) {
+  return api.delete(`/users/${username}/favorites`, {
+    data: { tmdbId },
   });
 }
