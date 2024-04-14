@@ -12,21 +12,21 @@ export default function GroupCard({
 }) {
   const [groupObj, setGroupObj] = useState(group);
   const navigate = useNavigate();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, userId } = useAuth();
   const { isMember, isPending } = membershipStatus;
+  const isOwner = group.owner_id === userId;
+
 
   const handleTitleClick = () => {
-    if (isLoggedIn) {
+    if (isMember && !isPending) {
       navigate("/group-details", { state: { groupDetails: groupObj } });
-    } else {
-      navigate("/login");
     }
   };
 
   return (
     <Card pl="xl" shadow="sm" padding="lg" radius="md" withBorder>
       <Group justify="space-between" mb="xs">
-        <Title order={1} onClick={handleTitleClick} style={{ cursor: "pointer" }}>
+        <Title order={1} onClick={handleTitleClick} style={{ cursor: isMember && !isPending ? "pointer" : "default" }}>
           {group.group_name}
         </Title>
         <Badge variant="light" color="gray">
@@ -40,6 +40,7 @@ export default function GroupCard({
       {showActionButton && membershipStatus && onMembershipRequest && (
         <Container size="md" mt="md">
           <GroupCardActionButton
+            isOwner={isOwner}
             isMember={isMember}
             isPending={isPending}
             groupId={group.group_id}

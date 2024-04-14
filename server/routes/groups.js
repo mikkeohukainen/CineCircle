@@ -58,6 +58,18 @@ router.get("/:groupId/contents", async (req, res) => {
   }
 });
 
+// Get all media for a group.
+router.get("/:groupId/contents/media", async (req, res) => {
+  const groupId = req.params.groupId;
+  try {
+    const result = await groupContents.getGroupMedia(groupId);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Add media to group
 router.post("/:groupId/contents/media", async (req, res) => {
   const groupId = req.params.groupId;
@@ -74,6 +86,7 @@ router.post("/:groupId/contents/media", async (req, res) => {
           tmdbId: req.body.tmdbId,
           posterUrl: req.body.posterUrl,
         };
+        console.log("mediaObject", mediaObject);
         await media.add(mediaObject);
       }
     }

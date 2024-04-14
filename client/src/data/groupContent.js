@@ -43,3 +43,18 @@ export async function deleteGroupContentById(contentId) {
 export async function deleteAllGroupContent(groupId) {
   await api.delete(`/groups/${groupId}/contents`);
 }
+
+export async function getGroupMedia(groupId) {
+  const { data } = await api.get(`/groups/${groupId}/contents/media`);
+  return data;
+}
+
+export async function getMovieDetails(id) {
+  const { data } = await api.get(`/search/movie/details/${id}/`)
+  return { data };
+}
+
+export async function getSeriesDetails(id) {
+  const { data } = await api.get(`/search/tv/details/${id}/`)
+  return { data };
+}

@@ -16,6 +16,7 @@ import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import CastCarousel from "./CastCarousel.jsx";
+import AddMediaToGroup from "./AddMediaToGroupButton.jsx";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo.js";
 import { getFavorites, addFavorite } from "../../data/favorites";
@@ -129,9 +130,12 @@ export default function MediaDetailsPage() {
 
   return (
     <Container size="lg" mt="lg">
-      <ActionIcon variant="outline" onClick={() => navigate(-1)}>
-        <IconArrowLeft></IconArrowLeft>
-      </ActionIcon>
+      <Group justify="space-between">
+        <ActionIcon variant="outline" onClick={() => navigate(-1)}>
+          <IconArrowLeft></IconArrowLeft>
+        </ActionIcon>
+        <AddMediaToGroup mediaObj={mediaObj} />
+      </Group>
       <Card shadow="lg" padding="lg" radius="md" withBorder>
         <Card.Section>
           <Carousel
