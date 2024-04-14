@@ -15,9 +15,10 @@ const groupContents = {
 
   getGroupMedia: async (groupId) => {
     const result = await dbPool.query(
-      `SELECT group_contents.*, media.*
+      `SELECT group_contents.*, media.*, users.username
       FROM media
       JOIN group_contents ON media.media_id = group_contents.media_id
+      LEFT JOIN users ON group_contents.added_by = users.user_id
       WHERE group_contents.group_id = $1 AND group_contents.media_id IS NOT NULL;
       `,
       [groupId],

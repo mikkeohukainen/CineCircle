@@ -10,6 +10,7 @@ import {
 import MemberList from "./GroupMembers.jsx";
 import DeleteGroupModal from "./DeleteGroupModal.jsx";
 import LeaveGroupModal from "./LeaveGroupModal.jsx";
+import GroupMedia from "./GroupMedia.jsx";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo.js";
 
@@ -17,7 +18,6 @@ export default function GroupDetailsPage() {
   const location = useLocation();
   const groupDetails = location.state?.groupDetails;
   const [groupMembers, setGroupMembers] = useState([]);
-  const [groupContent, setGroupContent] = useState([]);
   const { userId, username } = useAuth();
   const acceptedMembers = groupMembers.filter((member) => member.accepted);
   const isOwner = groupDetails.owner_id === userId;
@@ -71,46 +71,47 @@ export default function GroupDetailsPage() {
   }
 
   return (
-    <Container size="md" mb="xl" p="xl">
-      <Group justify="flex-end" mb="xl">
-        {isOwner ? (
-          <DeleteGroupModal handleDeleteGroup={handleDeleteGroup} groupDetails={groupDetails} />
-        ) : (
-            <LeaveGroupModal handleMemberAction={handleMemberAction} username={username} user_id={userId} groupDetails={groupDetails} />
-        )}
-      </Group>
-      <Group justify="space-between">
-        <Title order={1}>{groupDetails.group_name}</Title>
-        <Badge size="lg" variant="light" color="gray">
-          MEMBERS: {acceptedMembers.length}
-        </Badge>
-      </Group>
-      <Space h="xs" />
+    <Container size="xl" mb="xl" p="xl">
+      <Container size="lg" mb="xl">
+        <Group justify="flex-end" mb="xl">
+          {isOwner ? (
+            <DeleteGroupModal handleDeleteGroup={handleDeleteGroup} groupDetails={groupDetails} />
+          ) : (
+            <LeaveGroupModal
+              handleMemberAction={handleMemberAction}
+              username={username}
+              user_id={userId}
+              groupDetails={groupDetails}
+            />
+          )}
+        </Group>
+        <Group justify="space-between">
+          <Title order={1}>{groupDetails.group_name}</Title>
+          <Badge size="lg" variant="light" color="gray">
+            MEMBERS: {acceptedMembers.length}
+          </Badge>
+        </Group>
+        <Space h="xs" />
 
-      <Text size="xl">{groupDetails.description}</Text>
+        <Text size="xl">{groupDetails.description}</Text>
+      </Container>
+
+      <Space h="xl" />
+
+      <GroupMedia groupId={groupId} />
 
       <Container size="md" mb="xl">
-        <Space h="xl" />
-
-        <Container size="md" mb="xl">
-          <Title ta="center" order={3}>
-            GROUP CONTENT HERE
-          </Title>
-        </Container>
-
-        <Container size="md" mb="xl">
-          <Title ta="center" order={3}>
-            GROUP SHOWTIMES HERE
-          </Title>
-        </Container>
-
-        <MemberList
-          groupMembers={groupMembers}
-          isOwner={isOwner}
-          handleMemberAction={handleMemberAction}
-          ownerId={groupDetails.owner_id}
-        />
+        <Title ta="center" order={3}>
+          GROUP SHOWTIMES HERE
+        </Title>
       </Container>
+
+      <MemberList
+        groupMembers={groupMembers}
+        isOwner={isOwner}
+        handleMemberAction={handleMemberAction}
+        ownerId={groupDetails.owner_id}
+      />
 
       <Text ta="center">TEST BUTTONS:</Text>
       <Group justify="space-around">
