@@ -1,0 +1,2 @@
+ALTER TABLE showtimes
+ALTER COLUMN showtime_id DROP DEFAULT;
