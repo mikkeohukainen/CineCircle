@@ -104,11 +104,15 @@ export default function ShowtimeCard({ showtime }) {
           <Text c="dimmed" fz="lg">
             {showtime.TheatreAndAuditorium}
           </Text>
+          
           <Group pt="sm">
             <Image src={showtime.RatingImageUrl} alt={showtime.Rating} width={26} height={26} />
             {makeContentDescriptorImages()}
             {userId !== null && addShowtimeButton()}
           </Group>
+          <Anchor mt="sm" fz="h4" fw="bold" href={showtime.ShowURL} target="_blank">
+            Buy tickets
+          </Anchor>
         </Stack>
       </Group>
     </Card>
