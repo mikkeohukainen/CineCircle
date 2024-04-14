@@ -136,7 +136,7 @@ router.post("/:username/favorites", verifyToken, async (req, res) => {
       await mediaModel.add(mediaObject);
     }
 
-    await usersModel.addFavorites(req.body.username, req.body.tmdbId);
+    await usersModel.addFavorite(req.body.username, req.body.tmdbId);
 
     res.status(200).end();
   } catch (err) {
@@ -149,7 +149,7 @@ router.delete("/:username/favorites", verifyToken, async (req, res) => {
   try {
     const { tmdbId } = req.body;
     const { username } = res.locals;
-    await usersModel.deleteFavorites(username, tmdbId);
+    await usersModel.deleteFavorite(username, tmdbId);
     res.status(200).end();
   } catch (err) {
     console.log(err);
