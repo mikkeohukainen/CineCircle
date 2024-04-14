@@ -32,15 +32,10 @@ const options = {
 const fetchData = (URL) => {
   return fetch(URL, options)
     .then((res) => {
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
       return res.json();
     })
-    .then((json) => {
-      return json;
-    })
     .catch((err) => {
+      console.log(err.message);
       throw err;
     });
 };
@@ -127,35 +122,11 @@ const tmdb = {
     return fetchData(URL);
   },
   getMovieDetails: (id) => {
-    const URL = movieDetailsURL + id;
+    const URL = movieDetailsURL + id + "?language=EN&append_to_response=genres,credits";
     return fetchData(URL);
   },
   getTVDetails: (id) => {
-    const URL = TVDetailsURL + id;
-    return fetchData(URL);
-  },
-  getMovieImages: (id) => {
-    const URL = movieImagesURL + id + "/images?language=EN%2Cnull";
-    console.log("Images fetched from:");
-    console.log(URL);
-    return fetchData(URL);
-  },
-  getMovieCredits: (id) => {
-    const URL = movieDetailsURL + id + "/credits?language=EN";
-    console.log("Credits fetched from:");
-    console.log(URL);
-    return fetchData(URL);
-  },
-  getTVCredits: (id) => {
-    const URL = TVDetailsURL + id + "/credits?language=EN";
-    console.log("Credits fetched from:");
-    console.log(URL);
-    return fetchData(URL);
-  },
-  getTVImages: (id) => {
-    const URL = TVDetailsURL + id + "/images?language=EN%2Cnull";
-    console.log("Images fetched from:");
-    console.log(URL);
+    const URL = TVDetailsURL + id + "?language=EN&append_to_response=genres,credits";
     return fetchData(URL);
   },
 };
