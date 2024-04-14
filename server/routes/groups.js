@@ -92,19 +92,18 @@ router.post("/:groupId/contents/media", async (req, res) => {
 // Add showtime to group
 router.post("/:groupId/contents/showtime", async (req, res) => {
   const groupId = req.params.groupId;
-  const { theater, showtime, addedBy, EventID } = req.body;
+  const { theater, showtime, addedBy, ID } = req.body;
   try {
     console.log("showtime", showtime);
     console.log("theater", theater);
-    const result = await showtimes.getByTheaterAndTimestap(theater, showtime);
+    const result = await showtimes.getById(ID);
     const rows = result.rowCount;
     if (rows === 0) {
-      await showtimes.add({ theater, showtime, EventID });
+      await showtimes.add({ ID, theater, showtime });
     }
     await groupContents.addShowtimeToGroup({
       groupId,
-      theater,
-      showtime,
+      ID,
       addedBy,
     });
     res.status(201).end();

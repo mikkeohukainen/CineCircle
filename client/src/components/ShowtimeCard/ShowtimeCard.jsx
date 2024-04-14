@@ -29,7 +29,7 @@ export default function ShowtimeCard({ showtime }) {
     const groupContents = await getGroupContents(groupId);
 
     const alreadyInGroupContents = groupContents.some(
-      (entry) => entry.event_id === showtime.EventID,
+      (entry) => entry.showtime_id === showtime.ID,
     );
 
     if (!alreadyInGroupContents) {
@@ -39,7 +39,7 @@ export default function ShowtimeCard({ showtime }) {
           showtime.TheatreAndAuditorium,
           showtime.dttmShowStart,
           userId,
-          showtime.EventID,
+          showtime.ID,
         );
         messageUser("Yaay!", "Showtime added to your group!", "green");
       } catch (error) {
