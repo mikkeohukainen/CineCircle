@@ -25,12 +25,12 @@ export async function addMediaToGroup(
   return data;
 }
 
-export async function addShowtimeToGroup(groupId, theater, showtime, userId, EventID) {
+export async function addShowtimeToGroup(groupId, theater, showtime, userId, ID) {
   const { data } = await api.post(`/groups/${groupId}/contents/showtime`, {
     theater,
     showtime,
     addedBy: userId,
-    EventID,
+    ID,
   });
   return data;
 }

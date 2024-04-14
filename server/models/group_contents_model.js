@@ -3,7 +3,7 @@ const { dbPool } = require("../database/db_connection");
 const groupContents = {
   getGroupContents: async (groupId) => {
     const result = await dbPool.query(
-      `SELECT group_contents.*, users.username, showtimes.event_id
+      `SELECT group_contents.*, users.username, showtimes.showtime_id
       FROM group_contents
       INNER JOIN users ON group_contents.added_by = users.user_id
       INNER JOIN showtimes ON showtimes.showtime_id = group_contents.showtime_id
@@ -36,8 +36,8 @@ const groupContents = {
 
   addShowtimeToGroup: async (groupContent) => {
     const result = await dbPool.query(
-      "INSERT INTO group_contents (group_id, showtime_id, added_by) VALUES ($1, (SELECT showtime_id FROM showtimes WHERE theater=$2 AND showtime=$3), $4) RETURNING *",
-      [groupContent.groupId, groupContent.theater, groupContent.showtime, groupContent.addedBy],
+      "INSERT INTO group_contents (group_id, showtime_id, added_by) VALUES ($1, $2, $3) RETURNING *",
+      [groupContent.groupId, groupContent.ID, groupContent.addedBy],
     );
     return result.rows;
   },
