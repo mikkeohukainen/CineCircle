@@ -20,6 +20,8 @@ export default function UserInfoProvider({ children }) {
   useEffect(() => {
     if (userGroupIds.length > 0) {
       getGroups();
+    } else {
+      setUserGroups([]);
     }
   }, [userGroupIds]);
 
