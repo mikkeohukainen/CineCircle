@@ -9,12 +9,14 @@ import {
   Group,
   Title,
   useMantineTheme,
-  Overlay
+  Overlay,
 } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
+import { useNavigate } from "react-router-dom";
 
 export default function CastCarousel({ creditsArray }) {
+  const navigate = useNavigate();
   const baseURL = "https://image.tmdb.org/t/p/w300";
 
   const theme = useMantineTheme();
@@ -24,7 +26,14 @@ export default function CastCarousel({ creditsArray }) {
     .filter((person) => person.profile_path !== null)
     .map((person) => (
       <Carousel.Slide key={person.credit_id}>
-        <Image radius="md" src={baseURL + person.profile_path}></Image>
+        <Image
+          radius="md"
+          src={baseURL + person.profile_path}
+          onClick={() => navigate("/actor", { state: { id: person.id } })}
+          style={{
+            cursor: "pointer",
+          }}
+        ></Image>
         <Text fw={700}>{person.name}</Text>
       </Carousel.Slide>
     ));

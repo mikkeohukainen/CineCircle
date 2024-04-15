@@ -18,6 +18,7 @@ import { GroupsPage } from "./pages/GroupsPage";
 import { GroupDetailsPage } from "./pages/GroupDetailsPage";
 import { ShowtimesPage } from "./pages/ShowtimesPage";
 import { CreateGroupPage } from "./pages/CreateGroupPage";
+import { ActorPage } from "./pages/ActorPage";
 
 export default function App() {
   return (
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="group-details" element={<GroupDetailsPage />} />
             <Route path="theaters" element={<ShowtimesPage />} />
             <Route path="create-group" element={<CreateGroupPage />} />
+            <Route path="actor" element={<ActorPage />} />
             <Route path="*" element={<div>Not Found</div>} />
           </Route>
         </Routes>
