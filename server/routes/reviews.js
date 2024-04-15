@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const reviews = require("../models/reviews_model");
 const verifyToken = require("../middleware/verify-token");
+const mediaModel = require("../models/media_model");
 
 router.get("/", async (_req, res) => {
   try {
@@ -21,9 +22,9 @@ router.get("/user/:username", async (req, res) => {
   }
 });
 
-router.get("/media/:mediaId", async (req, res) => {
+router.get("/media/:tmdbId", async (req, res) => {
   try {
-    const result = await reviews.getByMediaId(req.params.mediaId);
+    const result = await reviews.getByTmdbId(req.params.tmdbId);
     console.log(result);
     res.json(result);
   } catch (err) {
@@ -33,8 +34,24 @@ router.get("/media/:mediaId", async (req, res) => {
 
 router.post("/", verifyToken, async (req, res) => {
   try {
-    const result = await reviews.add(req.body);
-    res.status(201).json(result);
+    console.log("req.body", req.body);
+    const { tmdbId, title, type, description, posterUrl, userId, rating, reviewText, released } =
+      req.body;
+
+    await mediaModel.add({
+      title,
+      type,
+      description,
+      tmdbId,
+      posterUrl,
+      released,
+    });
+
+    const result = await reviews.add({ userId, tmdbId, rating, reviewText });
+    res.status(201).json({
+      ...result,
+      tmdbId,
+    });
   } catch (err) {
     res.status(404).json({ error: err.message });
   }

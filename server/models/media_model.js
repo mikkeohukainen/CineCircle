@@ -3,8 +3,8 @@ const { dbPool } = require("../database/db_connection");
 const media = {
   add: async (media) => {
     await dbPool.query(
-      "INSERT INTO media (title, type, description, tmdb_id, poster_url) VALUES ($1, $2, $3, $4, $5)",
-      [media.title, media.type, media.description, media.tmdbId, media.posterUrl],
+      "INSERT INTO media (title, type, description, tmdb_id, poster_url, released) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING",
+      [media.title, media.type, media.description, media.tmdbId, media.posterUrl, media.released],
     );
   },
   getById: async (id) => {

@@ -3,7 +3,7 @@ const { dbPool } = require("../database/db_connection");
 const reviews = {
   getAll: async () => {
     const result = await dbPool.query(
-      "SELECT reviews.*, users.username FROM reviews JOIN users USING (user_id)",
+      "SELECT reviews.*, users.username, media.* FROM reviews JOIN users USING (user_id) JOIN media USING (media_id)",
     );
     return result.rows;
   },
@@ -14,14 +14,21 @@ const reviews = {
     );
     return result.rows;
   },
-  getByMediaId: async (id) => {
-    const result = await dbPool.query("SELECT * FROM reviews WHERE media_id = $1", [id]);
+  getByTmdbId: async (tmdbId) => {
+    const result = await dbPool.query(
+      `SELECT users.username, reviews.*
+      FROM reviews
+      JOIN users USING (user_id)
+      WHERE reviews.media_id = (SELECT media_id FROM media WHERE tmdb_id=$1 LIMIT 1)`,
+      [tmdbId],
+    );
     return result.rows;
   },
   add: async (body) => {
     const result = await dbPool.query(
-      "INSERT INTO reviews (user_id, media_id, rating, review_text) VALUES ($1, $2, $3, $4) RETURNING *",
-      [body.userId, body.mediaId, body.rating, body.reviewText],
+      `INSERT INTO reviews (user_id, media_id, rating, review_text)
+      VALUES ($1, (SELECT media_id FROM media where tmdb_id=$2 LIMIT 1), $3, $4) RETURNING *`,
+      [body.userId, body.tmdbId, body.rating, body.reviewText],
     );
     return result.rows;
   },
