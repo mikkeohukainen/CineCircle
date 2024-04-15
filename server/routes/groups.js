@@ -58,6 +58,18 @@ router.get("/:groupId/contents", async (req, res) => {
   }
 });
 
+// Get all media for a group.
+router.get("/:groupId/contents/media", async (req, res) => {
+  const groupId = req.params.groupId;
+  try {
+    const result = await groupContents.getGroupMedia(groupId);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
 // Add media to group
 router.post("/:groupId/contents/media", async (req, res) => {
   const groupId = req.params.groupId;
@@ -74,6 +86,7 @@ router.post("/:groupId/contents/media", async (req, res) => {
           tmdbId: req.body.tmdbId,
           posterUrl: req.body.posterUrl,
         };
+        console.log("mediaObject", mediaObject);
         await media.add(mediaObject);
       }
     }
@@ -92,19 +105,18 @@ router.post("/:groupId/contents/media", async (req, res) => {
 // Add showtime to group
 router.post("/:groupId/contents/showtime", async (req, res) => {
   const groupId = req.params.groupId;
-  const { theater, showtime, addedBy } = req.body;
+  const { theater, showtime, addedBy, ID } = req.body;
   try {
     console.log("showtime", showtime);
     console.log("theater", theater);
-    const result = await showtimes.getByTheaterAndTimestap(theater, showtime);
+    const result = await showtimes.getById(ID);
     const rows = result.rowCount;
     if (rows === 0) {
-      await showtimes.add({ theater, showtime });
+      await showtimes.add({ ID, theater, showtime });
     }
     await groupContents.addShowtimeToGroup({
       groupId,
-      theater,
-      showtime,
+      ID,
       addedBy,
     });
     res.status(201).end();
