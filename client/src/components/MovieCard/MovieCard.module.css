@@ -1,27 +1,24 @@
 .cardContainer {
   display: flex;
   justify-content: center;
-  /* padding: 10px; */
   box-shadow: 2px 2px 16px rgba(0, 0, 0, 0.5);
   border-radius: 10px;
   overflow: hidden;
   position: relative;
 }
 
-.cardContainer:hover .image {
+.cardContainer:hover .image
+{
   transform: scale(1.1);
+}
+.cardContainer:hover .invisibleButton {
   cursor: pointer;
+  background: rgba(0, 0, 0, 0.7);
 }
 
 .image {
-  transition: transform 0.5s ease;
+  transition: transform 0.4s ease;
 }
-
-.image:hover {
-  cursor: pointer;
-  transform: scale(1.1);
-}
-
 .invisibleButton {
   position: absolute;
   top: 0;
@@ -34,20 +31,32 @@
   border: none;
   padding: 0;
   cursor: pointer;
-}
-
-.invisibleButton:hover {
-  background: rgba(0, 0, 0, 0.65);
+  z-index: 2;
+  transition: background-color 0.4s ease;
 }
 
 .textOverlay {
   opacity: 0;
-  transition: opacity 0.5s ease;
-  
+  transition: opacity 0.4s ease;
 }
 
 .cardContainer:hover .textOverlay {
   opacity: 1;
 }
 
+.deleteButton {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 3;
+}
 
+.cardContainer:hover .deleteButton {
+  opacity: 1;
+}

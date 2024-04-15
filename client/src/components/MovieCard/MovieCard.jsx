@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { IconTrash } from "@tabler/icons-react";
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({ movie, isGroupOwner = false, handleDelete }) {
   const [movieObj, setMovieObj] = useState(movie);
   const navigate = useNavigate();
   const addedBy = movie.username; // this is used in group media to show who added the movie
@@ -13,6 +13,7 @@ export default function MovieCard({ movie }) {
   const handleClick = () => {
     navigate("/details", { state: { obj: movieObj } });
   };
+
 
   const baseURL = "https://image.tmdb.org/t/p/w500";
 
@@ -26,6 +27,7 @@ export default function MovieCard({ movie }) {
         }
         className={classes.image}
       />
+
       <button className={classes.invisibleButton} onClick={handleClick}>
         <div className={classes.textOverlay}>
           <Text size="lg" c="white">
@@ -47,6 +49,15 @@ export default function MovieCard({ movie }) {
           )}
         </div>
       </button>
+      {isGroupOwner && (
+        <ActionIcon
+          color="red"
+          className={classes.deleteButton}
+          onClick={() => handleDelete(movie.content_id)}
+        >
+          <IconTrash />
+        </ActionIcon>
+      )}
     </div>
   );
 }
