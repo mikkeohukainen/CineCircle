@@ -14,6 +14,7 @@ export default function ShowtimesPage() {
   useEffect(() => {
     getFinnkinoTheaterAreas().then((response) => {
       const areas = response.TheatreAreas.TheatreArea;
+      areas.shift();
       setTheaterAreas(areas);
       // The first area is selected by default
       setSelectedArea({
@@ -42,6 +43,7 @@ export default function ShowtimesPage() {
         <Select
           data={theaterAreas.map((area) => ({ value: String(area.ID), label: area.Name }))}
           value={selectedArea.value}
+          searchable
           onChange={(_value, option) => {
             setSelectedArea(option);
           }}

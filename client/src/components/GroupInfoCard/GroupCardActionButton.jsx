@@ -3,7 +3,7 @@ import { Badge, Button } from '@mantine/core'
 import { useHover } from '@mantine/hooks';
 import useAuth from '../../hooks/useAuth'
 
-export default function GroupCardActionButton({ isMember, isPending, groupId, onMembershipRequest }) {
+export default function GroupCardActionButton({ isOwner, isMember, isPending, groupId, onMembershipRequest }) {
   const { isLoggedIn } = useAuth();
   const { hovered, ref } = useHover();
   const navigate = useNavigate();
@@ -12,8 +12,16 @@ export default function GroupCardActionButton({ isMember, isPending, groupId, on
   if (!isLoggedIn) {
     return (
       <Button color="blue" mt="md" radius="md" onClick={() => navigate("/login")}>
-          Log in to join groups
+          Log In to Join Groups
         </Button>
+    );
+  }
+
+  if (isOwner) {
+    return (
+      <Badge size="xl" variant="light" color="gray" mt="lg">
+        Group Owner
+      </Badge>
     );
   }
 
@@ -26,20 +34,20 @@ export default function GroupCardActionButton({ isMember, isPending, groupId, on
           </Button>
         ) : (
           <Badge size="xl" variant="light" color="gray" mt="lg">
-            Request sent
+            Request Pending
                   </Badge>
       )}
   </div>
     ) : (
       <Badge size="xl" variant="light" color="gray" mt="lg">
-        You are a member
+        Member
       </Badge>
   );
 }
 
   return (
     <Button color="blue" mt="lg" radius="md" onClick={() => onMembershipRequest(groupId, "send")}>
-      Send Request
+      Request to Join
     </Button>
   );
 };

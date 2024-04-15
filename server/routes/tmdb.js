@@ -137,4 +137,14 @@ router.get("/tv/details/:id", async (req, res) => {
   }
 });
 
+router.get("/recommendations", async (req, res) => {
+  try {
+    const result = await tmdb.getRecommendations(req.query.type, req.query.id);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: err.message });
+  }
+});
+
 module.exports = router;

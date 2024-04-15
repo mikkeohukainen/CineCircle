@@ -2,6 +2,7 @@ const router = require("express").Router();
 const groups = require("../models/groups_model");
 const groupContents = require("../models/group_contents_model");
 const media = require("../models/media_model");
+const showtimes = require("../models/showtimes_model");
 const groupMembers = require("../models/group_members_model");
 const verifyToken = require("../middleware/verify-token");
 
@@ -58,36 +59,68 @@ router.get("/:groupId/contents", verifyToken, async (req, res) => {
   }
 });
 
-// Add media or showtime to a group. Either mediaId or showtimeId is required.
-router.post("/:groupId/contents", verifyToken, async (req, res) => {
+// Get all media for a group.
+router.get("/:groupId/contents/media", verifyToken, async (req, res) => {
   const groupId = req.params.groupId;
-  const { mediaId, showtimeId, addedBy } = req.body;
   try {
-    if (!mediaId && !showtimeId) {
-      return res.status(400).json({ error: "Either mediaId or showtimeId must be provided" });
-    }
+    const result = await groupContents.getGroupMedia(groupId);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
-    if (mediaId) {
-      const mediaExists = await media.getByTmdbId(mediaId);
-      if (!mediaExists) {
-        return res.status(404).json({ error: "Media not found" });
+// Add media to group
+router.post("/:groupId/contents/media", async (req, res) => {
+  const groupId = req.params.groupId;
+  const { tmdbId, addedBy } = req.body;
+  try {
+    if (tmdbId) {
+      const result = await media.getByTmdbId(tmdbId);
+      const rows = result.rowCount;
+      if (rows === 0) {
+        const mediaObject = {
+          title: req.body.title,
+          type: req.body.type,
+          description: req.body.description,
+          tmdbId: req.body.tmdbId,
+          posterUrl: req.body.posterUrl,
+        };
+        console.log("mediaObject", mediaObject);
+        await media.add(mediaObject);
       }
     }
-
-    if (showtimeId) {
-      const showtimeExists = await groupContents.getShowtimeById(showtimeId);
-      if (!showtimeExists) {
-        return res.status(404).json({ error: "Showtime not found" });
-      }
-    }
-
-    const result = await groupContents.addGroupContent({
+    await groupContents.addMediaToGroup({
       groupId,
-      mediaId: mediaId || null,
-      showtimeId: showtimeId || null,
+      tmdbId,
       addedBy,
     });
-    res.status(201).json(result);
+    res.status(201).end();
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+
+// Add showtime to group
+router.post("/:groupId/contents/showtime", async (req, res) => {
+  const groupId = req.params.groupId;
+  const { theater, showtime, addedBy, ID } = req.body;
+  try {
+    console.log("showtime", showtime);
+    console.log("theater", theater);
+    const result = await showtimes.getById(ID);
+    const rows = result.rowCount;
+    if (rows === 0) {
+      await showtimes.add({ ID, theater, showtime });
+    }
+    await groupContents.addShowtimeToGroup({
+      groupId,
+      ID,
+      addedBy,
+    });
+    res.status(201).end();
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: "Internal Server Error" });
