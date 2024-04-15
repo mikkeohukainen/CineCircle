@@ -30,8 +30,24 @@
   bottom: 0;
   width: 100%;
   height: 100%;
-  background-color: transparent;
+  background: rgba(0, 0, 0, 0);
   border: none;
   padding: 0;
   cursor: pointer;
 }
+
+.invisibleButton:hover {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.textOverlay {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  
+}
+
+.cardContainer:hover .textOverlay {
+  opacity: 1;
+}
+
+

@@ -66,16 +66,12 @@ export default function GroupMedia({ groupId }) {
   const movieSlides = movieDetails.map((item) => (
     <Carousel.Slide key={item.id}>
       <MovieCard movie={item} />
-      <Text style={{ fontWeight: 'bold' }} size="lg" ta="center">{item.title}</Text>
-      <Text ta="center">Added by: {item.username}</Text>
     </Carousel.Slide>
   ));
 
   const seriesSlides = seriesDetails.map((item) => (
     <Carousel.Slide key={item.id}>
       <MovieCard movie={item} />
-      <Text style={{ fontWeight: 'bold' }} size="lg" ta="center">{item.name}</Text>
-      <Text ta="center">Added by: {item.username}</Text>
     </Carousel.Slide>
   ));
 
