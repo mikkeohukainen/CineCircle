@@ -5,12 +5,14 @@ export async function getAllReviews() {
   return response.data;
 }
 
-export async function submitReview({ userId, mediaId, rating, reviewText }) {
+export async function getReviews(tmdbId) {
+  const response = await api.get(`/reviews/media/${tmdbId}`);
+  return response.data;
+}
+
+export async function submitReview(review) {
   const response = await api.post("/reviews", {
-    userId,
-    mediaId,
-    rating,
-    reviewText,
+    ...review,
   });
   return response.data;
 }

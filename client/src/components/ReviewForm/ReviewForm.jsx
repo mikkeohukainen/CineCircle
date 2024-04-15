@@ -1,14 +1,5 @@
 import { useForm } from "@mantine/form";
-import {
-  Button,
-  TextInput,
-  Textarea,
-  Rating,
-  Box,
-  InputLabel,
-  Input,
-  Fieldset,
-} from "@mantine/core";
+import { Button, Textarea, Rating, Box, Input } from "@mantine/core";
 
 export default function ReviewForm({ onSubmit }) {
   const form = useForm({
@@ -28,7 +19,7 @@ export default function ReviewForm({ onSubmit }) {
         autosize
         resize="vertical"
         minRows={5}
-        maxLength={500}
+        maxLength={1000}
         maxRows={10}
       />
       <Input.Wrapper mt={16} withAsterisk label="Your rating">

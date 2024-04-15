@@ -11,6 +11,7 @@ import {
   Title,
   Stack,
   Text,
+  ScrollArea,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -19,9 +20,10 @@ import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo.js";
 import { addFavorite, removeFavorite } from "../../data/favorites";
 import { ReviewForm } from "../../components/ReviewForm";
-import { IconHeart, IconShare, IconStar } from "@tabler/icons-react";
+import { IconHeart, IconPlus, IconShare, IconStar, IconStarOff } from "@tabler/icons-react";
 import { getMovieDetails, getTvDetails } from "../../data/media";
-import { submitReview } from "../../data/reviews";
+import { submitReview, getReviews } from "../../data/reviews";
+import { ReviewCard } from "../../components/ReviewCard";
 import dayjs from "dayjs";
 
 export default function MediaDetailsPage() {
@@ -33,17 +35,20 @@ export default function MediaDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [inFavorites, setInFavorites] = useState(false);
   const [reviewOpened, { open: openReview, close: closeReview }] = useDisclosure(false);
+  const [reviews, setReviews] = useState([]);
   const baseURL = "https://image.tmdb.org/t/p/w1280";
 
   useEffect(() => {
     (async () => {
-      if (media.title) {
+      if (media.media_type === "movie") {
         const result = await getMovieDetails(media.id);
         setDetails(result);
-      } else {
+      } else if (media.media_type === "tv") {
         const result = await getTvDetails(media.id);
         setDetails(result);
       }
+      const reviews = await getReviews(media.id);
+      setReviews(reviews);
       setIsLoading(false);
     })();
   }, [media, media.id, media.media_type, media.title]);
@@ -54,11 +59,17 @@ export default function MediaDetailsPage() {
 
   const handleReviewSubmit = async (e) => {
     await submitReview({
-      userId,
-      mediaId: media.id,
+      tmdbId: media.id,
+      title: media.title || media.name,
+      type: media.title ? "movie" : "series",
+      description: media.overview,
+      posterUrl: media.poster_path,
+      userId: userId,
       rating: e.rating,
       reviewText: e.review,
+      released: media.release_date || media.first_air_date,
     });
+    closeReview();
   };
 
   const checkFavorites = () => {
@@ -97,9 +108,9 @@ export default function MediaDetailsPage() {
   }, [details.genres]);
 
   return (
-    <Container pt={16}>
+    <Container py={16}>
       <AspectRatio ratio={16 / 9} mb="lg" m={0} p={0}>
-        <Image radius="lg" src={baseURL + media.backdrop_path} alt={media.title || media.name} />
+        <Image radius="lg" src={baseURL + details.backdrop_path} alt={media.title || media.name} />
       </AspectRatio>
       <Group justify="space-between">
         <Stack gap={0}>
@@ -168,20 +179,20 @@ export default function MediaDetailsPage() {
             </Tooltip>
           )}
           {isLoggedIn ? (
-            <Tooltip label="Share to group">
+            <Tooltip label="Add to group">
               <ActionIcon size={42} variant="white">
-                <IconShare style={{ width: rem(24), height: rem(24) }} />
+                <IconPlus style={{ width: rem(24), height: rem(24) }} />
               </ActionIcon>
             </Tooltip>
           ) : (
-            <Tooltip label="Log in to share to a group">
+            <Tooltip label="Log in to add to a group">
               <ActionIcon disabled color="blue" size={42} variant="white">
-                <IconShare style={{ width: rem(24), height: rem(24) }} />
+                <IconPlus style={{ width: rem(24), height: rem(24) }} />
               </ActionIcon>
             </Tooltip>
           )}
         </Group>
-        <Text>{media.overview}</Text>
+        <Text>{details.overview}</Text>
       </Group>
 
       <Stack mt={16}>
@@ -189,8 +200,17 @@ export default function MediaDetailsPage() {
         {!isLoading && details.credits && <CastCarousel creditsArray={details.credits} />}
       </Stack>
 
-      <Stack mt={16}>
-        <Title order={3}>Reviews</Title>
+      <Stack my={16}>
+        <Title order={3}>User reviews</Title>
+        {reviews.length === 0 && !isLoading ? (
+          <Text>No reviews yet. Be the first to leave one!</Text>
+        ) : (
+          <Stack>
+            {reviews.map((review) => (
+              <ReviewCard key={review.review_id} review={review} disableViewMedia />
+            ))}
+          </Stack>
+        )}
       </Stack>
 
       <Modal
