@@ -11,7 +11,7 @@ import {
   Menu,
 } from "@mantine/core";
 import dayjs from "dayjs";
-import { addShowtimeToGroup, getGroupContents } from "../../data/groupContent";
+import { addShowtimeToGroup, getGroupShowtime } from "../../data/groupContent";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo";
 import { basicNotification } from "../Notifications";
@@ -24,19 +24,13 @@ export default function ShowtimeCard({ showtime }) {
   const messageUser = basicNotification();
 
   async function handleAddShowtime(groupId) {
-    const groupContents = await getGroupContents(groupId);
+    const groupContents = await getGroupShowtime(groupId);
 
     const alreadyInGroupContents = groupContents.some((entry) => entry.showtime_id === showtime.ID);
 
     if (!alreadyInGroupContents) {
       try {
-        await addShowtimeToGroup(
-          groupId,
-          showtime.TheatreAndAuditorium,
-          showtime.dttmShowStart,
-          userId,
-          showtime.ID,
-        );
+        await addShowtimeToGroup(groupId, userId, showtime.ID, showtime);
         messageUser("Yaay!", "Showtime added to your group!", "green");
       } catch (error) {
         console.error(error);

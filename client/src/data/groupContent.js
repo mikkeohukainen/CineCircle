@@ -30,11 +30,11 @@ export async function addMediaToGroup(
   return data;
 }
 
-export async function addShowtimeToGroup(groupId, userId, ID, showtimeObj) {
+export async function addShowtimeToGroup(groupId, userId, ID, showtime) {
   const { data } = await api.post(`/groups/${groupId}/contents/showtime`, {
     addedBy: userId,
     ID,
-    showtimeObj,
+    showtimeObjectRaw: showtime
   });
   return data;
 }
