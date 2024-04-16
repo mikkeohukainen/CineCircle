@@ -202,11 +202,7 @@ export default function MediaDetailsPage() {
             </Tooltip>
           )}
           {isLoggedIn ? (
-            <Tooltip label="Add to group">
-              <ActionIcon size={42} variant="white">
-                <IconPlus style={{ width: rem(24), height: rem(24) }} />
-              </ActionIcon>
-            </Tooltip>
+<AddMediaToGroup mediaObj={media} />
           ) : (
             <Tooltip label="Log in to add to a group">
               <ActionIcon disabled color="blue" size={42} variant="white">
