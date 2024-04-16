@@ -7,6 +7,7 @@ const users = require("../routes/users");
 const reviews = require("../routes/reviews");
 const groups = require("../routes/groups");
 const search = require("../routes/tmdb");
+const showtimes = require("../routes/showtimes"); // testi
 
 app.use(helmet());
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use("/users", users);
 app.use("/reviews", reviews);
 app.use("/groups", groups);
 app.use("/search", search);
+app.use("/showtimes", showtimes); // testi
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running on port ${process.env.SERVER_PORT}`);

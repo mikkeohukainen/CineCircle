@@ -44,9 +44,9 @@ export default function UserInfoProvider({ children }) {
     if (!isLoggedIn) return;
     try {
       const usersGroups = await getGroupsByUserId(userId);
-      console.log("getUserGroups:", usersGroups);
+      // console.log("getUserGroups:", usersGroups);
       setUserGroupIds(usersGroups);
-      console.log("Users groups fetched. Found", usersGroups.length, "groups.");
+      // console.log("Users groups fetched. Found", usersGroups.length, "groups.");
     } catch (error) {
       console.log(error);
     }

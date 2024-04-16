@@ -99,7 +99,7 @@ router.post("/:groupId/contents/media", async (req, res) => {
           tmdbId: req.body.tmdbId,
           posterUrl: req.body.posterUrl,
         };
-        console.log("mediaObject", mediaObject);
+        // console.log("mediaObject", mediaObject);
         await media.add(mediaObject);
       }
     }
@@ -121,7 +121,7 @@ router.post("/:groupId/contents/showtime", async (req, res) => {
   const { addedBy, ID, showtimeObjectRaw } = req.body;
   // const { showtimeObj } = req.body;
   const showtimeObj = JSON.stringify(showtimeObjectRaw);
-  console.log("showtimeObj", showtimeObj);
+  // console.log("showtimeObj", showtimeObj);
   try {
     const result = await showtimes.getById(ID);
     const rows = result.rowCount;
