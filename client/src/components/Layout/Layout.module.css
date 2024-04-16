@@ -1,5 +1,10 @@
 .header {
-  background-color: var(--mantine-color-gray-0);
+  &[data-mantine-color-scheme="light"] {
+    background-color: var(--mantine-color-gray-0);
+  }
+  &[data-mantine-color-scheme="dark"] {
+    background-color: var(--mantine-color-gray-9);
+  }
 }
 
 .navbutton {
@@ -9,9 +14,6 @@
   font-weight: 500;
 
   @mixin hover {
-    background-color: light-dark(
-      var(--mantine-color-gray-2),
-      var(--mantine-color-dark-6)
-    );
+    background-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-6));
   }
 }
