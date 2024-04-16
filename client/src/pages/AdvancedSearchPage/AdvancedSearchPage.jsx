@@ -36,8 +36,10 @@ export default function AdvancedSearchPage() {
   // Save search parameters to session storage
 
   useEffect(() => {
-    getGenres();
-    getProviders();
+    (async () => {
+      await getGenres();
+      await getProviders();
+    })();
   }, [mediaType]);
 
   const getGenres = async () => {
