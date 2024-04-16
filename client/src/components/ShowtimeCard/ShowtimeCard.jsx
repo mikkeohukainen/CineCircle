@@ -8,14 +8,12 @@ import {
   Anchor,
   Tooltip,
   Button,
-  TextInput,
   Menu,
 } from "@mantine/core";
 import dayjs from "dayjs";
 import { addShowtimeToGroup, getGroupContents } from "../../data/groupContent";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo";
-import { useEffect } from "react";
 import { basicNotification } from "../Notifications";
 
 export default function ShowtimeCard({ showtime }) {
@@ -28,9 +26,7 @@ export default function ShowtimeCard({ showtime }) {
   async function handleAddShowtime(groupId) {
     const groupContents = await getGroupContents(groupId);
 
-    const alreadyInGroupContents = groupContents.some(
-      (entry) => entry.showtime_id === showtime.ID,
-    );
+    const alreadyInGroupContents = groupContents.some((entry) => entry.showtime_id === showtime.ID);
 
     if (!alreadyInGroupContents) {
       try {
@@ -104,7 +100,7 @@ export default function ShowtimeCard({ showtime }) {
           <Text c="dimmed" fz="lg">
             {showtime.TheatreAndAuditorium}
           </Text>
-          
+
           <Group pt="sm">
             <Image src={showtime.RatingImageUrl} alt={showtime.Rating} width={26} height={26} />
             {makeContentDescriptorImages()}

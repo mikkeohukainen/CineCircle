@@ -17,8 +17,10 @@ export default function Trending() {
   const [mediaType, setMediaType] = useState("movie");
 
   useEffect(() => {
-    getTrendingMovies();
-    getTrendingTV();
+    (async () => {
+      await getTrendingMovies();
+      await getTrendingTV();
+    })();
   }, []);
 
   const getTrendingMovies = async () => {

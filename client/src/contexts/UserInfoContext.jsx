@@ -54,14 +54,8 @@ export default function UserInfoProvider({ children }) {
 
   const fetchFavorites = async () => {
     if (isLoggedIn && username) {
-      console.log("Trying to fetch favorites.");
-      try {
-        const results = await getFavorites(username);
-        const searchResults = results.data;
-        setFavorites(searchResults);
-      } catch (error) {
-        console.error(error);
-      }
+      const favorites = await getFavorites(username).catch(console.error);
+      setFavorites(favorites);
     }
   };
 

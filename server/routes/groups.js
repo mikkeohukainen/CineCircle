@@ -4,6 +4,7 @@ const groupContents = require("../models/group_contents_model");
 const media = require("../models/media_model");
 const showtimes = require("../models/showtimes_model");
 const groupMembers = require("../models/group_members_model");
+const verifyToken = require("../middleware/verify-token");
 
 // Get all groups with their information
 router.get("/", async (req, res) => {
@@ -17,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 // Add a group. Also adds the user who created the group as a accepted member of the group.
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, async (req, res) => {
   try {
     const result = await groups.add(req.body);
     res.status(201).json(result);
@@ -29,7 +30,7 @@ router.post("/", async (req, res) => {
 
 // Delete a group. First deletes the group members from the group_members table
 // and the group contents from the group_contents table.
-router.delete("/:groupId", async (req, res) => {
+router.delete("/:groupId", verifyToken, async (req, res) => {
   const groupId = req.params.groupId;
   try {
     await groupMembers.deleteAllGroupMembers(groupId);
@@ -47,7 +48,7 @@ router.delete("/:groupId", async (req, res) => {
 });
 
 // Get all media and showtimes for a group.
-router.get("/:groupId/contents", async (req, res) => {
+router.get("/:groupId/contents", verifyToken, async (req, res) => {
   const groupId = req.params.groupId;
   try {
     const result = await groupContents.getGroupContents(groupId);
@@ -59,7 +60,7 @@ router.get("/:groupId/contents", async (req, res) => {
 });
 
 // Get all media for a group.
-router.get("/:groupId/contents/media", async (req, res) => {
+router.get("/:groupId/contents/media", verifyToken, async (req, res) => {
   const groupId = req.params.groupId;
   try {
     const result = await groupContents.getGroupMedia(groupId);
@@ -127,7 +128,7 @@ router.post("/:groupId/contents/showtime", async (req, res) => {
 });
 
 // Delete content by content_id
-router.delete("/contents/:contentId", async (req, res) => {
+router.delete("/contents/:contentId", verifyToken, async (req, res) => {
   const contentId = req.params.contentId;
   try {
     const result = await groupContents.deleteGroupContentById(contentId);
@@ -139,7 +140,7 @@ router.delete("/contents/:contentId", async (req, res) => {
 });
 
 // Get group members
-router.get("/:groupId/members", async (req, res) => {
+router.get("/:groupId/members", verifyToken, async (req, res) => {
   const groupId = req.params.groupId;
   try {
     const result = await groupMembers.getAllByGroupId(groupId);
@@ -151,7 +152,7 @@ router.get("/:groupId/members", async (req, res) => {
 });
 
 // Add a member to the group (join request, accepted=false unless specified otherwise)
-router.post("/:groupId/members", async (req, res) => {
+router.post("/:groupId/members", verifyToken, async (req, res) => {
   const { userId, accepted } = req.body;
   const groupId = req.params.groupId;
   try {
@@ -180,7 +181,7 @@ router.get("/:userId", async (req, res) => {
 });
 
 // Delete a member from group
-router.delete("/:groupId/members/:userId", async (req, res) => {
+router.delete("/:groupId/members/:userId", verifyToken, async (req, res) => {
   const { groupId, userId } = req.params;
   try {
     const result = await groupMembers.deleteGroupMember(groupId, userId);
@@ -192,7 +193,7 @@ router.delete("/:groupId/members/:userId", async (req, res) => {
 });
 
 // Accept a member into the group. Sets the accepted value to true.
-router.put("/:groupId/members", async (req, res) => {
+router.put("/:groupId/members", verifyToken, async (req, res) => {
   const groupId = req.params.groupId;
   const { userId } = req.body;
   try {

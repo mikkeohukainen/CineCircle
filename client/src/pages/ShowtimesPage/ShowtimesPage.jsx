@@ -36,6 +36,7 @@ export default function ShowtimesPage() {
         xs: "xs",
         sm: "lg",
       }}
+      mt="lg"
     >
       <Group position="center" justify="space-between" pb={20}>
         <Title>Showtimes</Title>

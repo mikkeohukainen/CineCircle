@@ -5,6 +5,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/users_model");
 const mediaModel = require("../models/media_model");
+const verifyToken = require("../middleware/verify-token");
 
 router.post("/", async (req, res) => {
   try {
@@ -74,6 +75,8 @@ router.post("/session", async (req, res) => {
     }
 
     const token = jwt.sign({ username }, process.env.JWT_SUPERSECRETSIGNER, {
+      issuer: "cinecircle-server",
+      audience: "cinecircle",
       expiresIn: "1d",
     });
 
@@ -88,25 +91,14 @@ router.post("/session", async (req, res) => {
   }
 });
 
-router.delete("/", async (req, res) => {
+router.delete("/", verifyToken, async (req, res) => {
   try {
-    if (!req.headers.authorization) {
-      return res.status(401).json({ message: "Authorization header required" });
-    }
-
     const { password } = req.body;
+    const { username } = res.locals;
+
     if (!password) {
       return res.status(400).json({ message: "Missing password" });
     }
-
-    const token = req.headers.authorization.split(" ")[1];
-
-    const decoded = jwt.verify(token, process.env.JWT_SUPERSECRETSIGNER);
-    if (!decoded) {
-      return res.status(401).json({ message: "Invalid token" });
-    }
-
-    const { username } = decoded;
 
     const row = await usersModel.getHashedPassword(username);
     if (!row) {
@@ -121,11 +113,12 @@ router.delete("/", async (req, res) => {
     await usersModel.deleteUser(username);
     res.status(200).end();
   } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
+    console.log(err.message);
+    res.status(500).end();
   }
 });
 
-router.post("/:username/favorites", async (req, res) => {
+router.post("/:username/favorites", verifyToken, async (req, res) => {
   //console.log(req.body)
   try {
     const result = await mediaModel.getByTmdbId(req.body.tmdbId);
@@ -143,11 +136,23 @@ router.post("/:username/favorites", async (req, res) => {
       await mediaModel.add(mediaObject);
     }
 
-    await usersModel.addFavorites(req.body.username, req.body.tmdbId);
+    await usersModel.addFavorite(req.body.username, req.body.tmdbId);
 
     res.status(200).end();
   } catch (err) {
     console.error(err.message);
+    res.status(500).end();
+  }
+});
+
+router.delete("/:username/favorites", verifyToken, async (req, res) => {
+  try {
+    const { tmdbId } = req.body;
+    const { username } = res.locals;
+    await usersModel.deleteFavorite(username, tmdbId);
+    res.status(200).end();
+  } catch (err) {
+    console.log(err);
     res.status(500).end();
   }
 });

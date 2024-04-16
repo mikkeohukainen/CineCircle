@@ -215,7 +215,7 @@ describe("Users", function () {
       const res = await chai.request(server).delete("/users");
       expect(res).to.be.json;
       expect(res).to.have.status(401);
-      expect(res.body.message).to.equal("Authorization header required");
+      expect(res.body.message).to.equal("Invalid or missing token");
     });
 
     it("should reject if token is invalid", async function () {
@@ -237,7 +237,7 @@ describe("Users", function () {
 
       expect(res).to.be.json;
       expect(res).to.have.status(401);
-      expect(res.body.message).to.equal("Invalid token");
+      expect(res.body.message).to.equal("Invalid or missing token");
     });
 
     it("should reject if password is incorrect", async function () {

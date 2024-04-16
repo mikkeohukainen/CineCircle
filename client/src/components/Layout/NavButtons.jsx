@@ -13,6 +13,7 @@ export default function NavButtons({ closeDrawer, ...props }) {
     { label: "Home", onClick: () => navigate("/") },
     { label: "Theaters", onClick: () => navigate("/theaters") },
     { label: "Groups", onClick: () => navigate("/groups") },
+    { label: "Reviews", onClick: () => navigate("/reviews") },
     { label: "Advanced Search", onClick: () => navigate("/advanced-search") },
   ].map(({ label, onClick }) => (
     <UnstyledButton
