@@ -55,7 +55,7 @@ const userModel = {
 
   getFavorites: async function (username) {
     const result = await dbPool.query(
-      "SELECT * FROM media JOIN favorites USING (media_id) JOIN users USING (user_id) WHERE users.username=$1",
+      "SELECT media.* FROM media JOIN favorites USING (media_id) JOIN users USING (user_id) WHERE users.username=$1",
       [username],
     );
 
