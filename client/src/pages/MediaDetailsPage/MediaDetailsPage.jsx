@@ -112,6 +112,7 @@ export default function MediaDetailsPage() {
         media.id,
         media.poster_path,
       );
+      await fetchFavorites();
     } catch (error) {
       console.error(error);
     }
@@ -120,6 +121,7 @@ export default function MediaDetailsPage() {
   const removeFromFavorites = async () => {
     try {
       await removeFavorite(username, media.id);
+      await fetchFavorites();
     } catch (error) {
       console.error(error);
     }
