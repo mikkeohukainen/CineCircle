@@ -140,7 +140,7 @@ export default function MediaDetailsPage() {
           <Title order={2}>{media.title || media.name}</Title>
           <Group>
             <Text size="sm" c="dimmed">
-              {dayjs(media.release_date || media.first_air_date).year()}
+              {dayjs(details.release_date || details.first_air_date).year()}
             </Text>
             <Text size="sm" c="dimmed">
               {genresString}
