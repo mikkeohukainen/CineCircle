@@ -37,7 +37,21 @@ export default function ActorPage() {
     const searchResults = await data.json();
 
     setActorInfo(searchResults);
-    setMovies(searchResults.combined_credits.cast.slice(0, 30));
+    const uniqueMovies = deduplicate(searchResults.combined_credits.cast.slice(0, 30))
+    setMovies(uniqueMovies);
+  };
+
+  const deduplicate = (items) => {
+    const uniqueIds = new Set();
+    const uniqueItems = [];
+
+    items.forEach((item) => {
+      if (!uniqueIds.has(item.id)) {
+        uniqueIds.add(item.id);
+        uniqueItems.push(item);
+      }
+    });
+    return uniqueItems;
   };
 
   const baseURL = "https://image.tmdb.org/t/p/w300";
