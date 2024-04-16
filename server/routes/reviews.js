@@ -34,18 +34,21 @@ router.get("/media/:tmdbId", async (req, res) => {
 
 router.post("/", verifyToken, async (req, res) => {
   try {
-    console.log("req.body", req.body);
     const { tmdbId, title, type, description, posterUrl, userId, rating, reviewText, released } =
       req.body;
 
-    await mediaModel.add({
-      title,
-      type,
-      description,
-      tmdbId,
-      posterUrl,
-      released,
-    });
+    const rowCount = (await mediaModel.getByTmdbId(tmdbId)).rowCount;
+
+    if (rowCount === 0) {
+      await mediaModel.add({
+        title,
+        type,
+        description,
+        tmdbId,
+        posterUrl,
+        released,
+      });
+    }
 
     const result = await reviews.add({ userId, tmdbId, rating, reviewText });
     res.status(201).json({
