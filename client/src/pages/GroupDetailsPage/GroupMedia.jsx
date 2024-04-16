@@ -1,25 +1,24 @@
 import { useEffect, useState } from "react";
 import { Carousel } from "@mantine/carousel";
-import { getGroupMedia, getMovieDetails, getSeriesDetails } from "../../data/groupContent";
+import { getGroupMedia, getMovieDetails, getSeriesDetails, deleteGroupContentById } from "../../data/groupContent";
 import { Container, useMantineTheme, Title, Space, Text, } from "@mantine/core";
 import { MovieCard } from "../../components/MovieCard";
 import { useMediaQuery } from "@mantine/hooks";
 
-export default function GroupMedia({ groupId }) {
+export default function GroupMedia({ groupId, isOwner }) {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
   const [groupMedia, setGroupMedia] = useState([]);
   const [movieDetails, setMovieDetails] = useState([]);
   const [seriesDetails, setSeriesDetails] = useState([]);
+  
 
   useEffect(() => {
     getMedia();
   }, []);
 
   useEffect(() => {
-    if (groupMedia.length > 0) {
       fetchAllDetails();
-    }
   }, [groupMedia]);
 
   const getMedia = async () => {
@@ -63,19 +62,26 @@ export default function GroupMedia({ groupId }) {
     setMovieDetails(newMovieDetails);
     setSeriesDetails(newSeriesDetails);
   };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteGroupContentById(id);
+      console.log("Deleted", id);
+    } catch (error) {
+      console.error(error);
+    }
+    getMedia();
+  };
+
   const movieSlides = movieDetails.map((item) => (
     <Carousel.Slide key={item.id}>
-      <MovieCard movie={item} />
-      <Text style={{ fontWeight: 'bold' }} size="lg" ta="center">{item.title}</Text>
-      <Text ta="center">Added by: {item.username}</Text>
+      <MovieCard movie={item} isGroupOwner={isOwner} handleDelete={handleDelete} />
     </Carousel.Slide>
   ));
 
   const seriesSlides = seriesDetails.map((item) => (
     <Carousel.Slide key={item.id}>
-      <MovieCard movie={item} />
-      <Text style={{ fontWeight: 'bold' }} size="lg" ta="center">{item.name}</Text>
-      <Text ta="center">Added by: {item.username}</Text>
+      <MovieCard movie={item} isGroupOwner={isOwner} handleDelete={handleDelete}/>
     </Carousel.Slide>
   ));
 

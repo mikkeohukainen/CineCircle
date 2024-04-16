@@ -98,7 +98,7 @@ export default function GroupDetailsPage() {
 
       <Space h="xl" />
 
-      <GroupMedia groupId={groupId} />
+      <GroupMedia groupId={groupId} isOwner={isOwner} />
 
       <Container size="md" mb="xl">
         <Title ta="center" order={3}>
