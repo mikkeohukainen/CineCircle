@@ -13,6 +13,19 @@ const groupContents = {
     return result.rows;
   },
 
+  getGroupShowtime: async (groupId) => {
+    const result = await dbPool.query(
+      `SELECT group_contents.*, showtimes.*, users.username
+      FROM showtimes
+      JOIN group_contents ON showtimes.showtime_id = group_contents.showtime_id
+      LEFT JOIN users ON group_contents.added_by = users.user_id
+      WHERE group_contents.group_id = $1 AND group_contents.showtime_id IS NOT NULL;
+      `,
+      [groupId],
+    );
+    return result.rows;
+  },
+
   getGroupMedia: async (groupId) => {
     const result = await dbPool.query(
       `SELECT group_contents.*, media.*, users.username
