@@ -34,8 +34,7 @@ export default function MovieCard({ movie, isGroupOwner = false, handleDelete })
             {movie.title || movie.name}
           </Text>
           <Text mt="xs" c="white" size="sm">
-            {new Date(movie.release_date).getFullYear() ||
-              new Date(movie.first_air_date).getFullYear()}
+          {new Date(movie.release_date ?? movie.first_air_date ?? '').getFullYear() || ''}
           </Text>
           {addedBy && (
             <>
