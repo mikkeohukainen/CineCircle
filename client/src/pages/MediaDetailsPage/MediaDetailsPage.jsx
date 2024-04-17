@@ -26,6 +26,7 @@ import { getMovieDetails, getTvDetails } from "../../data/media";
 import { submitReview, getReviews } from "../../data/reviews";
 import { ReviewCard } from "../../components/ReviewCard";
 import dayjs from "dayjs";
+import { notifications } from "@mantine/notifications";
 
 export default function MediaDetailsPage() {
   const { username, isLoggedIn, userId } = useAuth();
@@ -84,6 +85,12 @@ export default function MediaDetailsPage() {
       released: media.release_date || media.first_air_date,
     });
     closeReview();
+    notifications.show({
+      title: "Review submitted",
+      message: "Thank you for your review!",
+      color: "green",
+      autoClose: 3000,
+    });
   };
 
   const checkFavorites = () => {
