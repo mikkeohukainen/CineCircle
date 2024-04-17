@@ -33,7 +33,7 @@ export default function ReviewCard({ review, disableViewMedia }) {
         </div>
         <Rating value={review.rating} readOnly size="md" />
       </Group>
-      <Text size="sm" truncate="end" mt="sm">
+      <Text size="sm" mt="sm" wrap>
         {review.review_text}
       </Text>
       {!disableViewMedia && (
