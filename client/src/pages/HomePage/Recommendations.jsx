@@ -31,7 +31,9 @@ export default function Recommendations() {
   }, [favorites]);
 
   useEffect(() => {
-    getAllRecommendations();
+    (async () => {
+      await getAllRecommendations();
+    })();
   }, [favMovies, favTv]);
 
   const filterFavorites = () => {

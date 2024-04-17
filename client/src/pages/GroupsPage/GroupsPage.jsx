@@ -17,8 +17,10 @@ export default function GroupsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    getGroups();
-    getUsersGroups();
+    (async () => {
+      await getGroups();
+      await getUsersGroups();
+    })();
   }, [updateTrigger, isLoggedIn, userId]);
 
   const getGroups = async () => {

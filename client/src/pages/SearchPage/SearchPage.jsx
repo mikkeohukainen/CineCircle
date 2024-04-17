@@ -10,10 +10,12 @@ export default function SearchPage() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.state && location.state.query) {
-      setSearchText(location.state.query);
-      searchMovies(location.state.query);
-    }
+    (async () => {
+      if (location.state && location.state.query) {
+        setSearchText(location.state.query);
+        await searchMovies(location.state.query);
+      }
+    })();
   }, []);
 
   const searchMovies = async (query) => {
@@ -23,9 +25,7 @@ export default function SearchPage() {
       return;
     }
     console.log(searchQuery);
-    const data = await fetch(
-      "http://localhost:8000/search/multi/title/" + searchQuery
-    );
+    const data = await fetch("http://localhost:8000/search/multi/title/" + searchQuery);
     const searchResults = await data.json();
     setMovies(() => searchResults.results);
     console.log("Movies searched");
@@ -49,7 +49,7 @@ export default function SearchPage() {
           />
         </form>
       </Container>
-        <SearchResults media={movies} />
+      <SearchResults media={movies} />
     </Container>
   );
 }

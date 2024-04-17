@@ -36,8 +36,10 @@ export default function AdvancedSearchPage() {
   // Save search parameters to session storage
 
   useEffect(() => {
-    getGenres();
-    getProviders();
+    (async () => {
+      await getGenres();
+      await getProviders();
+    })();
   }, [mediaType]);
 
   const getGenres = async () => {
@@ -92,9 +94,15 @@ export default function AdvancedSearchPage() {
       if (tvStatus) URL += `&tvstatus=${tvStatus}`;
 
       const response = await fetch(URL);
-      const searchResults = await response.json();
-      return searchResults.results;
-    };
+      const searchResultsRaw = await response.json();
+      // lisätään jokaiseen tulokseen media_type
+    const searchResults = searchResultsRaw.results.map((item) => ({
+      ...item,
+      media_type: mediaType
+    }));
+
+    return searchResults;
+  };
     const firstPageResults = await fetchMedia(1);
     const secondPageResults = await fetchMedia(2);
 

@@ -112,6 +112,7 @@ export default function MediaDetailsPage() {
         media.id,
         media.poster_path,
       );
+      await fetchFavorites();
     } catch (error) {
       console.error(error);
     }
@@ -120,6 +121,7 @@ export default function MediaDetailsPage() {
   const removeFromFavorites = async () => {
     try {
       await removeFavorite(username, media.id);
+      await fetchFavorites();
     } catch (error) {
       console.error(error);
     }
@@ -173,7 +175,7 @@ export default function MediaDetailsPage() {
                 }}
                 color="red"
                 size={42}
-                variant="white"
+                variant="transparent"
               >
                 <IconHeart
                   fill={inFavorites ? "red" : "transparent"}
@@ -183,29 +185,29 @@ export default function MediaDetailsPage() {
             </Tooltip>
           ) : (
             <Tooltip label="Log in to add to favorites">
-              <ActionIcon disabled color="red" size={42} variant="white">
+              <ActionIcon disabled color="red" size={42} variant="transparent">
                 <IconHeart style={{ width: rem(24), height: rem(24) }} />
               </ActionIcon>
             </Tooltip>
           )}
           {isLoggedIn ? (
             <Tooltip label="Leave a review">
-              <ActionIcon onClick={openReview} color="yellow" size={42} variant="white">
+              <ActionIcon onClick={openReview} color="yellow" size={42} variant="transparent">
                 <IconStar style={{ width: rem(24), height: rem(24) }} />
               </ActionIcon>
             </Tooltip>
           ) : (
             <Tooltip label="Log in to leave a review">
-              <ActionIcon disabled color="yellow" size={42} variant="white">
+              <ActionIcon disabled color="yellow" size={42} variant="transparent">
                 <IconStar style={{ width: rem(24), height: rem(24) }} />
               </ActionIcon>
             </Tooltip>
           )}
           {isLoggedIn ? (
-<AddMediaToGroup mediaObj={media} />
+            <AddMediaToGroup mediaObj={media} />
           ) : (
             <Tooltip label="Log in to add to a group">
-              <ActionIcon disabled color="blue" size={42} variant="white">
+              <ActionIcon disabled color="blue" size={42} variant="transparent">
                 <IconPlus style={{ width: rem(24), height: rem(24) }} />
               </ActionIcon>
             </Tooltip>

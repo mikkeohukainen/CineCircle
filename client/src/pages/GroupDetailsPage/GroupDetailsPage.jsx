@@ -26,7 +26,9 @@ export default function GroupDetailsPage() {
   const { userGroups } = useUserInfo();
 
   useEffect(() => {
-    getMembers();
+    (async () => {
+      await getMembers();
+    })();
   }, []);
 
   const getMembers = async () => {

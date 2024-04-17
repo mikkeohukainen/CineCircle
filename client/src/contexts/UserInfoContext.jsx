@@ -12,17 +12,21 @@ export default function UserInfoProvider({ children }) {
   const { username, userId, isLoggedIn } = useAuth();
 
   useEffect(() => {
-    if (!isLoggedIn) return;
-    getUsersGroups();
-    fetchFavorites();
+    (async () => {
+      if (!isLoggedIn) return;
+      await getUsersGroups();
+      await fetchFavorites();
+    })();
   }, [isLoggedIn, userId]);
 
   useEffect(() => {
-    if (userGroupIds.length > 0) {
-      getGroups();
-    } else {
-      setUserGroups([]);
-    }
+    (async () => {
+      if (userGroupIds.length > 0) {
+        await getGroups();
+      } else {
+        setUserGroups([]);
+      }
+    })();
   }, [userGroupIds]);
 
   const getGroups = async () => {

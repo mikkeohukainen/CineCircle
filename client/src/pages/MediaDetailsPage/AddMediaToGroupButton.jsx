@@ -61,11 +61,11 @@ export default function AddMediaToGroup({ mediaObj }) {
   return (
     <Menu shadow="md">
       <Menu.Target>
-      <Tooltip label="Add to group">
-              <ActionIcon size={42} variant="white">
-                <IconPlus style={{ width: rem(24), height: rem(24) }} />
-              </ActionIcon>
-            </Tooltip>
+        <Tooltip label="Add to group">
+          <ActionIcon size={42} variant="transparent">
+            <IconPlus style={{ width: rem(24), height: rem(24) }} />
+          </ActionIcon>
+        </Tooltip>
       </Menu.Target>
       <Menu.Dropdown>
         {groupsToAdd.map((group) => (
