@@ -47,7 +47,7 @@ export default function ShowtimeCard({ showtime }) {
     }
   }
 
-  function makeContentDescriptorImages() {
+  function ContentDescriptorImages() {
     const contentDescriptors = showtime.ContentDescriptors.ContentDescriptor;
 
     if (!Array.isArray(contentDescriptors)) {
@@ -65,11 +65,13 @@ export default function ShowtimeCard({ showtime }) {
     });
   }
 
-  function addShowtimeButton() {
+  function AddShowtimeButton(props) {
     return (
-      <Menu shadow="md" width={200}>
+      <Menu shadow="md" width={200} {...props}>
         <Menu.Target>
-          <Button variant="outline">Add to your group</Button>
+          <Button fz="md" variant="transparent">
+            Add to group
+          </Button>
         </Menu.Target>
 
         <Menu.Dropdown>
@@ -84,7 +86,7 @@ export default function ShowtimeCard({ showtime }) {
   }
 
   return (
-    <Card>
+    <Card withBorder radius="md" padding="sm" style={{ width: "100%" }}>
       <Group wrap="nowrap">
         <Stack gap={0} align="center" p="sm">
           <Text fz="h2" fw="bold">
@@ -103,12 +105,14 @@ export default function ShowtimeCard({ showtime }) {
 
           <Group pt="sm">
             <Image src={showtime.RatingImageUrl} alt={showtime.Rating} width={26} height={26} />
-            {makeContentDescriptorImages()}
-            {userId !== null && addShowtimeButton()}
+            {<ContentDescriptorImages />}
           </Group>
-          <Anchor mt="sm" fz="h4" fw="bold" href={showtime.ShowURL} target="_blank">
-            Buy tickets
-          </Anchor>
+          <Group mt="sm">
+            <Anchor fw={700} href={showtime.ShowURL} target="_blank">
+              Buy tickets
+            </Anchor>
+            {userId !== null && <AddShowtimeButton />}
+          </Group>
         </Stack>
       </Group>
     </Card>
