@@ -41,9 +41,6 @@ export default function UserMenu({ onLogout }) {
           >
             Profile
           </Menu.Item>
-          <Menu.Item leftSection={<IconSettings className={classes.menuItemIcon} />}>
-            Settings
-          </Menu.Item>
           <Menu.Divider />
           <Menu.Item
             leftSection={<IconLogout className={classes.menuItemIcon} />}
