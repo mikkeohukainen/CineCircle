@@ -11,10 +11,11 @@ import {
   Menu,
 } from "@mantine/core";
 import dayjs from "dayjs";
-import { addShowtimeToGroup, getGroupContents } from "../../data/groupContent";
+import { addShowtimeToGroup, getGroupShowtime } from "../../data/groupContent";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo";
 import { basicNotification } from "../Notifications";
+import { useLocation } from "react-router-dom";
 
 export default function ShowtimeCard({ showtime }) {
   const showStartTime = dayjs(showtime.dttmShowStart).format("HH.mm");
@@ -22,21 +23,17 @@ export default function ShowtimeCard({ showtime }) {
   const { userGroups } = useUserInfo();
   const { userId } = useAuth();
   const messageUser = basicNotification();
+  const location = useLocation();
+  const excludePathForButton = "/group-details";
 
   async function handleAddShowtime(groupId) {
-    const groupContents = await getGroupContents(groupId);
+    const groupContents = await getGroupShowtime(groupId);
 
     const alreadyInGroupContents = groupContents.some((entry) => entry.showtime_id === showtime.ID);
 
     if (!alreadyInGroupContents) {
       try {
-        await addShowtimeToGroup(
-          groupId,
-          showtime.TheatreAndAuditorium,
-          showtime.dttmShowStart,
-          userId,
-          showtime.ID,
-        );
+        await addShowtimeToGroup(groupId, userId, showtime.ID, showtime);
         messageUser("Yaay!", "Showtime added to your group!", "green");
       } catch (error) {
         console.error(error);
@@ -104,7 +101,7 @@ export default function ShowtimeCard({ showtime }) {
           <Group pt="sm">
             <Image src={showtime.RatingImageUrl} alt={showtime.Rating} width={26} height={26} />
             {makeContentDescriptorImages()}
-            {userId !== null && addShowtimeButton()}
+            {userId !== null && location.pathname !== excludePathForButton && addShowtimeButton()}
           </Group>
           <Anchor mt="sm" fz="h4" fw="bold" href={showtime.ShowURL} target="_blank">
             Buy tickets
