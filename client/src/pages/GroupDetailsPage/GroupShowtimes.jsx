@@ -1,4 +1,4 @@
-import { Stack } from "@mantine/core";
+import { Stack, Text } from "@mantine/core";
 import { ShowtimeCard } from "../../components/ShowtimeCard";
 import { getGroupShowtime } from "../../data/groupContent";
 import { useState, useEffect } from "react";
@@ -9,21 +9,12 @@ export default function GroupShowtimes() {
   const location = useLocation();
   const groupDetails = location.state?.groupDetails;
   const groupId = groupDetails.group_id;
-  const [groupShowtimeList, setGroupShowtimeList] = useState(null);
+  const [groupShowtimeList, setGroupShowtimeList] = useState([]);
 
   useEffect(() => {
     async function getShowtimeIds() {
       const groupShowtimes = await getGroupShowtime(groupId);
-
-      if (groupShowtimes !== null) {
-        const requests = groupShowtimes.map((showtime) =>
-          fetch(`http://localhost:8000/showtimes/${showtime.showtime_id}`).then((response) =>
-            response.json(),
-          ),
-        );
-        const showtimes = await Promise.all(requests);
-        setGroupShowtimeList(showtimes);
-      }
+      setGroupShowtimeList(groupShowtimes);
     }
     getShowtimeIds();
   }, []);
@@ -31,10 +22,13 @@ export default function GroupShowtimes() {
   return (
     <>
       <Stack gap="sm">
-        {groupShowtimeList &&
+        {groupShowtimeList.length > 0 ? (
           groupShowtimeList.map((showtime) => (
             <ShowtimeCard key={showtime.showtime_id} showtime={showtime.showtime_obj} />
-          ))}
+          ))
+        ) : (
+          <Text>No showtimes added to the group</Text>
+        )}
       </Stack>
     </>
   );

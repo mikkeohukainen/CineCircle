@@ -18,7 +18,6 @@ app.use("/users", users);
 app.use("/reviews", reviews);
 app.use("/groups", groups);
 app.use("/search", search);
-app.use("/showtimes", showtimes); // testi
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running on port ${process.env.SERVER_PORT}`);
