@@ -64,7 +64,7 @@ export default function ShowtimeCard({ showtime }) {
 
   function AddShowtimeButton(props) {
     return (
-      <Menu shadow="md" width={200} {...props}>
+      <Menu shadow="md" {...props}>
         <Menu.Target>
           <Button fz="md" variant="transparent">
             Add to group
@@ -74,7 +74,7 @@ export default function ShowtimeCard({ showtime }) {
         <Menu.Dropdown>
           {userGroups.map((group) => (
             <Menu.Item key={group.group_id} onClick={() => handleAddShowtime(group.group_id)}>
-              {group.group_name}
+              <Text>{group.group_name}</Text>
             </Menu.Item>
           ))}
         </Menu.Dropdown>
