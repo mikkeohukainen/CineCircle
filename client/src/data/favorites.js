@@ -5,6 +5,11 @@ export async function getFavorites(username) {
   return response.data;
 }
 
+export async function getFavoritesByListId(listId) {
+  const response = await api.get(`/users/favorites/${listId}`);
+  return response.data;
+}
+
 export async function addFavorite(username, title, type, description, tmdbId, posterUrl) {
   return api.post(`/users/${username}/favorites`, {
     username,

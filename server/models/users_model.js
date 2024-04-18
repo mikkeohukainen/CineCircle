@@ -61,6 +61,17 @@ const userModel = {
 
     return result.rowCount > 0 ? result.rows : null;
   },
+  getFavoritesByListId: async function (listId) {
+    const result = await dbPool.query(
+      `SELECT media.*, users.username AS shared_by
+       FROM media
+       JOIN favorites USING (media_id)
+       JOIN users USING (user_id)
+       WHERE favorites.user_id=$1`,
+      [listId],
+    );
+    return result.rowCount > 0 ? result.rows : null;
+  },
 
   getReviews: async function (username) {
     const result = await dbPool.query(
