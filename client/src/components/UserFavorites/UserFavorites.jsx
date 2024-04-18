@@ -12,6 +12,7 @@ export default function UserFavorites() {
   const [favorites, setFavorites] = useState(null);
   const listId = userId;
   const baseUrl = import.meta.env.VITE_BASE_URL;
+  // const baseUrl = import.meta.env.BASE_URL
   const shareLink = `${baseUrl}/shared-favorites/${listId}`;
 
   useEffect(() => {
