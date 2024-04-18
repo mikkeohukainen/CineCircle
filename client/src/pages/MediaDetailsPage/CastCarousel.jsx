@@ -1,16 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Card,
-  Image,
-  Text,
-  Badge,
-  Button,
-  Group,
-  Title,
-  useMantineTheme,
-  Overlay,
-} from "@mantine/core";
+import { Image, Text, useMantineTheme } from "@mantine/core";
 import { Carousel } from "@mantine/carousel";
 import { useMediaQuery } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
@@ -26,21 +15,18 @@ export default function CastCarousel({ creditsArray }) {
     .filter((person) => person.profile_path !== null)
     .map((person) => (
       <Carousel.Slide key={person.credit_id}>
-        <Image
-          radius="md"
-          src={baseURL + person.profile_path}
-          onClick={() => navigate("/actor", { state: { id: person.id } })}
-          style={{
-            cursor: "pointer",
-          }}
-        ></Image>
-        <Text fw={700}>{person.name}</Text>
+        <Image radius="md" src={baseURL + person.profile_path} />
+        <Text size="sm" pt={4} fw={700}>
+          {person.name}
+        </Text>
+        <Text c="dimmed" size="sm">
+          {person.character}
+        </Text>
       </Carousel.Slide>
     ));
 
   return (
     <Carousel
-      mt="md"
       slideSize={{ base: "33.333%", sm: "20%" }}
       slideGap={{ base: "sm", sm: "lg" }}
       align="start"

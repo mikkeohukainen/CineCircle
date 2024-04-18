@@ -8,15 +8,14 @@ import {
   Anchor,
   Tooltip,
   Button,
-  TextInput,
   Menu,
 } from "@mantine/core";
 import dayjs from "dayjs";
-import { addShowtimeToGroup, getGroupContents } from "../../data/groupContent";
+import { addShowtimeToGroup, getGroupShowtime } from "../../data/groupContent";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo";
-import { useEffect } from "react";
 import { basicNotification } from "../Notifications";
+import { useLocation } from "react-router-dom";
 
 export default function ShowtimeCard({ showtime }) {
   const showStartTime = dayjs(showtime.dttmShowStart).format("HH.mm");
@@ -24,23 +23,17 @@ export default function ShowtimeCard({ showtime }) {
   const { userGroups } = useUserInfo();
   const { userId } = useAuth();
   const messageUser = basicNotification();
+  const location = useLocation();
+  const excludePathForButton = "/group-details";
 
   async function handleAddShowtime(groupId) {
-    const groupContents = await getGroupContents(groupId);
+    const groupContents = await getGroupShowtime(groupId);
 
-    const alreadyInGroupContents = groupContents.some(
-      (entry) => entry.showtime_id === showtime.ID,
-    );
+    const alreadyInGroupContents = groupContents.some((entry) => entry.showtime_id === showtime.ID);
 
     if (!alreadyInGroupContents) {
       try {
-        await addShowtimeToGroup(
-          groupId,
-          showtime.TheatreAndAuditorium,
-          showtime.dttmShowStart,
-          userId,
-          showtime.ID,
-        );
+        await addShowtimeToGroup(groupId, userId, showtime.ID, showtime);
         messageUser("Yaay!", "Showtime added to your group!", "green");
       } catch (error) {
         console.error(error);
@@ -51,7 +44,7 @@ export default function ShowtimeCard({ showtime }) {
     }
   }
 
-  function makeContentDescriptorImages() {
+  function ContentDescriptorImages() {
     const contentDescriptors = showtime.ContentDescriptors.ContentDescriptor;
 
     if (!Array.isArray(contentDescriptors)) {
@@ -69,17 +62,19 @@ export default function ShowtimeCard({ showtime }) {
     });
   }
 
-  function addShowtimeButton() {
+  function AddShowtimeButton(props) {
     return (
-      <Menu shadow="md" width={200}>
+      <Menu shadow="md" {...props}>
         <Menu.Target>
-          <Button variant="outline">Add to your group</Button>
+          <Button fz="md" variant="transparent">
+            Add to group
+          </Button>
         </Menu.Target>
 
         <Menu.Dropdown>
           {userGroups.map((group) => (
             <Menu.Item key={group.group_id} onClick={() => handleAddShowtime(group.group_id)}>
-              {group.group_name}
+              <Text>{group.group_name}</Text>
             </Menu.Item>
           ))}
         </Menu.Dropdown>
@@ -88,7 +83,7 @@ export default function ShowtimeCard({ showtime }) {
   }
 
   return (
-    <Card>
+    <Card withBorder radius="md" padding="sm" style={{ width: "100%" }}>
       <Group wrap="nowrap">
         <Stack gap={0} align="center" p="sm">
           <Text fz="h2" fw="bold">
@@ -104,15 +99,17 @@ export default function ShowtimeCard({ showtime }) {
           <Text c="dimmed" fz="lg">
             {showtime.TheatreAndAuditorium}
           </Text>
-          
+
           <Group pt="sm">
             <Image src={showtime.RatingImageUrl} alt={showtime.Rating} width={26} height={26} />
-            {makeContentDescriptorImages()}
-            {userId !== null && addShowtimeButton()}
+            <ContentDescriptorImages />
           </Group>
-          <Anchor mt="sm" fz="h4" fw="bold" href={showtime.ShowURL} target="_blank">
-            Buy tickets
-          </Anchor>
+          <Group mt="sm">
+            <Anchor fw={700} href={showtime.ShowURL} target="_blank">
+              Buy tickets
+            </Anchor>
+            {userId !== null && location.pathname !== excludePathForButton && <AddShowtimeButton />}
+          </Group>
         </Stack>
       </Group>
     </Card>

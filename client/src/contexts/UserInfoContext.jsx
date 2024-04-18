@@ -12,17 +12,21 @@ export default function UserInfoProvider({ children }) {
   const { username, userId, isLoggedIn } = useAuth();
 
   useEffect(() => {
-    if (!isLoggedIn) return;
-    getUsersGroups();
-    fetchFavorites();
+    (async () => {
+      if (!isLoggedIn) return;
+      await getUsersGroups();
+      await fetchFavorites();
+    })();
   }, [isLoggedIn, userId]);
 
   useEffect(() => {
-    if (userGroupIds.length > 0) {
-      getGroups();
-    } else {
-      setUserGroups([]);
-    }
+    (async () => {
+      if (userGroupIds.length > 0) {
+        await getGroups();
+      } else {
+        setUserGroups([]);
+      }
+    })();
   }, [userGroupIds]);
 
   const getGroups = async () => {
@@ -44,9 +48,9 @@ export default function UserInfoProvider({ children }) {
     if (!isLoggedIn) return;
     try {
       const usersGroups = await getGroupsByUserId(userId);
-      console.log("getUserGroups:", usersGroups);
+      // console.log("getUserGroups:", usersGroups);
       setUserGroupIds(usersGroups);
-      console.log("Users groups fetched. Found", usersGroups.length, "groups.");
+      // console.log("Users groups fetched. Found", usersGroups.length, "groups.");
     } catch (error) {
       console.log(error);
     }
@@ -54,14 +58,8 @@ export default function UserInfoProvider({ children }) {
 
   const fetchFavorites = async () => {
     if (isLoggedIn && username) {
-      console.log("Trying to fetch favorites.");
-      try {
-        const results = await getFavorites(username);
-        const searchResults = results.data;
-        setFavorites(searchResults);
-      } catch (error) {
-        console.error(error);
-      }
+      const favorites = await getFavorites(username).catch(console.error);
+      setFavorites(favorites);
     }
   };
 

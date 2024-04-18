@@ -13,6 +13,7 @@ import LeaveGroupModal from "./LeaveGroupModal.jsx";
 import GroupMedia from "./GroupMedia.jsx";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo.js";
+import GroupShowtimes from "./GroupShowtimes.jsx";
 
 export default function GroupDetailsPage() {
   const location = useLocation();
@@ -25,7 +26,9 @@ export default function GroupDetailsPage() {
   const { userGroups } = useUserInfo();
 
   useEffect(() => {
-    getMembers();
+    (async () => {
+      await getMembers();
+    })();
   }, []);
 
   const getMembers = async () => {
@@ -101,9 +104,12 @@ export default function GroupDetailsPage() {
       <GroupMedia groupId={groupId} isOwner={isOwner} />
 
       <Container size="md" mb="xl">
+        <Space h="xl" />
         <Title ta="center" order={3}>
-          GROUP SHOWTIMES HERE
+          GROUP SHOWTIMES
+          {GroupShowtimes()}
         </Title>
+        <Space h="xl" />
       </Container>
 
       <MemberList

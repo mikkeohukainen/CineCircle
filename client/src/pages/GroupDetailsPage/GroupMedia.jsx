@@ -1,66 +1,38 @@
 import { useEffect, useState } from "react";
 import { Carousel } from "@mantine/carousel";
-import { getGroupMedia, getMovieDetails, getSeriesDetails, deleteGroupContentById } from "../../data/groupContent";
-import { Container, useMantineTheme, Title, Space, Text, } from "@mantine/core";
+import { getGroupMedia, deleteGroupContentById } from "../../data/groupContent";
+import { Container, useMantineTheme, Title, Space, Text } from "@mantine/core";
 import { MovieCard } from "../../components/MovieCard";
 import { useMediaQuery } from "@mantine/hooks";
 
 export default function GroupMedia({ groupId, isOwner }) {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-  const [groupMedia, setGroupMedia] = useState([]);
-  const [movieDetails, setMovieDetails] = useState([]);
-  const [seriesDetails, setSeriesDetails] = useState([]);
-  
+  const [groupMovies, setGroupMovies] = useState([]);
+  const [groupSeries, setGroupSeries] = useState([]);
 
   useEffect(() => {
-    getMedia();
+    (async () => {
+      await fetchMedia();
+    })();
   }, []);
 
-  useEffect(() => {
-      fetchAllDetails();
-  }, [groupMedia]);
-
-  const getMedia = async () => {
+  const fetchMedia = async () => {
     try {
       const result = await getGroupMedia(groupId);
-      setGroupMedia(result);
+      // Muutetaan data ennen tilaan tallentamista
+      const modifiedMedia = result.map((media) => ({
+        ...media,
+        media_type: media.type, // muutetaan "type" -> "media_type"
+        poster_path: media.poster_url, // muutetaan "poster_url" -> "poster_path"
+        id: media.tmdb_id, // muutetaan "tmdb_id" -> "id"
+      }));
+      // sarjat ja leffat erilleen
+      setGroupMovies(modifiedMedia.filter((media) => media.media_type === "movie"));
+      setGroupSeries(modifiedMedia.filter((media) => media.media_type === "series"));
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const fetchAllDetails = async () => {
-    const newMovieDetails = [];
-    const newSeriesDetails = [];
-
-    for (const mediaItem of groupMedia) {
-      if (mediaItem.type === "movie") {
-        try {
-          const movieResult = await getMovieDetails(mediaItem.tmdb_id);
-          newMovieDetails.push({
-            ...movieResult.data,
-            content_id: mediaItem.content_id, //content_id is needed later when deleting group media
-            username: mediaItem.username // who added
-          });
-        } catch (error) {
-          console.error("Error fetching movie details:", error);
-        }
-      } else if (mediaItem.type === "series") {
-        try {
-          const seriesResult = await getSeriesDetails(mediaItem.tmdb_id);
-          newSeriesDetails.push({
-            ...seriesResult.data,
-            content_id: mediaItem.content_id, //content_id is needed later when deleting group media
-            username: mediaItem.username
-          });
-        } catch (error) {
-          console.error("Error fetching series details:", error);
-        }
-      }
-    }
-    setMovieDetails(newMovieDetails);
-    setSeriesDetails(newSeriesDetails);
   };
 
   const handleDelete = async (id) => {
@@ -70,29 +42,28 @@ export default function GroupMedia({ groupId, isOwner }) {
     } catch (error) {
       console.error(error);
     }
-    getMedia();
+    fetchMedia();
   };
 
-  const movieSlides = movieDetails.map((item) => (
+  const movieSlides = groupMovies.map((item) => (
     <Carousel.Slide key={item.id}>
       <MovieCard movie={item} isGroupOwner={isOwner} handleDelete={handleDelete} />
     </Carousel.Slide>
   ));
 
-  const seriesSlides = seriesDetails.map((item) => (
+  const seriesSlides = groupSeries.map((item) => (
     <Carousel.Slide key={item.id}>
-      <MovieCard movie={item} isGroupOwner={isOwner} handleDelete={handleDelete}/>
+      <MovieCard movie={item} isGroupOwner={isOwner} handleDelete={handleDelete} />
     </Carousel.Slide>
   ));
 
   return (
     <Container size="xl">
-
       <Title ta="center" order={3}>
         GROUP MOVIES
-        </Title>
+      </Title>
 
-      {movieDetails.length > 0 ? (
+      {groupMovies.length > 0 ? (
         <Carousel
           slideSize={{ base: "33.333%", sm: "20%" }}
           slideGap={{ base: "md", sm: "xl" }}
@@ -110,11 +81,10 @@ export default function GroupMedia({ groupId, isOwner }) {
       )}
       <Space h="xl" />
 
-
       <Title ta="center" order={3}>
         GROUP SERIES
-        </Title>
-      {seriesDetails.length > 0 ? (
+      </Title>
+      {groupSeries.length > 0 ? (
         <Carousel
           slideSize={{ base: "33.333%", sm: "20%" }}
           slideGap={{ base: "md", sm: "xl" }}

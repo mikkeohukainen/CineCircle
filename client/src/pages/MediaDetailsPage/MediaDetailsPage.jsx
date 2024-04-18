@@ -1,46 +1,60 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
+  rem,
   Container,
-  Card,
-  Image,
-  Text,
-  Badge,
-  Button,
-  Group,
-  Title,
-  useMantineTheme,
+  AspectRatio,
+  Modal,
   ActionIcon,
+  Image,
+  Group,
+  Tooltip,
+  Title,
+  Stack,
+  Text,
+  ScrollArea,
 } from "@mantine/core";
-import { IconArrowLeft } from "@tabler/icons-react";
-import { Carousel } from "@mantine/carousel";
-import { useMediaQuery } from "@mantine/hooks";
+import { useDisclosure } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
 import CastCarousel from "./CastCarousel.jsx";
 import AddMediaToGroup from "./AddMediaToGroupButton.jsx";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo.js";
-import { getFavorites, addFavorite } from "../../data/favorites";
+import { addFavorite, removeFavorite, getFavorites } from "../../data/favorites";
+import { ReviewForm } from "../../components/ReviewForm";
+import { IconHeart, IconPlus, IconShare, IconStar, IconStarOff } from "@tabler/icons-react";
+import { getMovieDetails, getTvDetails } from "../../data/media";
+import { submitReview, getReviews } from "../../data/reviews";
+import { ReviewCard } from "../../components/ReviewCard";
+import dayjs from "dayjs";
+import { notifications } from "@mantine/notifications";
 
 export default function MediaDetailsPage() {
-  const { username, userId, isLoggedIn } = useAuth();
+  const { username, isLoggedIn, userId } = useAuth();
   const { favorites, setFavorites } = useUserInfo();
-
   const location = useLocation();
-  const navigate = useNavigate();
-
-  const [mediaObj, setMediaObj] = useState(location.state.obj);
-  const [images, setImages] = useState([]);
-  const [credits, setCredits] = useState([]);
-  const [genres, setGenres] = useState([]);
+  const { obj: media } = location.state;
+  const [details, setDetails] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [inFavorites, setInFavorites] = useState(false);
+  const [reviewOpened, { open: openReview, close: closeReview }] = useDisclosure(false);
+  const [reviews, setReviews] = useState([]);
+  const baseURL = "https://image.tmdb.org/t/p/w1280";
 
   useEffect(() => {
-    getImages();
-    getCredits();
-    getGenres();
-    fetchFavorites();
-  }, []);
+    (async () => {
+      if (media.media_type === "movie") {
+        const result = await getMovieDetails(media.id);
+        setDetails(result);
+      } else if (media.media_type === "tv" || media.media_type === "series") {
+        const result = await getTvDetails(media.id);
+        setDetails(result);
+      }
+      const reviews = await getReviews(media.id);
+      setReviews(reviews);
+      await fetchFavorites();
+      setIsLoading(false);
+    })();
+  }, [media]);
 
   useEffect(() => {
     checkFavorites();
@@ -51,19 +65,39 @@ export default function MediaDetailsPage() {
       console.log("Trying to fetch favorites.");
       try {
         const results = await getFavorites(username);
-        const searchResults = results.data;
-        setFavorites(searchResults);
+        setFavorites(results);
       } catch (error) {
         console.error(error);
       }
     }
   };
 
+  const handleReviewSubmit = async (e) => {
+    await submitReview({
+      tmdbId: media.id,
+      title: media.title || media.name,
+      type: media.title ? "movie" : "series",
+      description: media.overview,
+      posterUrl: media.poster_path,
+      userId: userId,
+      rating: e.rating,
+      reviewText: e.review,
+      released: media.release_date || media.first_air_date,
+    });
+    closeReview();
+    notifications.show({
+      title: "Review submitted",
+      message: "Thank you for your review!",
+      color: "green",
+      autoClose: 3000,
+    });
+  };
+
   const checkFavorites = () => {
     if (isLoggedIn && favorites) {
       console.log("Checking favorites.");
       console.log(favorites);
-      const idFound = favorites.some((favorite) => favorite.tmdb_id === mediaObj.id);
+      const idFound = favorites.some((favorite) => favorite.tmdb_id === media.id);
       if (idFound) {
         console.log("Movie ID found in favorites.");
         setInFavorites(true);
@@ -75,129 +109,147 @@ export default function MediaDetailsPage() {
   };
 
   const addToFavorites = async () => {
-    const type = mediaObj.title ? "movie" : "series";
+    const type = media.title ? "movie" : "series";
     try {
       await addFavorite(
         username,
-        mediaObj.title || mediaObj.name,
+        media.title || media.name,
         type,
-        mediaObj.overview,
-        mediaObj.id,
-        mediaObj.poster_path,
+        media.overview,
+        media.id,
+        media.poster_path,
       );
+      await fetchFavorites();
     } catch (error) {
       console.error(error);
     }
-    fetchFavorites();
   };
 
-  const getImages = async () => {
-    const URL = `http://localhost:8000/search/${mediaObj.title ? "movie" : "tv"}/images/${mediaObj.id}`;
-    const data = await fetch(URL);
-    const searchResults = await data.json();
-    const limitedImages = searchResults.backdrops.slice(0, 20);
-    setImages(() => limitedImages);
+  const removeFromFavorites = async () => {
+    try {
+      await removeFavorite(username, media.id);
+      await fetchFavorites();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const getCredits = async () => {
-    setIsLoading(true);
-    const URL = `http://localhost:8000/search/${mediaObj.title ? "movie" : "tv"}/credits/${mediaObj.id}`;
-    const data = await fetch(URL);
-    const searchResults = await data.json();
-    setCredits(() => searchResults);
-    setIsLoading(false);
-  };
-
-  const getGenres = async () => {
-    const URL = `http://localhost:8000/search/genres/${mediaObj.title ? "movie" : "tv"}`;
-    const data = await fetch(URL);
-    const searchResults = await data.json();
-    const currentObjGenres = new Set(mediaObj.genre_ids);
-    const filteredGenres = searchResults.genres.filter((genre) => currentObjGenres.has(genre.id));
-    setGenres(() => filteredGenres);
-  };
-
-  const baseURL = "https://image.tmdb.org/t/p/original";
-
-  const theme = useMantineTheme();
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
-
-  const imageSlides = images.map((image) => (
-    <Carousel.Slide key={image.file_path}>
-      <Image src={baseURL + image.file_path}></Image>
-    </Carousel.Slide>
-  ));
+  const genresString = useMemo(() => {
+    if (!details.genres) return null;
+    return details.genres.map((genre) => genre.name).join(", ");
+  }, [details.genres]);
 
   return (
-    <Container size="lg" mt="lg">
+    <Container py={16}>
+      <AspectRatio ratio={16 / 9} mb="lg" m={0} p={0}>
+        <Image radius="lg" src={baseURL + details.backdrop_path} alt={media.title || media.name} />
+      </AspectRatio>
       <Group justify="space-between">
-        <ActionIcon variant="outline" onClick={() => navigate(-1)}>
-          <IconArrowLeft></IconArrowLeft>
-        </ActionIcon>
-        <AddMediaToGroup mediaObj={mediaObj} />
-      </Group>
-      <Card shadow="lg" padding="lg" radius="md" withBorder>
-        <Card.Section>
-          <Carousel
-            slideSize={{ base: "100%", sm: "100%" }}
-            slideGap={{ base: "md", sm: "xl" }}
-            align="start"
-            slidesToScroll={mobile ? 1 : 1}
-            controlSize={30}
-          >
-            {imageSlides}
-          </Carousel>
-        </Card.Section>
-        <Title ta="center" mt="md" order={1}>
-          {mediaObj.title || mediaObj.name}
-        </Title>
-        <Text ta="center" size="xl" mt="md">
-          {mediaObj.overview}
-        </Text>
-        <Container>
-          <Badge variant="light" color="blue" size="xl" radius="md" mt="md">
-            {"Release date: " + (mediaObj.release_date || mediaObj.first_air_date)}
-          </Badge>
-        </Container>
-        <Group justify="center">
-          {genres.map((genre) => (
-            <Badge key={genre.id} color="gray" size="xl" radius="md" mt="md">
-              {genre.name}
-            </Badge>
-          ))}
+        <Stack gap={0}>
+          <Title order={2}>{media.title || media.name}</Title>
+          <Group>
+            <Text size="sm" c="dimmed">
+              {dayjs(details.release_date || details.first_air_date).year()}
+            </Text>
+            <Text size="sm" c="dimmed">
+              {genresString}
+            </Text>
+            {details.runtime ? (
+              <Text size="sm" c="dimmed">
+                {details.runtime || details.episode_run_time} min
+              </Text>
+            ) : (
+              <Text size="sm" c="dimmed">
+                {details.number_of_seasons === 1
+                  ? "1 season"
+                  : `${details.number_of_seasons} seasons`}
+              </Text>
+            )}
+          </Group>
+        </Stack>
+        <Group>
+          {isLoggedIn ? (
+            <Tooltip label={`${inFavorites ? "Remove from" : "Add to"} favorites`}>
+              <ActionIcon
+                onClick={() => {
+                  if (inFavorites) {
+                    setInFavorites(false);
+                    removeFromFavorites();
+                  } else {
+                    setInFavorites(true);
+                    addToFavorites();
+                  }
+                }}
+                color="red"
+                size={42}
+                variant="transparent"
+              >
+                <IconHeart
+                  fill={inFavorites ? "red" : "transparent"}
+                  style={{ width: rem(24), height: rem(24) }}
+                />
+              </ActionIcon>
+            </Tooltip>
+          ) : (
+            <Tooltip label="Log in to add to favorites">
+              <ActionIcon disabled color="red" size={42} variant="transparent">
+                <IconHeart style={{ width: rem(24), height: rem(24) }} />
+              </ActionIcon>
+            </Tooltip>
+          )}
+          {isLoggedIn ? (
+            <Tooltip label="Leave a review">
+              <ActionIcon onClick={openReview} color="yellow" size={42} variant="transparent">
+                <IconStar style={{ width: rem(24), height: rem(24) }} />
+              </ActionIcon>
+            </Tooltip>
+          ) : (
+            <Tooltip label="Log in to leave a review">
+              <ActionIcon disabled color="yellow" size={42} variant="transparent">
+                <IconStar style={{ width: rem(24), height: rem(24) }} />
+              </ActionIcon>
+            </Tooltip>
+          )}
+          {isLoggedIn ? (
+            <AddMediaToGroup mediaObj={media} />
+          ) : (
+            <Tooltip label="Log in to add to a group">
+              <ActionIcon disabled color="blue" size={42} variant="transparent">
+                <IconPlus style={{ width: rem(24), height: rem(24) }} />
+              </ActionIcon>
+            </Tooltip>
+          )}
         </Group>
-        <Title ta="center" c="blue" mt="md" order={2}>
-          Cast
-        </Title>
+        <Text>{details.overview}</Text>
+      </Group>
 
-        {!isLoading && credits.cast && <CastCarousel creditsArray={credits} />}
+      <Stack mt={16}>
+        <Title order={3}>Cast</Title>
+        {!isLoading && details.credits && <CastCarousel creditsArray={details.credits} />}
+      </Stack>
 
-        {isLoggedIn && !inFavorites && (
-          <Button color="blue" mt="md" radius="md" fullWidth onClick={addToFavorites}>
-            Add to favorites
-          </Button>
+      <Stack my={16}>
+        <Title order={3}>User reviews</Title>
+        {reviews.length === 0 && !isLoading ? (
+          <Text>No reviews yet. Be the first to leave one!</Text>
+        ) : (
+          <Stack>
+            {reviews.map((review) => (
+              <ReviewCard key={review.review_id} review={review} disableViewMedia />
+            ))}
+          </Stack>
         )}
+      </Stack>
 
-        {isLoggedIn && inFavorites && (
-          <Container>
-            <Badge variant="outline" color="blue" size="xl" radius="md" mt="md">
-              Already in your favorites list
-            </Badge>
-          </Container>
-        )}
-
-        {!isLoggedIn && (
-          <Container>
-            <Badge variant="outline" color="blue" size="xl" radius="md" mt="md">
-              Log in to add to favorites
-            </Badge>
-          </Container>
-        )}
-
-        {/* <Button color="blue" mt="md" radius="md" fullWidth>
-          Add to favorites
-        </Button> */}
-      </Card>
+      <Modal
+        title={`Review ${media.title || media.name}`}
+        size="lg"
+        opened={reviewOpened}
+        onClose={closeReview}
+        lockScroll={false}
+      >
+        <ReviewForm onSubmit={handleReviewSubmit} />
+      </Modal>
     </Container>
   );
 }

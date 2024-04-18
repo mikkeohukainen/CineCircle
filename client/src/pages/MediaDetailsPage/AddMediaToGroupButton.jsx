@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Button, Menu } from "@mantine/core";
+import { Menu, Tooltip, ActionIcon, rem } from "@mantine/core";
 import useUserInfo from "../../hooks/useUserInfo";
 import useAuth from "../../hooks/useAuth";
 import { basicNotification } from "../../components/Notifications";
 import { getGroupMedia, addMediaToGroup } from "../../data/groupContent";
-import { IconChevronDown } from "@tabler/icons-react";
+import { IconPlus } from "@tabler/icons-react";
 
 export default function AddMediaToGroup({ mediaObj }) {
   const { userGroups } = useUserInfo();
@@ -61,15 +61,11 @@ export default function AddMediaToGroup({ mediaObj }) {
   return (
     <Menu shadow="md">
       <Menu.Target>
-        <Button
-          color="blue"
-          mb="xs"
-          radius="md"
-          variant="outline"
-          rightSection={<IconChevronDown size={16} />}
-        >
-          Add to group
-        </Button>
+        <Tooltip label="Add to group">
+          <ActionIcon size={42} variant="transparent">
+            <IconPlus style={{ width: rem(24), height: rem(24) }} />
+          </ActionIcon>
+        </Tooltip>
       </Menu.Target>
       <Menu.Dropdown>
         {groupsToAdd.map((group) => (

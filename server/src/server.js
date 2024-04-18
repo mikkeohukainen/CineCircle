@@ -1,26 +1,23 @@
+const helmet = require("helmet");
 const express = require("express");
 const cors = require("cors");
 const app = express();
 
 const users = require("../routes/users");
 const reviews = require("../routes/reviews");
-const favorites = require("../routes/favorites");
 const groups = require("../routes/groups");
 const search = require("../routes/tmdb");
+const showtimes = require("../routes/showtimes"); // testi
 
+app.use(helmet());
 app.use(express.json());
 app.use(cors());
 
 // ROUTES
 app.use("/users", users);
 app.use("/reviews", reviews);
-app.use("/favorites", favorites);
 app.use("/groups", groups);
 app.use("/search", search);
-
-app.get("/", (req, res) => {
-  res.status(200).send("hello there");
-});
 
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server running on port ${process.env.SERVER_PORT}`);

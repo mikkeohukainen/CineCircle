@@ -1,5 +1,5 @@
 import classes from "./Layout.module.css";
-import { AppShell, Burger, Group, Image, Divider } from "@mantine/core";
+import { AppShell, Burger, Group, Image, Divider, useMantineColorScheme } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Outlet, useNavigate } from "react-router-dom";
 import AuthButtonGroup from "./AuthButtonGroup.jsx";
@@ -7,8 +7,10 @@ import NavButtons from "./NavButtons.jsx";
 import useAuth from "../../hooks/useAuth.js";
 import UserMenu from "../UserMenu/UserMenu.jsx";
 import { logout } from "../../data/auth.js";
+import ThemeToggle from "../ThemeToggle/ThemeToggle.jsx";
 
 export default function Layout() {
+  const { colorScheme } = useMantineColorScheme();
   const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
   const [drawerOpened, { toggle: toggleDrawer, close: closeDrawer }] = useDisclosure(false);
@@ -21,7 +23,6 @@ export default function Layout() {
         breakpoint: "sm",
         collapsed: { mobile: !drawerOpened, desktop: true },
       }}
-      padding="md"
     >
       <AppShell.Header className={classes.header}>
         <Group h="100%" px="md">
@@ -30,7 +31,7 @@ export default function Layout() {
             <Group gap={0}>
               <Image
                 classNames={classes.logo}
-                src="/cinecircle-black-sm.png"
+                src={`cinecircle-${colorScheme === "dark" ? "white" : "black"}-sm.png`}
                 style={{
                   width: 60,
                   height: 60,
@@ -42,17 +43,20 @@ export default function Layout() {
             </Group>
             <NavButtons ml="xl" gap={0} visibleFrom="sm" />
 
-            {isLoggedIn ? (
-              <UserMenu
-                onLogout={() => {
-                  logout();
-                  setIsLoggedIn(false);
-                  navigate("/");
-                }}
-              />
-            ) : (
-              <AuthButtonGroup visibleFrom="sm" />
-            )}
+            <Group>
+              <ThemeToggle />
+              {isLoggedIn ? (
+                <UserMenu
+                  onLogout={() => {
+                    logout();
+                    setIsLoggedIn(false);
+                    navigate("/");
+                  }}
+                />
+              ) : (
+                <AuthButtonGroup visibleFrom="sm" />
+              )}
+            </Group>
           </Group>
         </Group>
       </AppShell.Header>
