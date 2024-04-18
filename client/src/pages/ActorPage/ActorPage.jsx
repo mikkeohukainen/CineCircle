@@ -11,6 +11,7 @@ import {
   Title,
   useMantineTheme,
   ActionIcon,
+  ScrollArea,
 } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { Carousel } from "@mantine/carousel";
@@ -28,7 +29,9 @@ export default function ActorPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    getInfo();
+    (async () => {
+      await getInfo();
+    })();
   }, []);
 
   const getInfo = async () => {
@@ -37,7 +40,7 @@ export default function ActorPage() {
     const searchResults = await data.json();
 
     setActorInfo(searchResults);
-    const uniqueMovies = deduplicate(searchResults.combined_credits.cast.slice(0, 30))
+    const uniqueMovies = deduplicate(searchResults.combined_credits.cast.slice(0, 30));
     setMovies(uniqueMovies);
   };
 
@@ -59,8 +62,6 @@ export default function ActorPage() {
   const theme = useMantineTheme();
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
-  console.log(movies);
-
   const movieSlides = movies.map((item) => (
     <Carousel.Slide key={item.id}>
       <MovieCard movie={item} />
@@ -78,18 +79,23 @@ export default function ActorPage() {
         <Title ta="center" order={2}>
           {actorInfo.name}
         </Title>
-
-        <Flex gap="lg">
-          <Image src={baseURL + actorInfo.profile_path} radius="md"></Image>
+        <Flex gap="lg" direction={mobile ? "column" : "row"}>
+          <Container>
+            <Image
+              src={baseURL + actorInfo.profile_path}
+              radius="md"
+              w={mobile ? 250 : "auto"}
+              mt="lg"
+            ></Image>
+          </Container>
           <Container mt="lg">
-            <Container mb="lg">
-              <Title order={4}>{actorInfo.place_of_birth}</Title>
-              <Title order={4}>{actorInfo.birthday}</Title>
-            </Container>
-            <Text>{actorInfo.biography}</Text>
+            <Title order={4}>{actorInfo.place_of_birth}</Title>
+            <Title order={5}>{actorInfo.birthday}</Title>
+            <ScrollArea mt="lg" h={300} type="auto" offsetScrollbars>
+              <Text>{actorInfo.biography}</Text>
+            </ScrollArea>
           </Container>
         </Flex>
-
         <Title ta="center" c="blue" mt="md" order={2}>
           Known for
         </Title>

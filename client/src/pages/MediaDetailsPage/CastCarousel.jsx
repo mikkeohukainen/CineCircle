@@ -15,7 +15,14 @@ export default function CastCarousel({ creditsArray }) {
     .filter((person) => person.profile_path !== null)
     .map((person) => (
       <Carousel.Slide key={person.credit_id}>
-        <Image radius="md" src={baseURL + person.profile_path} />
+        <Image
+          radius="md"
+          src={baseURL + person.profile_path}
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={() => navigate("/actor", { state: { id: person.id } })}
+        />
         <Text size="sm" pt={4} fw={700}>
           {person.name}
         </Text>

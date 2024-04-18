@@ -147,4 +147,14 @@ router.get("/recommendations", async (req, res) => {
   }
 });
 
+router.get("/actor/:id", async (req, res) => {
+  try {
+    const result = await tmdb.getActorDetails(req.params.id);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: err.message });
+  }
+});
+
 module.exports = router;
