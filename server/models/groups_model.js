@@ -37,6 +37,14 @@ const groups = {
     ]);
     return result.rows;
   },
+
+  updateGroupOwner: async (owner_id, group_id) => {
+    const result = await dbPool.query("UPDATE groups SET owner_id = $1 WHERE group_id = $2", [
+      owner_id,
+      group_id,
+    ]);
+    return result.rows;
+  },
 };
 
 module.exports = groups;

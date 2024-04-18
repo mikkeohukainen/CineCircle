@@ -5,8 +5,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/users_model");
 const mediaModel = require("../models/media_model");
+const reviewModel = require("../models/reviews_model");
 const verifyToken = require("../middleware/verify-token");
-
+const { dbPool } = require("../database/db_connection");
+const showtimes = require("../models/showtimes_model");
+const groupContentsModel = require("../models/group_contents_model");
+const groupMembersModel = require("../models/group_members_model");
+const groupsModel = require("../models/groups_model");
 router.post("/", async (req, res) => {
   try {
     const { username, password, confirmPw } = req.body;
@@ -110,8 +115,68 @@ router.delete("/", verifyToken, async (req, res) => {
       return res.status(401).json({ message: "Incorrect password" });
     }
 
-    await usersModel.deleteUser(username);
-    res.status(200).end();
+    // DATA DELETION
+    try {
+      // Transaktio, jotta voidaan peruuttaa kaikki jos jokin menee pieleen
+      await dbPool.query("BEGIN");
+
+      const query = await dbPool.query(`SELECT user_id FROM users WHERE username=$1`, [username]);
+      const userId = query.rows[0].user_id;
+
+      // Nämä voi suoraan poistaa, koska ei ole riippuvuuksia muihin tauluihin
+      await reviewModel.deleteByUserId(userId);
+      await usersModel.deleteFavoritesByUserId(userId);
+      await groupContentsModel.deleteGroupContentByUserId(userId);
+
+      // Haetaan listalle ryhmät, joissa käyttäjä on omistajana
+      const groups = await groupsModel.getAll();
+      const groupsWherUserIsOwner = groups.filter((group) => group.owner_id === userId);
+
+      if (groupsWherUserIsOwner) {
+        for (const group of groupsWherUserIsOwner) {
+          // Jos ryhmässä on muita jäseniä, tarkista hyväksytyt ja siirrä omistajuus
+          if (Number(group.member_count) > 1) {
+            const groupMembers = await groupMembersModel.getAllByGroupId(group.group_id);
+            const acceptedMembers = groupMembers.filter((member) => member.accepted === true);
+            // Siirrä omistajuus -- 'ensimmäinen' listalla saa omistajuuden
+            await groupsModel.updateGroupOwner(acceptedMembers[1].user_id, group.group_id);
+            // Poista käyttäjä ryhmästä
+            await groupMembersModel.deleteGroupMember(group.group_id, userId);
+          }
+
+          // Jos vain omistaja ryhmässä, poista ei-hyväksytyt jäsenet, omistaja ja viimeisenä ryhmä
+          else {
+            const groupMembers = await groupMembersModel.getAllByGroupId(group.group_id);
+            const notMembers = groupMembers.filter((member) => member.accepted === false);
+            if (notMembers) {
+              for (const member of notMembers) {
+                await groupMembersModel.deleteGroupMember(group.group_id, member.user_id);
+              }
+            }
+            // Poista omistaja viimeisenä ja ryhmä sen jälkeen
+            await groupMembersModel.deleteGroupMember(group.group_id, userId);
+            await groupsModel.deleteGroup(group.group_id);
+          }
+        }
+      }
+
+      // Poistetaan käyttäjä ryhmistä, joissa ei omistajana
+      const userGroupsGuest = await groupMembersModel.getGroupsByUserId(userId);
+      if (userGroupsGuest) {
+        for (const group of userGroupsGuest) {
+          await groupMembersModel.deleteGroupMember(group.group_id, userId);
+        }
+      }
+
+      await usersModel.deleteUser(username);
+
+      await dbPool.query("COMMIT"); // Jos tänne pääsee niin kaikki ok => commit
+      res.status(200).end();
+    } catch (err) {
+      await dbPool.query("ROLLBACK");
+      console.log(err.message);
+      res.status(500).end();
+    }
   } catch (err) {
     console.log(err.message);
     res.status(500).end();

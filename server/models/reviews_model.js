@@ -43,6 +43,10 @@ const reviews = {
     const result = await dbPool.query("DELETE FROM reviews WHERE review_id = $1 RETURNING *", [id]);
     return result.rows;
   },
+
+  deleteByUserId: async function (user_id) {
+    await dbPool.query(`DELETE FROM reviews WHERE user_id = $1`, [user_id]);
+  },
 };
 
 module.exports = reviews;

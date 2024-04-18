@@ -53,6 +53,10 @@ const userModel = {
     );
   },
 
+  deleteFavoritesByUserId: async function (user_id) {
+    await dbPool.query(`DELETE FROM favorites WHERE user_id = $1`, [user_id]);
+  },
+
   getFavorites: async function (username) {
     const result = await dbPool.query(
       "SELECT media.* FROM media JOIN favorites USING (media_id) JOIN users USING (user_id) WHERE users.username=$1",
