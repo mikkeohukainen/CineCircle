@@ -3,6 +3,7 @@ import { SearchResults } from "../../components/SearchResults";
 import { Container, useMantineTheme, Grid, Space, rem } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { searchMedia } from "../../data/media";
 
 export default function SearchPage() {
   const [searchText, setSearchText] = useState("");
@@ -25,10 +26,13 @@ export default function SearchPage() {
       return;
     }
     console.log(searchQuery);
-    const data = await fetch("http://localhost:8000/search/multi/title/" + searchQuery);
-    const searchResults = await data.json();
-    setMovies(() => searchResults.results);
-    console.log("Movies searched");
+    try {
+      const searchResults = await searchMedia(searchQuery);
+      setMovies(() => searchResults.results);
+      console.log("Movies searched");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleSearch = (e) => {

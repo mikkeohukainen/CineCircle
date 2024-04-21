@@ -20,6 +20,11 @@ export const getRecommended = async (type, id) => {
   return response.data.results;
 };
 
+export const searchMedia = async (query) => {
+  const response = await api.get("/search/multi/title/" + query);
+  return response.data;
+};
+
 export const searchWithFilters = async (
   type,
   page,
