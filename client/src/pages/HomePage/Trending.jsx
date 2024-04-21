@@ -11,6 +11,8 @@ import {
 import { useMediaQuery } from "@mantine/hooks";
 import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from "react";
+import { getTrending } from "../../data/media";
+
 export default function Trending() {
   const [trendingMovies, setTrendingMovies] = useState([]);
   const [trendingTVShows, setTrendingTVShows] = useState([]);
@@ -18,23 +20,19 @@ export default function Trending() {
 
   useEffect(() => {
     (async () => {
-      await getTrendingMovies();
-      await getTrendingTV();
+      await getTrendingMedia();
     })();
   }, []);
 
-  const getTrendingMovies = async () => {
-    const data = await fetch("http://localhost:8000/search/trending/movies");
-    const searchResults = await data.json();
-    setTrendingMovies(() => searchResults.results);
-    console.log("Trending movies fetched");
-  };
-
-  const getTrendingTV = async () => {
-    const data = await fetch("http://localhost:8000/search/trending/tv");
-    const searchResults = await data.json();
-    setTrendingTVShows(() => searchResults.results);
-    console.log("Trending TVshows fetched");
+  const getTrendingMedia = async () => {
+    try {
+      const movies = await getTrending("movies");
+      setTrendingMovies(movies);
+      const tv = await getTrending("tv");
+      setTrendingTVShows(tv);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const theme = useMantineTheme();
