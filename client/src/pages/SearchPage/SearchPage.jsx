@@ -11,8 +11,13 @@ export default function SearchPage() {
   const location = useLocation();
 
   useEffect(() => {
+    const savedSearchText = sessionStorage.getItem("searchText") || "";
+    setSearchText(savedSearchText);
+
     (async () => {
-      if (location.state && location.state.query) {
+      if (savedSearchText) {
+        await searchMovies(savedSearchText);
+      } else if (location.state && location.state.query) {
         setSearchText(location.state.query);
         await searchMovies(location.state.query);
       }
@@ -37,6 +42,7 @@ export default function SearchPage() {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    sessionStorage.setItem("searchText", searchText);
     searchMovies();
   };
 
