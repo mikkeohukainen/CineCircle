@@ -13,6 +13,7 @@ import {
 import { IconSearch, IconArrowRight } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
+import { searchWithFilters, getGenres, getProviders, searchPeople } from "../../data/media";
 
 export default function AdvancedSearchPage() {
   const [media, setMedia] = useState([]);
@@ -37,21 +38,25 @@ export default function AdvancedSearchPage() {
 
   useEffect(() => {
     (async () => {
-      await getGenres();
-      await getProviders();
+      await getGenresAndProviders();
     })();
   }, [mediaType]);
 
-  const getGenres = async () => {
-    const data = await fetch("http://localhost:8000/search/genres/" + mediaType);
-    const searchResults = await data.json();
-    setGenres(() => searchResults.genres);
-  };
+  useEffect(() => {
+    (async () => {
+      await searchMedia();
+    })();
+  }, []);
 
-  const getProviders = async () => {
-    const data = await fetch("http://localhost:8000/search/providers/" + mediaType);
-    const searchResults = await data.json();
-    setProviders(() => searchResults);
+  const getGenresAndProviders = async () => {
+    try {
+      const genreResults = await getGenres(mediaType);
+      setGenres(genreResults);
+      const providerResults = await getProviders(mediaType);
+      setProviders(providerResults);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const searchActors = async (query) => {
@@ -59,13 +64,16 @@ export default function AdvancedSearchPage() {
       setActors([]);
       return;
     }
-    const data = await fetch("http://localhost:8000/search/people/name/" + query);
-    const searchResults = await data.json();
-    setActors(() =>
-      searchResults.filter(
-        (person) => person.name.includes(" ") && person.known_for_department === "Acting",
-      ),
-    );
+    try {
+      const searchResults = await searchPeople(query);
+      setActors(() =>
+        searchResults.filter(
+          (person) => person.name.includes(" ") && person.known_for_department === "Acting",
+        ),
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const searchDirectors = async (query) => {
@@ -73,45 +81,52 @@ export default function AdvancedSearchPage() {
       setDirectors([]);
       return;
     }
-    const data = await fetch("http://localhost:8000/search/people/name/" + query);
-    const searchResults = await data.json();
-    setDirectors(() =>
-      searchResults.filter(
-        (person) => person.name.includes(" ") && person.known_for_department === "Directing",
-      ),
-    );
+    try {
+      const searchResults = await searchPeople(query);
+      setDirectors(() =>
+        searchResults.filter(
+          (person) => person.name.includes(" ") && person.known_for_department === "Directing",
+        ),
+      );
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const searchMedia = async () => {
-    console.log(tvType);
     const fetchMedia = async (page) => {
-      let URL = `http://localhost:8000/search/multi/filter?a=10&page=${page}&type=${mediaType}`;
-      if (genreID && genreID !== 0) URL += `&genre=${genreID}`;
-      if (providerID && providerID !== 0) URL += `&provider=${providerID}`;
-      if (actorID && actorID !== 0) URL += `&actor=${actorID}`;
-      if (directorID && directorID !== 0) URL += `&director=${directorID}`;
-      if (tvType) URL += `&tvtype=${tvType}`;
-      if (tvStatus) URL += `&tvstatus=${tvStatus}`;
+      const searchResultsRaw = await searchWithFilters(
+        mediaType,
+        page,
+        genreID,
+        providerID,
+        actorID,
+        directorID,
+        tvType,
+        tvStatus,
+      );
 
-      const response = await fetch(URL);
-      const searchResultsRaw = await response.json();
-      // lisätään jokaiseen tulokseen media_type
-    const searchResults = searchResultsRaw.results.map((item) => ({
-      ...item,
-      media_type: mediaType
-    }));
+      const searchResults = searchResultsRaw.results.map((item) => ({
+        ...item,
+        media_type: mediaType,
+      }));
 
-    return searchResults;
-  };
-    const firstPageResults = await fetchMedia(1);
-    const secondPageResults = await fetchMedia(2);
+      return searchResults;
+    };
 
-    const firstPageMovieIds = new Set(firstPageResults.map((movie) => movie.id));
-    const filteredSecondsPage = secondPageResults.filter(
-      (movie) => !firstPageMovieIds.has(movie.id),
-    );
+    try {
+      const firstPageResults = await fetchMedia(1);
+      const secondPageResults = await fetchMedia(2);
 
-    setMedia([...firstPageResults, ...filteredSecondsPage]);
+      const firstPageMovieIds = new Set(firstPageResults.map((movie) => movie.id));
+      const filteredSecondsPage = secondPageResults.filter(
+        (movie) => !firstPageMovieIds.has(movie.id),
+      );
+
+      setMedia([...firstPageResults, ...filteredSecondsPage]);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const genreOptions = genres.map((genre) => ({
@@ -255,10 +270,6 @@ export default function AdvancedSearchPage() {
           Search
         </Button>
       </Container>
-      {/* {console.log("Genre id: " + genreID)}
-      {console.log("Provider id: " + providerID)}
-      {console.log("Actor id: " + actorID)} */}
-      {/* {console.log(movies)} */}
       <SearchResults media={media} />
     </Container>
   );

@@ -4,20 +4,20 @@ import {
   Card,
   Image,
   Text,
-  Badge,
-  Button,
   Group,
   Flex,
   Title,
   useMantineTheme,
   ActionIcon,
   ScrollArea,
+  Loader,
 } from "@mantine/core";
 import { IconArrowLeft } from "@tabler/icons-react";
 import { Carousel } from "@mantine/carousel";
 import { MovieCard } from "../../components/MovieCard";
 import { useMediaQuery } from "@mantine/hooks";
 import { useLocation, useNavigate } from "react-router-dom";
+import { getActorDetails } from "../../data/media";
 
 export default function ActorPage() {
   const location = useLocation();
@@ -35,13 +35,18 @@ export default function ActorPage() {
   }, []);
 
   const getInfo = async () => {
-    const URL = `http://localhost:8000/search/actor/${actorId}`;
-    const data = await fetch(URL);
-    const searchResults = await data.json();
+    setIsLoading(true);
+    try {
+      const searchResults = await getActorDetails(actorId);
+      setActorInfo(searchResults);
 
-    setActorInfo(searchResults);
-    const uniqueMovies = deduplicate(searchResults.combined_credits.cast.slice(0, 30));
-    setMovies(uniqueMovies);
+      const uniqueMovies = deduplicate(searchResults.combined_credits.cast.slice(0, 30));
+      setMovies(uniqueMovies);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const deduplicate = (items) => {
@@ -99,16 +104,22 @@ export default function ActorPage() {
         <Title ta="center" c="blue" mt="md" order={2}>
           Known for
         </Title>
-        <Carousel
-          mt="md"
-          slideSize={{ base: "33.333%", sm: "20%" }}
-          slideGap={{ base: "md", sm: "xl" }}
-          align="start"
-          slidesToScroll={mobile ? 3 : 5}
-          controlSize={30}
-        >
-          {movieSlides}
-        </Carousel>
+        {isLoading ? (
+          <Group justify="center">
+            <Loader></Loader>
+          </Group>
+        ) : (
+          <Carousel
+            mt="md"
+            slideSize={{ base: "33.333%", sm: "20%" }}
+            slideGap={{ base: "md", sm: "xl" }}
+            align="start"
+            slidesToScroll={mobile ? 3 : 5}
+            controlSize={30}
+          >
+            {movieSlides}
+          </Carousel>
+        )}
       </Card>
     </Container>
   );

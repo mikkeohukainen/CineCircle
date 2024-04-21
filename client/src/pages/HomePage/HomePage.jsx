@@ -13,6 +13,7 @@ export default function HomePage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    sessionStorage.removeItem("searchText")
     navigate("/search", { state: { query: searchText } });
   };
 
