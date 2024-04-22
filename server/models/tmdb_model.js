@@ -135,6 +135,10 @@ const tmdb = {
     // console.log(URL);
     return fetchData(URL);
   },
+  getActorDetails: (id) => {
+    const URL = `https://api.themoviedb.org/3/person/${id}?append_to_response=combined_credits&language=en-US`;
+    return fetchData(URL);
+  },
 };
 
 module.exports = tmdb;

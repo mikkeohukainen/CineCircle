@@ -18,6 +18,7 @@ import { GroupsPage } from "./pages/GroupsPage";
 import { GroupDetailsPage } from "./pages/GroupDetailsPage";
 import { ShowtimesPage } from "./pages/ShowtimesPage";
 import { CreateGroupPage } from "./pages/CreateGroupPage";
+import { ActorPage } from "./pages/ActorPage";
 import ReviewsPage from "./pages/ReviewsPage/ReviewsPage.jsx";
 import { SharedFavoritesPage } from "./pages/SharedFavoritesPage";
 
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="group-details" element={<GroupDetailsPage />} />
             <Route path="theaters" element={<ShowtimesPage />} />
             <Route path="create-group" element={<CreateGroupPage />} />
+            <Route path="actor" element={<ActorPage />} />
             <Route path="reviews" element={<ReviewsPage />} />
             <Route path="shared-favorites/:listId" element={<SharedFavoritesPage />} />
             <Route path="*" element={<div>Not Found</div>} />

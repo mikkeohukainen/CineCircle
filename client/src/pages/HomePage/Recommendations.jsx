@@ -14,6 +14,7 @@ import { Carousel } from "@mantine/carousel";
 import { useEffect, useState } from "react";
 import useUserInfo from "../../hooks/useUserInfo.js";
 import useAuth from "../../hooks/useAuth";
+import { getRecommended } from "../../data/media";
 
 export default function Recommendations() {
   const { isLoggedIn } = useAuth();
@@ -54,21 +55,20 @@ export default function Recommendations() {
 
     const type = mediaObject.type === "movie" ? "movie" : "tv";
 
-    const response = await fetch(
-      `http://localhost:8000/search/recommendations?type=${type}&id=${mediaObject.tmdb_id}`,
-    );
-    const data = await response.json();
+    try {
+      const media = await getRecommended(type, mediaObject.tmdb_id);
+      const numFavorites = type === "movie" ? favMovies.length : favTv.length;
+      let sliceIndex = 5;
 
-    const numFavorites = type === "movie" ? favMovies.length : favTv.length;
-    let sliceIndex = 5;
-
-    if (numFavorites > 6) {
-      sliceIndex = 3;
-    } else if (numFavorites <= 6) {
-      sliceIndex = Math.ceil(15 / numFavorites);
+      if (numFavorites > 6) {
+        sliceIndex = 3;
+      } else if (numFavorites <= 6) {
+        sliceIndex = Math.ceil(15 / numFavorites);
+      }
+      return media.slice(0, sliceIndex).reverse();
+    } catch (error) {
+      console.error(error);
     }
-
-    return data.results.slice(0, sliceIndex);
   };
 
   const getAllRecommendations = async () => {

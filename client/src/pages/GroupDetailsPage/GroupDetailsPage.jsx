@@ -118,13 +118,6 @@ export default function GroupDetailsPage() {
         handleMemberAction={handleMemberAction}
         ownerId={groupDetails.owner_id}
       />
-
-      <Text ta="center">TEST BUTTONS:</Text>
-      <Group justify="space-around">
-        <Button onClick={() => console.log(groupDetails)}>Console.log group details</Button>
-        <Button onClick={() => console.log(groupMembers)}>Console.log group members</Button>
-        <Button onClick={() => console.log(userGroups)}>Console.log users groups</Button>
-      </Group>
     </Container>
   );
 }
