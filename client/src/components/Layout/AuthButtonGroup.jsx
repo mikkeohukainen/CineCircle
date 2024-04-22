@@ -10,6 +10,7 @@ export default function AuthButtonGroup({ closeDrawer, ...props }) {
   return (
     <Group {...props}>
       <Button
+        size="compact-md"
         variant="default"
         onClick={() => {
           navigate("login");
@@ -19,6 +20,7 @@ export default function AuthButtonGroup({ closeDrawer, ...props }) {
         Log In
       </Button>
       <Button
+        size="compact-md"
         onClick={() => {
           navigate("/signup");
           if (isMobile) closeDrawer();
