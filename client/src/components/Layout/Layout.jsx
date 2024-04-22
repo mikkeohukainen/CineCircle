@@ -25,7 +25,7 @@ export default function Layout() {
       }}
     >
       <AppShell.Header className={classes.header}>
-        <Group h="100%" px="md">
+        <Group h="100%" px="md" pl={5}>
           <Burger opened={drawerOpened} onClick={toggleDrawer} hiddenFrom="sm" size="sm" />
           <Group justify="space-between" style={{ flex: 1 }}>
             <Group gap={0}>
@@ -41,7 +41,7 @@ export default function Layout() {
                 onClick={() => navigate("/")}
               />
             </Group>
-            <NavButtons ml="xl" gap={0} visibleFrom="sm" />
+            <NavButtons gap={0} visibleFrom="sm" />
 
             <Group>
               <ThemeToggle />
