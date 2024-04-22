@@ -11,17 +11,16 @@ import {
   Title,
   Stack,
   Text,
-  ScrollArea,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import CastCarousel from "./CastCarousel.jsx";
 import AddMediaToGroup from "./AddMediaToGroupButton.jsx";
 import useAuth from "../../hooks/useAuth";
 import useUserInfo from "../../hooks/useUserInfo.js";
 import { addFavorite, removeFavorite, getFavorites } from "../../data/favorites";
 import { ReviewForm } from "../../components/ReviewForm";
-import { IconHeart, IconPlus, IconShare, IconStar, IconStarOff } from "@tabler/icons-react";
+import { IconHeart, IconPlus, IconStar } from "@tabler/icons-react";
 import { getMovieDetails, getTvDetails } from "../../data/media";
 import { submitReview, getReviews } from "../../data/reviews";
 import { ReviewCard } from "../../components/ReviewCard";
@@ -73,24 +72,35 @@ export default function MediaDetailsPage() {
   };
 
   const handleReviewSubmit = async (e) => {
-    await submitReview({
-      tmdbId: media.id,
-      title: media.title || media.name,
-      type: media.title ? "movie" : "series",
-      description: media.overview,
-      posterUrl: media.poster_path,
-      userId: userId,
-      rating: e.rating,
-      reviewText: e.review,
-      released: media.release_date || media.first_air_date,
-    });
-    closeReview();
-    notifications.show({
-      title: "Review submitted",
-      message: "Thank you for your review!",
-      color: "green",
-      autoClose: 3000,
-    });
+    try {
+      await submitReview({
+        tmdbId: media.id,
+        title: media.title || media.name,
+        type: media.title ? "movie" : "series",
+        description: media.overview,
+        posterUrl: media.poster_path,
+        userId: userId,
+        rating: e.rating,
+        reviewText: e.review,
+        released: media.release_date || media.first_air_date,
+      });
+      closeReview();
+      notifications.show({
+        title: "Review submitted",
+        message: "Thank you for your review!",
+        color: "green",
+        autoClose: 3000,
+      });
+      setReviews(await getReviews(media.id));
+    } catch (error) {
+      console.error(error);
+      notifications.show({
+        title: "Review failed",
+        message: "An error occurred while submitting your review.",
+        color: "red",
+        autoClose: 3000,
+      });
+    }
   };
 
   const checkFavorites = () => {
