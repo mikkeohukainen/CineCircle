@@ -33,9 +33,7 @@ export default function DeleteAccount() {
         customNotification("Error", "Password incorrect!", "red");
         // console.error("Failed to delete account");
       } else {
-        //
-        // TODO: DELETE all data from all tables
-        //
+        // Data tuhottu backendissä, jos tänne asti pääsee
         customNotification("Ok", "Account permanently deleted", "green");
         customNotification("Ok", "Logged out", "green");
         logout();

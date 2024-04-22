@@ -63,6 +63,10 @@ const groupContents = {
     return result.rows;
   },
 
+  deleteGroupContentByUserId: async (userId) => {
+    await dbPool.query("DELETE FROM group_contents WHERE added_by = $1", [userId]);
+  },
+
   deleteAllGroupContent: async (groupId) => {
     await dbPool.query("DELETE FROM group_contents WHERE group_id = $1", [groupId]);
   },

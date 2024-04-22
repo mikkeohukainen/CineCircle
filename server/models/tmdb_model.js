@@ -43,7 +43,7 @@ const fetchData = (URL) => {
 const tmdb = {
   getGenres: (mediaType) => {
     const URL = genresURL + mediaType + "/list?language=en";
-    console.log(URL);
+    // console.log(URL);
     return fetchData(URL);
   },
   getProviders: (filter) => {
@@ -57,31 +57,31 @@ const tmdb = {
     return fetchData(popularMoviesURL);
   },
   getTrendingMovies: () => {
-    console.log("Trending movies fetched from:");
-    console.log(trendingMoviesURL);
+    // console.log("Trending movies fetched from:");
+    // console.log(trendingMoviesURL);
     return fetchData(trendingMoviesURL);
   },
   getTrendingTV: () => {
-    console.log("Trending movies fetched from:");
-    console.log(trendingTVShowsURL);
+    // console.log("Trending movies fetched from:");
+    // console.log(trendingTVShowsURL);
     return fetchData(trendingTVShowsURL);
   },
   getTopRated: (type) => {
     const URL = `https://api.themoviedb.org/3/${type}/top_rated?language=en-US&page=1`;
-    console.log("Trending movies fetched from:");
-    console.log(URL);
+    // console.log("Trending movies fetched from:");
+    // console.log(URL);
     return fetchData(URL);
   },
   searchMovies: (title) => {
     const URL = searchMoviesURL + title;
-    console.log("Movies searched from:");
-    console.log(URL);
+    // console.log("Movies searched from:");
+    // console.log(URL);
     return fetchData(URL);
   },
   searchMulti: (title) => {
     const URL = searchMultiURL + title;
-    console.log("Searched from:");
-    console.log(URL);
+    // console.log("Searched from:");
+    // console.log(URL);
     return fetchData(URL);
   },
   discoverMedia: (filters) => {
@@ -113,12 +113,12 @@ const tmdb = {
       URL += `&with_people=${peopleIds.join(",")}`;
     }
 
-    console.log(URL);
+    // console.log(URL);
     return fetchData(URL);
   },
   searchPeople: (name) => {
     const URL = searchPeopleURL + name;
-    console.log(URL);
+    // console.log(URL);
     return fetchData(URL);
   },
   getMovieDetails: (id) => {
@@ -130,15 +130,15 @@ const tmdb = {
     return fetchData(URL);
   },
   getRecommendations: (mediaType, id) => {
-    const URL = `https://api.themoviedb.org/3/${mediaType}/${id}/recommendations`
-    console.log("Fetching recommendations from:");
-    console.log(URL);
+    const URL = `https://api.themoviedb.org/3/${mediaType}/${id}/recommendations`;
+    // console.log("Fetching recommendations from:");
+    // console.log(URL);
     return fetchData(URL);
   },
   getActorDetails: (id) => {
-    const URL = `https://api.themoviedb.org/3/person/${id}?append_to_response=combined_credits&language=en-US`
+    const URL = `https://api.themoviedb.org/3/person/${id}?append_to_response=combined_credits&language=en-US`;
     return fetchData(URL);
-  }
+  },
 };
 
 module.exports = tmdb;

@@ -26,5 +26,6 @@
     "**/*.sass",
     "**/*.less",
     "./client/node_modules/@mantine/core/styles.css"
-  ]
+  ],
+  "git.enabled": true
 }
