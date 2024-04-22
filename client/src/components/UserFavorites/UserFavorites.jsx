@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { MovieCard } from "../../components/MovieCard";
 import { Carousel } from "@mantine/carousel";
 import useAuth from "../../hooks/useAuth";
-import { Button, ActionIcon, Tooltip, rem, Group } from "@mantine/core";
+import { Button, ActionIcon, Tooltip, rem, Group, useMantineTheme } from "@mantine/core";
 import { getFavorites } from "../../data/favorites.js";
 import { IconCopy, IconCheck } from "@tabler/icons-react";
 import { showNotification } from "@mantine/notifications";
+import { useMediaQuery } from "@mantine/hooks";
 
 export default function UserFavorites() {
   const { username, userId } = useAuth();
@@ -14,6 +15,9 @@ export default function UserFavorites() {
   const baseUrl = import.meta.env.VITE_BASE_URL;
   // const baseUrl = import.meta.env.BASE_URL
   const shareLink = `${baseUrl}/shared-favorites/${listId}`;
+
+  const theme = useMantineTheme();
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   useEffect(() => {
     fetchFavorites();
@@ -76,6 +80,7 @@ export default function UserFavorites() {
         slideSize={{ base: "33.333%", sm: "20%" }}
         slideGap={{ base: "md", sm: "xl" }}
         align="start"
+        slidesToScroll={mobile ? 3 : 5}
         controlSize={30}
       >
         {favoritesSlide}
