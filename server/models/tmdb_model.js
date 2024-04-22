@@ -139,6 +139,18 @@ const tmdb = {
     const URL = `https://api.themoviedb.org/3/person/${id}?append_to_response=combined_credits&language=en-US`;
     return fetchData(URL);
   },
+  getMovieImages: (id) => {
+    const URL = movieDetailsURL + id + "/images?language=EN%2Cnull";
+    console.log("Images fetched from:");
+    console.log(URL);
+    return fetchData(URL);
+  },
+  getTVImages: (id) => {
+    const URL = TVDetailsURL + id + "/images?language=EN%2Cnull";
+    console.log("Images fetched from:");
+    console.log(URL);
+    return fetchData(URL);
+  },
 };
 
 module.exports = tmdb;
