@@ -66,7 +66,7 @@ export default function GroupMedia({ groupId, isOwner }) {
       {groupMovies.length > 0 ? (
         <Carousel
           slideSize={{ base: "33.333%", sm: "20%" }}
-          slideGap={{ base: "md", sm: "xl" }}
+          slideGap={{ base: "md", lg: "xl" }}
           align="start"
           controlSize={30}
           loop={true}
@@ -87,7 +87,7 @@ export default function GroupMedia({ groupId, isOwner }) {
       {groupSeries.length > 0 ? (
         <Carousel
           slideSize={{ base: "33.333%", sm: "20%" }}
-          slideGap={{ base: "md", sm: "xl" }}
+          slideGap={{ base: "md", lg: "xl" }}
           align="start"
           controlSize={30}
           loop={true}

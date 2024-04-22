@@ -1,6 +1,7 @@
 import { SearchBar } from "../../components/SearchBar";
 import { SearchResults } from "../../components/SearchResults";
 import { Container, useMantineTheme, Grid, Space, rem } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { searchMedia } from "../../data/media";
@@ -47,9 +48,10 @@ export default function SearchPage() {
   };
 
   const theme = useMantineTheme();
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
 
   return (
-    <Container size="xl" mt="lg">
+    <Container size="xl" mt="lg" px={mobile ? "xs" : "lg"}>
       <Container size="sm" mb="lg">
         <form onSubmit={handleSearch}>
           <SearchBar

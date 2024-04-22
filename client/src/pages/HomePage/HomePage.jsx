@@ -5,6 +5,7 @@ import { Container, useMantineTheme, Space, rem } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+import { useMediaQuery } from "@mantine/hooks";
 
 export default function HomePage() {
   const { username, userId, isLoggedIn } = useAuth();
@@ -17,8 +18,11 @@ export default function HomePage() {
     navigate("/search", { state: { query: searchText } });
   };
 
+  const theme = useMantineTheme();
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+
   return (
-    <Container size="xl" mt="lg" mb="xl">
+    <Container size="xl" mt="lg" mb="xl" px={mobile ? "xs" : "lg"}>
       <Container size="sm">
         <form onSubmit={handleSubmit}>
           <SearchBar

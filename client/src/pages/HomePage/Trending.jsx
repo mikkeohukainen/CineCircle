@@ -68,7 +68,7 @@ export default function Trending() {
       </Group>
       <Carousel
         slideSize={{ base: "33.333%", sm: "20%" }}
-        slideGap={{ base: "md", sm: "xl" }}
+        slideGap={{ base: "md", lg: "xl" }}
         align="start"
         slidesToScroll={mobile ? 3 : 5}
         controlSize={30}

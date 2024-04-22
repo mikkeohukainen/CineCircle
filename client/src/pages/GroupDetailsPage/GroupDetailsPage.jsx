@@ -74,7 +74,7 @@ export default function GroupDetailsPage() {
   }
 
   return (
-    <Container size="xl" mb="xl" p="xl">
+    <Container size="xl" mb="xl" pt="xl" pb="xl" px={0}>
       <Container size="lg" mb="xl">
         <Group justify="flex-end" mb="xl">
           {isOwner ? (

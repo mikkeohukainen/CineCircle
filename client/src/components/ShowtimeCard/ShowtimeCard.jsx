@@ -66,7 +66,7 @@ export default function ShowtimeCard({ showtime }) {
     return (
       <Menu shadow="md" {...props}>
         <Menu.Target>
-          <Button fz="md" variant="transparent">
+          <Button fz="md" variant="transparent" p={0}>
             Add to group
           </Button>
         </Menu.Target>
@@ -93,7 +93,7 @@ export default function ShowtimeCard({ showtime }) {
         </Stack>
         <Divider orientation="vertical" size="sm" />
         <Stack pl="sm" gap={0}>
-          <Anchor fz="h2" fw="bold" href={showtime.EventURL} target="_blank">
+          <Anchor fz={{base: "h3", sm: "h2"}} fw="bold" href={showtime.EventURL} target="_blank">
             {showtime.OriginalTitle}
           </Anchor>
           <Text c="dimmed" fz="lg">

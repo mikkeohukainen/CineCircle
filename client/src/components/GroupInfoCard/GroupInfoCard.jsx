@@ -26,7 +26,7 @@ export default function GroupCard({
   return (
     <Card pl="xl" shadow="sm" padding="lg" radius="md" withBorder>
       <Group justify="space-between" mb="xs">
-        <Title order={1} onClick={handleTitleClick} style={{ cursor: isMember && !isPending ? "pointer" : "default" }}>
+        <Title order={2} onClick={handleTitleClick} style={{ cursor: isMember && !isPending ? "pointer" : "default" }}>
           {group.group_name}
         </Title>
         <Badge variant="light" color="gray">

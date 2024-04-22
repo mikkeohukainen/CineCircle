@@ -10,6 +10,7 @@ import {
   Select,
   Button,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { IconSearch, IconArrowRight } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
@@ -168,8 +169,11 @@ export default function AdvancedSearchPage() {
     { value: "5", label: "Pilot" },
   ];
 
+  const theme = useMantineTheme();
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`);
+
   return (
-    <Container size="xl" mt="lg">
+    <Container size="xl" mt="lg" px={mobile ? "xs" : "lg"}>
       <Container size="lg">
         <Group justify="start">
           <SegmentedControl

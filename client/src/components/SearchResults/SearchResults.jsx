@@ -4,11 +4,11 @@ import { Container, useMantineTheme, Grid, Space, rem } from "@mantine/core";
 export default function SearchResults({ media }) {
   const mediaArray = media;
   return (
-    <Container size="lg">
+    <Container size="lg" p={0}>
       <Space h="xl" />
-      <Grid mt="xl">
+      <Grid mt="xl" gutter={{ base: "sm", sm: "md", md: "xl", lg: "xl", xl: "xl" }}>
         {mediaArray.map((mediaObj) => (
-          <Grid.Col span={{ base: 4, md: 4, lg: 3 }} key={mediaObj.id}>
+          <Grid.Col span={{ base: 4, md: 3, lg: 3 }} key={mediaObj.id}>
             <MovieCard movie={mediaObj} />
           </Grid.Col>
         ))}
