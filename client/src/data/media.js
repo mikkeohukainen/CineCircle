@@ -67,3 +67,9 @@ export const getActorDetails = async (id) => {
   const response = await api.get(`/search/actor/${id}`);
   return response.data;
 };
+
+export const getImages = async (type, id) => {
+  const response = await api.get(`/search/${type}/images/${id}`);
+  const limitedImages = response.data.backdrops.slice(1, 11);
+  return limitedImages;
+};
