@@ -1,10 +1,10 @@
 import { Container, TextInput, Button, Box, Space, Checkbox, Stack } from "@mantine/core";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "@mantine/form";
-import { useState } from "react";
 import { logout } from "../../data/auth";
 import { useNavigate } from "react-router-dom";
 import { basicNotification } from "../Notifications";
+import { api } from "../../data/api";
 
 export default function DeleteAccount() {
   const { username, setIsLoggedIn } = useAuth();
@@ -17,33 +17,24 @@ export default function DeleteAccount() {
   const customNotification = basicNotification();
 
   const handleSubmit = async (values) => {
-    if (values.boxChecked === true) {
-      const response = await fetch("http://localhost:8000/users", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          password: values.password,
-        }),
-      });
-
-      if (!response.ok) {
-        customNotification("Error", "Password incorrect!", "red");
-        // console.error("Failed to delete account");
-      } else {
-        // Data tuhottu backendissä, jos tänne asti pääsee
-        customNotification("Ok", "Account permanently deleted", "green");
-        customNotification("Ok", "Logged out", "green");
-        logout();
-        setIsLoggedIn(false);
-        navigate("/");
-        // console.log("Account deleted");
-      }
-    } else {
+    if (!values.boxChecked) {
       customNotification("Error", "Please mark the checkbox to confirm deletion", "red");
-      // console.log("box not checked");
+      return;
+    }
+
+    try {
+      await api.delete("/users", {
+        data: {
+          password: values.password,
+        },
+      });
+      customNotification("Ok", "Account permanently deleted", "green");
+      logout();
+      setIsLoggedIn(false);
+      navigate("/");
+    } catch (error) {
+      customNotification("Error", "Password incorrect!", "red");
+      return;
     }
     form.reset();
   };
