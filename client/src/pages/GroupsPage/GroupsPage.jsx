@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Button, Group, Stack } from "@mantine/core";
+import { Container, Button, Group, Stack, Skeleton } from "@mantine/core";
 import { GroupInfoCard } from "../../components/GroupInfoCard";
 import { SearchBar } from "../../components/SearchBar";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ export default function GroupsPage() {
   const [searchText, setSearchText] = useState("");
   const [searchSubmitted, setSearchSubmitted] = useState(false);
   const [updateTrigger, setUpdateTrigger] = useState(0);
+  const [loading, setLoading] = useState(true);
   const { userId, isLoggedIn } = useAuth();
   const navigate = useNavigate();
 
@@ -20,6 +21,7 @@ export default function GroupsPage() {
     (async () => {
       await getGroups();
       await getUsersGroups();
+      setLoading(false);
     })();
   }, [updateTrigger, isLoggedIn, userId]);
 
@@ -115,14 +117,16 @@ export default function GroupsPage() {
       {searchSubmitted && searchText && <h3>Search results for: "{searchText}"</h3>}
       <Container size="md" mt="lg">
         <Stack spacing="lg" mt="lg">
-          {filteredGroups.map((group) => (
-            <GroupInfoCard
-              group={group}
-              key={`${group.group_id}-${checkMembershipStatus(group.group_id).isPending}`}
-              membershipStatus={checkMembershipStatus(group.group_id)}
-              onMembershipRequest={handleMembershipRequest}
-            />
-          ))}
+          {loading
+            ? Array.from({ length: 4 }).map((_, index) => <Skeleton key={index} height={185} />)
+            : filteredGroups.map((group) => (
+                <GroupInfoCard
+                  group={group}
+                  key={`${group.group_id}-${checkMembershipStatus(group.group_id).isPending}`}
+                  membershipStatus={checkMembershipStatus(group.group_id)}
+                  onMembershipRequest={handleMembershipRequest}
+                />
+              ))}
         </Stack>
       </Container>
     </Container>
