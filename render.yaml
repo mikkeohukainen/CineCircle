@@ -1,0 +1,55 @@
+databases:
+  - name: cinecircle-database
+    plan: free
+    databaseName: cinecircle
+    user: cinecircle_user
+    postgresMajorVersion: "14"
+    region: frankfurt
+    ipAllowList: []
+
+services:
+  - name: cinecircle-server
+    plan: free
+    type: web
+    runtime: node
+    branch: main
+    buildCommand: "./server/bin/render-build.sh"
+    startCommand: "node ./server/src/server.js"
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+      - key: SERVER_PORT
+        value: 8000
+
+      - key: POSTGRES_HOST
+        fromDatabase:
+          name: cinecircle-database
+          property: host
+
+      - key: POSTGRES_PORT
+        fromDatabase:
+          name: cinecircle-database
+          property: port
+
+      - key: POSTGRES_USER
+        fromDatabase:
+          name: cinecircle-database
+          property: user
+
+      - key: POSTGRES_PASSWORD
+        fromDatabase:
+          name: cinecircle-database
+          property: password
+
+      - key: POSTGRES_DB
+        fromDatabase:
+          name: cinecircle-database
+          property: databaseName
+
+      - key: JWT_SUPERSECRETSIGNER
+        sync: false
+
+      - key: TMDB_KEY
+        sync: false
