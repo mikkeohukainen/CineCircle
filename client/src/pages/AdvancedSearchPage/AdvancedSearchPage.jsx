@@ -29,6 +29,8 @@ export default function AdvancedSearchPage() {
   const [directorID, setDirectorID] = useState();
   const [tvType, setTvType] = useState();
   const [tvStatus, setTvStatus] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   // TODO:
   // Reset all fields and values on mediaType change -> form.reset()??
@@ -45,7 +47,7 @@ export default function AdvancedSearchPage() {
 
   useEffect(() => {
     (async () => {
-      await searchMedia();
+      await searchMedia(true);
     })();
   }, []);
 
@@ -94,7 +96,7 @@ export default function AdvancedSearchPage() {
     }
   };
 
-  const searchMedia = async () => {
+  const searchMedia = async (reset) => {
     const fetchMedia = async (page) => {
       const searchResultsRaw = await searchWithFilters(
         mediaType,
@@ -116,15 +118,23 @@ export default function AdvancedSearchPage() {
     };
 
     try {
-      const firstPageResults = await fetchMedia(1);
-      const secondPageResults = await fetchMedia(2);
+      if (reset) {
+        const firstPageResults = await fetchMedia(1);
+        setMedia(firstPageResults);
+        setCurrentPage(1);
+        setHasMore(true);
+      } else {
+        const newPage = currentPage + 1;
+        const newMediaResults = await fetchMedia(newPage);
+        setMedia((prevMedia) => {
+          const existingIds = new Set(prevMedia.map((item) => item.id));
+          const filteredNewMedia = newMediaResults.filter((item) => !existingIds.has(item.id));
+          return [...prevMedia, ...filteredNewMedia];
+        });
 
-      const firstPageMovieIds = new Set(firstPageResults.map((movie) => movie.id));
-      const filteredSecondsPage = secondPageResults.filter(
-        (movie) => !firstPageMovieIds.has(movie.id),
-      );
-
-      setMedia([...firstPageResults, ...filteredSecondsPage]);
+        setHasMore(newMediaResults.length > 0);
+        setCurrentPage(newPage);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -266,7 +276,9 @@ export default function AdvancedSearchPage() {
           )}
         </Group>
         <Button
-          onClick={searchMedia}
+          onClick={() => {
+            searchMedia(true);
+          }}
           mt="lg"
           radius="md"
           rightSection={<IconArrowRight size={16} />}
@@ -275,6 +287,21 @@ export default function AdvancedSearchPage() {
         </Button>
       </Container>
       <SearchResults media={media} />
+      <Container mb="lg" mt="lg" px="xl">
+        {hasMore && (
+          <Button
+            onClick={() => {
+              searchMedia(false);
+            }}
+            mt="lg"
+            mb="lg"
+            radius="md"
+            fullWidth
+          >
+            Load More
+          </Button>
+        )}
+      </Container>
     </Container>
   );
 }
