@@ -46,7 +46,7 @@ services:
       - key: POSTGRES_DB
         fromDatabase:
           name: cinecircle-database
-          property: databaseName
+          property: database
 
       - key: JWT_SUPERSECRETSIGNER
         sync: false
