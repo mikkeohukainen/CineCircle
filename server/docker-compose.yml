@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    entrypoint: "/bin/sh docker-entrypoint.sh"
+    entrypoint: "/bin/sh ./bin/docker-entrypoint.sh"
     env_file: .env
     ports:
       - ${SERVER_PORT}:${SERVER_PORT}
