@@ -43,7 +43,7 @@ export default function ShowtimesPage() {
 
   const items = useMemo(() => {
     if (isLoading) {
-      return Array.from({ length: 5 }, (_, index) => (
+      return Array.from({ length: 4 }, (_, index) => (
         <Skeleton key={index} height={185} radius="md" />
       ));
     }
@@ -58,18 +58,16 @@ export default function ShowtimesPage() {
   }, [selectedArea, isLoading, activePage]);
 
   useEffect(() => {
-    getFinnkinoTheaterAreas()
-      .then((response) => {
-        const areas = response.TheatreAreas.TheatreArea;
-        areas.shift();
-        setTheaterAreas(areas);
-        // The first area is selected by default
-        setSelectedArea({
-          value: String(areas[0].ID),
-          label: areas[0].Name,
-        });
-      })
-      .then(() => setIsLoading(false));
+    getFinnkinoTheaterAreas().then((response) => {
+      const areas = response.TheatreAreas.TheatreArea;
+      areas.shift();
+      setTheaterAreas(areas);
+      // The first area is selected by default
+      setSelectedArea({
+        value: String(areas[0].ID),
+        label: areas[0].Name,
+      });
+    });
   }, []);
 
   useEffect(() => {
