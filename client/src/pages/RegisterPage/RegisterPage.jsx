@@ -3,6 +3,7 @@ import { Container, Paper } from "@mantine/core";
 import { RegistrationForm } from "../../components/RegistrationForm";
 import { register } from "../../data/auth";
 import { useNavigate } from "react-router-dom";
+import { showNotification } from "@mantine/notifications";
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -12,7 +13,12 @@ export default function RegisterPage() {
       await register(username, password, repeatPassword);
       navigate("/login", { replace: true });
     } catch (error) {
-      console.error(error);
+      showNotification({
+        title: "Registration failed",
+        message: error.response.data.message,
+        color: "red",
+        autoClose: 2000,
+      });
     }
   }
 
