@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Container, Paper } from "@mantine/core";
 import { LoginForm } from "../../components/LoginForm";
 import useAuth from "../../hooks/useAuth";
+import { showNotification } from "@mantine/notifications";
 
 export default function LoginPage() {
   const { setIsLoggedIn } = useAuth();
@@ -18,7 +19,12 @@ export default function LoginPage() {
       setIsLoggedIn(true);
       navigate("/", { replace: true });
     } catch (error) {
-      console.error(error);
+      showNotification({
+        title: "Login failed",
+        message: error.response.data.message,
+        color: "red",
+        autoClose: 2000,
+      });
     }
   }
 
