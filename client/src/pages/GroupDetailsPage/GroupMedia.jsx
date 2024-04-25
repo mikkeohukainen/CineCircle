@@ -69,7 +69,7 @@ export default function GroupMedia({ groupId, isOwner }) {
           slideGap={{ base: "md", lg: "xl" }}
           align="start"
           controlSize={30}
-          loop={true}
+          loop={false}
           slidesToScroll={mobile ? 3 : 5}
           mt="sm"
           mb="xl"
@@ -90,7 +90,7 @@ export default function GroupMedia({ groupId, isOwner }) {
           slideGap={{ base: "md", lg: "xl" }}
           align="start"
           controlSize={30}
-          loop={true}
+          loop={false}
           slidesToScroll={mobile ? 3 : 5}
           mt="sm"
         >
