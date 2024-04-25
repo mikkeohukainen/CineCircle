@@ -31,7 +31,7 @@ export default function Layout() {
             <Group gap={0}>
               <Image
                 classNames={classes.logo}
-                src={`cinecircle-${colorScheme === "dark" ? "white" : "black"}-sm.png`}
+                src={`/cinecircle-${colorScheme === "dark" ? "white" : "black"}-sm.png`}
                 style={{
                   width: 60,
                   height: 60,
