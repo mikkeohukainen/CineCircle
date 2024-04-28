@@ -12,6 +12,7 @@ services:
     plan: starter
     type: web
     runtime: node
+    region: frankfurt
     branch: main
     rootDir: ./server
     buildCommand: "./bin/render-build.sh"
