@@ -8,8 +8,8 @@ databases:
     ipAllowList: []
 
 services:
-  - name: cinecircle-server
-    plan: free
+  - name: thecinecircle-server
+    plan: starter
     type: web
     runtime: node
     branch: main
@@ -55,7 +55,7 @@ services:
       - key: TMDB_KEY
         sync: false
 
-  - name: cinecircle
+  - name: thecinecircle
     type: web
     runtime: static
     branch: main
