@@ -7,7 +7,6 @@ const users = require("../routes/users");
 const reviews = require("../routes/reviews");
 const groups = require("../routes/groups");
 const search = require("../routes/tmdb");
-const showtimes = require("../routes/showtimes"); // testi
 
 app.use(helmet());
 app.use(express.json());

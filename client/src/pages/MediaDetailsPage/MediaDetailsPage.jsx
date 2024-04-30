@@ -63,7 +63,6 @@ export default function MediaDetailsPage() {
 
   const fetchFavorites = async () => {
     if (isLoggedIn && username) {
-      console.log("Trying to fetch favorites.");
       try {
         const results = await getFavorites(username);
         setFavorites(results);
@@ -109,10 +108,8 @@ export default function MediaDetailsPage() {
     if (isLoggedIn && favorites) {
       const idFound = favorites.some((favorite) => favorite.tmdb_id === media.id);
       if (idFound) {
-        console.log("Movie ID found in favorites.");
         setInFavorites(true);
       } else {
-        console.log("Movie ID NOT found in favorites.");
         setInFavorites(false);
       }
     }
@@ -173,7 +170,7 @@ export default function MediaDetailsPage() {
             <Carousel.Slide key={image.file_path}>
               <AspectRatio ratio={16 / 9} m={0} p={0}>
                 <Image src={baseURL + image.file_path} radius="lg"></Image>
-                </AspectRatio>
+              </AspectRatio>
             </Carousel.Slide>
           ))}
         </Carousel>

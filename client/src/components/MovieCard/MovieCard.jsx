@@ -1,4 +1,4 @@
-import { Button, Image, Text, ActionIcon } from "@mantine/core";
+import { Image, Text, ActionIcon } from "@mantine/core";
 import classes from "./MovieCard.module.css";
 import noimage from "../../assets/no-image.jpg";
 import { useNavigate } from "react-router-dom";
