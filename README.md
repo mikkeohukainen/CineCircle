@@ -1,4 +1,15 @@
-# CineCircle - Elokuvasovellusprojekti
+# Web-ohjelmoinnin sovellusprojekti
+### 11.3. - 2.5.2024
+
+Ensimmäinen fullstack projekti ja ensikosketus Reactiin. Projektikurssi kesti noin kahdeksan viikkoa, josta ensimmäiset kaksi viikkoa painottuivat opetukseen.
+Suunnittelu- ja toteutusvaiheet kestivät yhteensä noin viisi viikkoa. Aikaa oli siis todella rajallisesti mutta pääsimme tavoitteisiin ja saimme täytettyä kaikki kurssin vaatimukset.
+
+Sovellusta voi käydä kokeilemassa osoitteessa:
+https://thecinecircle.onrender.com/
+
+Alla kurssin aikana laadittu esittelyteksti.
+
+# CineCircle
 
 ## Tekijät
 
@@ -11,7 +22,7 @@
 
 CineCircle on Oulun ammattikorkeakoulun toisen vuoden tietotekniikan opiskelijoiden web-ohjelmoinnin sovellusprojekti. Projektissa toteutettiin elokuva-aiheinen sivusto, jonka käyttäjät voivat hakea elokuvateattereiden esitysaikoja sekä elokuvia ja sarjoja eri suodattimilla. Lisäksi käyttäjät voivat mm. kirjoittaa arvosteluja, lisätä suosikkeja, luoda ryhmiä, jakaa elokuvia ja sarjoja sekä lisätä sisältöä ryhmäsivulle.
 
-Kurssivaatimuksina projektille oli luoda selaimessa toimiva monipuolinen web-sivusto, joka hyödyntää kahta olemassa olevaa rajapintaa: Finnkinon tarjoamia esitysaikoja sekä TMDB:n (The Movie Database) laajaa tietokantaa. Lisäksi projektissa tuli toteuttaa käyttäjänhallinnan yksikkötestaukset sekä käyttää projektin hallintaan yhtä kurssilla esitellyistä agile-menetelmistä.
+Kurssivaatimuksina projektille oli luoda selaimessa toimiva monipuolinen web-sivusto, joka hyödyntää kahta olemassa olevaa rajapintaa: Finnkinon tarjoamia esitysaikoja sekä TMDB:n (The Movie Database) laajaa tietokantaa. Lisäksi projektissa tuli toteuttaa käyttäjänhallinnan yksikkötestaukset sekä käyttää projektin hallintaan yhtä kurssilla esitellyistä agile-menetelmistä (Scrum, Kanban).
 
 ## Vastuualueet
 
