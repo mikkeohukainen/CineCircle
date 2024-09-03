@@ -4,8 +4,10 @@
 Ensimmäinen fullstack projekti ja ensikosketus Reactiin. Projektikurssi kesti noin kahdeksan viikkoa, josta ensimmäiset kaksi viikkoa painottuivat opetukseen.
 Suunnittelu- ja toteutusvaiheet kestivät yhteensä noin viisi viikkoa. Aikaa oli siis todella rajallisesti mutta pääsimme tavoitteisiin ja saimme täytettyä kaikki kurssin vaatimukset.
 
-Sovellusta voi käydä kokeilemassa osoitteessa:
-https://thecinecircle.onrender.com/
+~~Sovellusta voi käydä kokeilemassa osoitteessa:
+https://thecinecircle.onrender.com/~~
+
+Sovellus on tällä hetkellä offline-tilassa.
 
 Alla kurssin aikana laadittu esittelyteksti.
 
