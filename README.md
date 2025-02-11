@@ -9,6 +9,9 @@ https://thecinecircle.onrender.com/~~
 
 Sovellus on tällä hetkellä offline-tilassa.
 
+Demovideo:
+https://youtu.be/8hHyUZzX_-A
+
 Alla kurssin aikana laadittu esittelyteksti.
 
 # CineCircle
